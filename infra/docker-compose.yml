@@ -1,0 +1,55 @@
+services:
+
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: cie-vllm
+    restart: unless-stopped
+    ipc: host
+
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    volumes:
+      - ${HOME}/.cache/huggingface:/root/.cache/huggingface
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+    command:
+      - --model
+      - Qwen/Qwen2.5-VL-32B-Instruct-AWQ
+      - --served-model-name
+      - cie-vl
+      - --quantization
+      - awq
+      - --dtype
+      - auto
+      - --max-model-len
+      - "16384"
+      - --gpu-memory-utilization
+      - "0.88"
+      - --trust-remote-code
+
+  postgres:
+    image: postgres:16
+    container_name: cie-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: cie
+      POSTGRES_PASSWORD: cie_local_dev_password
+      POSTGRES_DB: cie
+
+    ports:
+      - "127.0.0.1:5432:5432"
+
+    volumes:
+      - cie_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  cie_postgres_data:

@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+html {
+  min-height: 100%;
+  background: #f8fafc;
+}
+
+body {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(20, 184, 166, 0.10), transparent 30rem),
+    radial-gradient(circle at top right, rgba(15, 23, 42, 0.06), transparent 32rem),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: var(--foreground);
+}
+
+button {
+  transition: all 160ms ease;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+::selection {
+  background: #ccfbf1;
+  color: #134e4a;
+}
