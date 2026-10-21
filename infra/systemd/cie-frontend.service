@@ -1,0 +1,18 @@
+[Unit]
+Description=CareerIntel frontend (Next.js, production build)
+After=network-online.target cie-backend.service
+Wants=network-online.target
+
+[Service]
+User=exouser
+WorkingDirectory=/home/exouser/cie/frontend
+Environment=NODE_ENV=production
+Environment=PATH=/home/exouser/.nvm/versions/node/v20.20.2/bin:/usr/bin:/bin
+ExecStart=/home/exouser/.nvm/versions/node/v20.20.2/bin/npm run start -- -p 3001
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

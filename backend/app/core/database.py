@@ -4,10 +4,12 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.core.config import config
+from app.core.config import config, get_required_env
 
 
-DATABASE_URL = config["database"]["url"]
+DATABASE_URL = get_required_env(
+    config["database"]["url_env"]
+)
 
 
 engine = create_async_engine(

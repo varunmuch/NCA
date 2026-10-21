@@ -42,7 +42,7 @@ services:
 
     environment:
       POSTGRES_USER: cie
-      POSTGRES_PASSWORD: cie_local_dev_password
+      POSTGRES_PASSWORD: ${CIE_POSTGRES_PASSWORD:?Set CIE_POSTGRES_PASSWORD in infra/.env}
       POSTGRES_DB: cie
 
     ports:

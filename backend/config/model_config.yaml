@@ -5,85 +5,12 @@ model:
   endpoint: /v1/chat/completions
 
   temperature: 0.0
-  max_tokens: 800
+  max_tokens: 1400
 
-  timeout_seconds: 120
+  timeout_seconds: 180
 
   context_window: 16384
 
-career_scope:
-  enabled: true
-
-  allowed_topics:
-    - career_guidance
-    - career_path
-    - skill_gap
-    - certifications
-    - resume_analysis
-    - portfolio_projects
-    - professional_development
-    - job_role_comparison
-    - interview_preparation
-    - education_and_training
-    - career_transition
-    - job_requirements
-    - career_progression
-
-  reject_out_of_scope: true
-
-  rejection_message: >
-    CIE only provides career guidance, skill development,
-    career planning, professional development, resume analysis,
-    job preparation, and related career assistance.
-
-security:
-  block_prompt_injection: true
-  block_system_prompt_requests: true
-  block_general_assistant_mode: true
-
-  blocked_patterns:
-    - ignore previous instructions
-    - ignore all previous instructions
-    - reveal system prompt
-    - show system prompt
-    - reveal developer message
-    - act as unrestricted chatgpt
-    - bypass restrictions
-    - jailbreak
-    - override instructions
-
-generation:
-  structured_output: true
-  require_json_schema: true
-  allow_freeform_general_chat: false
-
-logging:
-  log_rejected_requests: true
-  log_llm_latency: true
-
-intent_classifier:
-  enabled: true
-
-  allowed_intents:
-    - career_path
-    - skill_gap
-    - certification
-    - resume
-    - projects
-    - job_search
-    - interview
-    - education
-    - role_comparison
-    - career_progression
-
-  out_of_scope_intent: out_of_scope
-
 database:
-  url: postgresql+asyncpg://cie:cie_local_dev_password@127.0.0.1:5432/cie
-
-memory:
-  enabled: true
-  recent_message_count: 8
-  compression_trigger_tokens: 6000
-  compression_target_tokens: 1500
-  retain_raw_messages: true
+  # Connection URL (with credentials) comes from CIE_DATABASE_URL in backend/.env
+  url_env: CIE_DATABASE_URL

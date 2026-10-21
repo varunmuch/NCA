@@ -1,0 +1,127 @@
+{
+  "note": "Hand-curated, well-known programs and sites. Links point to each organization's own site; eligibility, amounts, and deadlines change every year, so the app never states them.",
+  "sections": {
+    "learn": "Learn online",
+    "programs": "Clubs, competitions & programs",
+    "scholarships": "Scholarships & fellowships",
+    "college": "College & career planning"
+  },
+  "general": [
+    {"id": "khan-academy", "section": "learn", "title": "Khan Academy", "url": "https://www.khanacademy.org", "description": "Free lessons and practice in math, science, computing, economics, and test prep (including SAT).", "tags": ["Free"]},
+    {"id": "coursera", "section": "learn", "title": "Coursera", "url": "https://www.coursera.org", "description": "University courses you can audit for free; certificates usually cost money.", "tags": ["Free to audit"]},
+    {"id": "edx", "section": "learn", "title": "edX", "url": "https://www.edx.org", "description": "Courses from universities like Harvard and MIT; most can be audited for free.", "tags": ["Free to audit"]},
+    {"id": "mit-ocw", "section": "learn", "title": "MIT OpenCourseWare", "url": "https://ocw.mit.edu", "description": "Free lecture notes, videos, and problem sets from real MIT courses.", "tags": ["Free"]},
+    {"id": "flvs", "section": "learn", "title": "Florida Virtual School (FLVS)", "url": "https://www.flvs.net", "description": "Free online high school courses for Florida students, including AP and electives your school may not offer.", "tags": ["Free", "Florida"]},
+
+    {"id": "bigfuture", "section": "college", "title": "BigFuture (College Board)", "url": "https://bigfuture.collegeboard.org", "description": "Search colleges by major, size, and location, and plan your college steps by grade.", "tags": ["Free"]},
+    {"id": "college-scorecard", "section": "college", "title": "College Scorecard", "url": "https://collegescorecard.ed.gov", "description": "U.S. Department of Education data on costs, graduation rates, and earnings by college and field of study.", "tags": ["Free", "Official"]},
+    {"id": "floridashines", "section": "college", "title": "FloridaShines", "url": "https://www.floridashines.org", "description": "Florida's student portal for comparing state colleges and universities and checking dual enrollment options.", "tags": ["Free", "Florida"]},
+    {"id": "valencia-college", "section": "college", "title": "Valencia College", "url": "https://valenciacollege.edu", "description": "Central Florida state college with dual enrollment for high school students and DirectConnect to UCF transfer.", "tags": ["Florida", "Dual enrollment"]},
+    {"id": "common-app", "section": "college", "title": "Common App", "url": "https://www.commonapp.org", "description": "One application used by over a thousand colleges; good for seeing what applications ask for.", "tags": ["Free to explore"]},
+    {"id": "studentaid", "section": "college", "title": "Federal Student Aid (FAFSA)", "url": "https://studentaid.gov", "description": "The FAFSA unlocks federal grants, many state awards, and most college aid. File in senior year.", "tags": ["Free", "Official"]},
+    {"id": "careeronestop", "section": "college", "title": "CareerOneStop", "url": "https://www.careeronestop.org", "description": "U.S. Department of Labor site for career videos, training finders, and a large free scholarship search.", "tags": ["Free", "Official"]},
+    {"id": "apprenticeship-gov", "section": "college", "title": "Apprenticeship.gov", "url": "https://www.apprenticeship.gov", "description": "Find paid, earn-while-you-learn apprenticeships across hundreds of careers.", "tags": ["Free", "Official"]},
+
+    {"id": "bright-futures", "section": "scholarships", "title": "Florida Bright Futures", "url": "https://www.floridastudentfinancialaidsg.org", "description": "Florida's merit scholarships for students attending Florida colleges; requirements include GPA, test scores, and service hours.", "tags": ["Florida", "Merit"]},
+    {"id": "careeronestop-scholarships", "section": "scholarships", "title": "CareerOneStop Scholarship Finder", "url": "https://www.careeronestop.org/toolkit/training/find-scholarships.aspx", "description": "Free search of thousands of scholarships you can filter by field, state, and grade.", "tags": ["Free", "Search tool"]},
+    {"id": "coca-cola-scholars", "section": "scholarships", "title": "Coca-Cola Scholars Program", "url": "https://www.coca-colascholarsfoundation.org", "description": "National scholarship for high school seniors who show leadership and service.", "tags": ["Seniors", "Leadership"]},
+    {"id": "questbridge", "section": "scholarships", "title": "QuestBridge National College Match", "url": "https://www.questbridge.org", "description": "Connects high-achieving students from lower-income families with full scholarships at partner colleges. College Prep Scholars program starts in junior year.", "tags": ["Need-based", "Juniors & seniors"]},
+    {"id": "gates-scholarship", "section": "scholarships", "title": "The Gates Scholarship", "url": "https://www.thegatesscholarship.org", "description": "Last-dollar scholarship for outstanding minority seniors from low-income households.", "tags": ["Need-based", "Seniors"]},
+    {"id": "jack-kent-cooke", "section": "scholarships", "title": "Jack Kent Cooke Foundation", "url": "https://www.jkcf.org", "description": "Large scholarships and advising for high-achieving students with financial need.", "tags": ["Need-based"]},
+    {"id": "dell-scholars", "section": "scholarships", "title": "Dell Scholars", "url": "https://www.dellscholars.org", "description": "Scholarship plus mentoring for students who overcame obstacles; values grit over perfect grades.", "tags": ["Need-based", "Seniors"]},
+    {"id": "horatio-alger", "section": "scholarships", "title": "Horatio Alger Scholarships", "url": "https://scholars.horatioalger.org", "description": "Scholarships for students who have faced adversity, including awards for career and technical paths.", "tags": ["Need-based"]},
+    {"id": "elks-mvs", "section": "scholarships", "title": "Elks Most Valuable Student", "url": "https://www.elks.org/scholars", "description": "One of the largest national scholarship contests for seniors, based on leadership, need, and academics.", "tags": ["Seniors"]},
+    {"id": "hsf", "section": "scholarships", "title": "Hispanic Scholarship Fund", "url": "https://www.hsf.net", "description": "Scholarships and support for students of Hispanic heritage.", "tags": ["Identity-based"]},
+    {"id": "uncf", "section": "scholarships", "title": "UNCF", "url": "https://uncf.org", "description": "Hundreds of scholarships, many for African American students and HBCU attendees.", "tags": ["Identity-based"]},
+    {"id": "apia-scholars", "section": "scholarships", "title": "APIA Scholars", "url": "https://apiascholars.org", "description": "Scholarships for Asian American, Native Hawaiian, and Pacific Islander students.", "tags": ["Identity-based"]},
+    {"id": "american-indian-college-fund", "section": "scholarships", "title": "American Indian College Fund", "url": "https://collegefund.org", "description": "Scholarships for American Indian and Alaska Native students.", "tags": ["Identity-based"]},
+    {"id": "national-merit", "section": "scholarships", "title": "National Merit Scholarship Program", "url": "https://www.nationalmerit.org", "description": "Taking the PSAT/NMSQT in junior year enters you automatically.", "tags": ["Merit", "Juniors"]},
+    {"id": "davidson-fellows", "section": "scholarships", "title": "Davidson Fellows Scholarship", "url": "https://www.davidsongifted.org", "description": "Fellowship-style scholarship for students 18 and under who complete a significant project in STEM, literature, music, or philosophy.", "tags": ["Fellowship", "Project-based"]},
+    {"id": "bank-of-america-leaders", "section": "programs", "title": "Bank of America Student Leaders", "url": "https://about.bankofamerica.com/en/making-an-impact/student-leaders", "description": "Paid summer internship at a local nonprofit plus a leadership summit, for juniors and seniors.", "tags": ["Paid", "Juniors & seniors"]},
+    {"id": "congressional-award", "section": "programs", "title": "Congressional Award", "url": "https://www.congressionalaward.org", "description": "Earn medals for goals you set in service, personal development, fitness, and exploration. Starts at age 14.", "tags": ["Free", "Self-paced"]}
+  ],
+  "families": {
+    "technology": [
+      {"id": "freecodecamp", "section": "learn", "title": "freeCodeCamp", "url": "https://www.freecodecamp.org", "description": "Free, self-paced coding curriculum with projects and certifications.", "tags": ["Free"]},
+      {"id": "cs50", "section": "learn", "title": "Harvard CS50", "url": "https://cs50.harvard.edu", "description": "Harvard's famous intro to computer science, free online.", "tags": ["Free"]},
+      {"id": "code-org", "section": "learn", "title": "Code.org", "url": "https://code.org", "description": "Beginner-friendly coding courses, including AP CS Principles material.", "tags": ["Free", "Beginner"]},
+      {"id": "odin-project", "section": "learn", "title": "The Odin Project", "url": "https://www.theodinproject.com", "description": "Free full-stack web development path built around real projects.", "tags": ["Free"]},
+      {"id": "usaco", "section": "programs", "title": "USA Computing Olympiad", "url": "https://usaco.org", "description": "Free online programming contests from bronze to platinum level.", "tags": ["Free", "Competition"]},
+      {"id": "congressional-app-challenge", "section": "programs", "title": "Congressional App Challenge", "url": "https://www.congressionalappchallenge.us", "description": "Build an app and submit it to your district's competition.", "tags": ["Free", "Competition"]},
+      {"id": "cyberpatriot", "section": "programs", "title": "CyberPatriot", "url": "https://www.uscyberpatriot.org", "description": "National youth cybersecurity competition run by the Air & Space Forces Association.", "tags": ["Competition", "Team"]},
+      {"id": "picoctf", "section": "programs", "title": "picoCTF", "url": "https://picoctf.org", "description": "Free capture-the-flag cybersecurity practice and competition from Carnegie Mellon.", "tags": ["Free", "Competition"]},
+      {"id": "first-robotics", "section": "programs", "title": "FIRST Robotics", "url": "https://www.firstinspires.org", "description": "Team robotics competitions with large scholarship opportunities for participants.", "tags": ["Team", "Scholarships"]},
+      {"id": "girls-who-code", "section": "programs", "title": "Girls Who Code", "url": "https://girlswhocode.com", "description": "Free clubs and summer programs for girls and nonbinary students.", "tags": ["Free", "Summer", "Identity-based"]},
+      {"id": "ncwit-aic", "section": "scholarships", "title": "NCWIT Award for Aspirations in Computing", "url": "https://www.aspirations.org", "description": "Recognition and community for students of underrepresented genders interested in computing.", "tags": ["Award", "Identity-based"]}
+    ],
+    "health": [
+      {"id": "hosa", "section": "programs", "title": "HOSA – Future Health Professionals", "url": "https://hosa.org", "description": "Student organization with health-career competitions, leadership, and scholarships.", "tags": ["Club", "Scholarships"]},
+      {"id": "red-cross-volunteer", "section": "programs", "title": "American Red Cross Volunteering", "url": "https://www.redcross.org/volunteer", "description": "Youth volunteer roles, blood drives, and first aid/CPR training.", "tags": ["Volunteer"]},
+      {"id": "nih-hs-sip", "section": "programs", "title": "NIH Summer Internship Program", "url": "https://www.training.nih.gov", "description": "Biomedical research internships at the National Institutes of Health for students 17 and older.", "tags": ["Paid", "Research", "Competitive"]},
+      {"id": "medlineplus", "section": "learn", "title": "MedlinePlus", "url": "https://medlineplus.gov", "description": "Trusted, plain-language health and anatomy information from the National Library of Medicine.", "tags": ["Free", "Official"]},
+      {"id": "khan-health", "section": "learn", "title": "Khan Academy Health & Medicine", "url": "https://www.khanacademy.org/science/health-and-medicine", "description": "Free videos on body systems, diseases, and how medicine works.", "tags": ["Free"]}
+    ],
+    "science": [
+      {"id": "science-olympiad", "section": "programs", "title": "Science Olympiad", "url": "https://www.soinc.org", "description": "Team competition across biology, chemistry, physics, and earth science events.", "tags": ["Team", "Competition"]},
+      {"id": "regeneron-isef", "section": "programs", "title": "Regeneron ISEF", "url": "https://www.societyforscience.org/isef/", "description": "The world's largest high school science fair; start at your school or regional fair.", "tags": ["Competition", "Research"]},
+      {"id": "regeneron-sts", "section": "scholarships", "title": "Regeneron Science Talent Search", "url": "https://www.societyforscience.org/regeneron-sts/", "description": "Top research competition for seniors with major scholarship awards.", "tags": ["Seniors", "Research"]},
+      {"id": "rsi", "section": "programs", "title": "Research Science Institute (RSI)", "url": "https://www.cee.org/programs/research-science-institute", "description": "Free, highly selective summer research program at MIT for rising seniors.", "tags": ["Free", "Summer", "Competitive"]},
+      {"id": "usabo", "section": "programs", "title": "USA Biology Olympiad", "url": "https://www.usabo-trc.org", "description": "National biology competition that starts with an open exam at your school.", "tags": ["Competition"]},
+      {"id": "nasa-stem", "section": "learn", "title": "NASA STEM Engagement", "url": "https://www.nasa.gov/stem", "description": "Student challenges, internships (16+), and learning resources from NASA.", "tags": ["Free", "Official"]},
+      {"id": "zooniverse", "section": "programs", "title": "Zooniverse", "url": "https://www.zooniverse.org", "description": "Help real scientists with research projects from home — a great first taste of research.", "tags": ["Free", "Citizen science"]}
+    ],
+    "engineering": [
+      {"id": "first-robotics-eng", "section": "programs", "title": "FIRST Robotics", "url": "https://www.firstinspires.org", "description": "Design, build, and program competition robots with a team; scholarships available to participants.", "tags": ["Team", "Scholarships"]},
+      {"id": "recf-vex", "section": "programs", "title": "VEX Robotics (REC Foundation)", "url": "https://www.roboticseducation.org", "description": "Robotics competitions for middle and high school teams.", "tags": ["Team", "Competition"]},
+      {"id": "tsa", "section": "programs", "title": "Technology Student Association", "url": "https://tsaweb.org", "description": "STEM student organization with engineering, architecture, and design competitions.", "tags": ["Club", "Competition"]},
+      {"id": "ace-mentor", "section": "programs", "title": "ACE Mentor Program", "url": "https://www.acementor.org", "description": "Free after-school mentoring by architects, contractors, and engineers, with scholarships.", "tags": ["Free", "Mentoring", "Scholarships"]},
+      {"id": "swe", "section": "scholarships", "title": "Society of Women Engineers Scholarships", "url": "https://swe.org/scholarships", "description": "Scholarships for women studying engineering and computer science.", "tags": ["Identity-based"]},
+      {"id": "nsbe", "section": "programs", "title": "National Society of Black Engineers", "url": "https://www.nsbe.org", "description": "Pre-college programs, competitions, and scholarships.", "tags": ["Identity-based", "Scholarships"]},
+      {"id": "shpe", "section": "programs", "title": "SHPE", "url": "https://shpe.org", "description": "Society of Hispanic Professional Engineers: pre-college programs and scholarships.", "tags": ["Identity-based", "Scholarships"]}
+    ],
+    "arts": [
+      {"id": "scholastic-awards", "section": "scholarships", "title": "Scholastic Art & Writing Awards", "url": "https://www.artandwriting.org", "description": "The longest-running recognition program for teen artists and writers, with scholarships for seniors.", "tags": ["Competition", "Portfolio"]},
+      {"id": "youngarts", "section": "scholarships", "title": "YoungArts", "url": "https://youngarts.org", "description": "National competition for artists ages 15–18 with cash awards and mentoring.", "tags": ["Competition"]},
+      {"id": "pixar-in-a-box", "section": "learn", "title": "Pixar in a Box (Khan Academy)", "url": "https://www.khanacademy.org/computing/pixar", "description": "Free lessons on how Pixar artists use math and science to make films.", "tags": ["Free"]},
+      {"id": "blender", "section": "learn", "title": "Blender", "url": "https://www.blender.org", "description": "Free, professional 3D modeling and animation software with lots of tutorials.", "tags": ["Free", "Tool"]}
+    ],
+    "business": [
+      {"id": "deca", "section": "programs", "title": "DECA", "url": "https://www.deca.org", "description": "Business and marketing student organization with competitions and scholarships.", "tags": ["Club", "Scholarships"]},
+      {"id": "fbla", "section": "programs", "title": "FBLA", "url": "https://www.fbla.org", "description": "Future Business Leaders of America: competitions, leadership, and networking.", "tags": ["Club", "Competition"]},
+      {"id": "junior-achievement", "section": "programs", "title": "Junior Achievement", "url": "https://www.ja.org", "description": "Programs on entrepreneurship, financial literacy, and running a student company.", "tags": ["Free"]},
+      {"id": "diamond-challenge", "section": "programs", "title": "Diamond Challenge", "url": "https://diamondchallenge.org", "description": "Global entrepreneurship competition for high school teams.", "tags": ["Competition"]},
+      {"id": "wharton-global-youth", "section": "learn", "title": "Wharton Global Youth Program", "url": "https://globalyouth.wharton.upenn.edu", "description": "Free business articles and an investment competition for high schoolers.", "tags": ["Free"]},
+      {"id": "khan-finance", "section": "learn", "title": "Khan Academy Economics & Finance", "url": "https://www.khanacademy.org/economics-finance-domain", "description": "Free lessons on economics, finance, and accounting basics.", "tags": ["Free"]}
+    ],
+    "education": [
+      {"id": "educators-rising", "section": "programs", "title": "Educators Rising", "url": "https://educatorsrising.org", "description": "Student organization for future teachers, with competitions and teaching practice.", "tags": ["Club"]},
+      {"id": "key-club", "section": "programs", "title": "Key Club", "url": "https://www.keyclub.org", "description": "Student-led service organization — great for service hours and leadership.", "tags": ["Club", "Volunteer"]},
+      {"id": "teach-grant", "section": "scholarships", "title": "TEACH Grant", "url": "https://studentaid.gov/understand-aid/types/grants/teach", "description": "Federal grant for college students who agree to teach in a high-need field and school.", "tags": ["Official", "College"]}
+    ],
+    "law": [
+      {"id": "nsda", "section": "programs", "title": "National Speech & Debate Association", "url": "https://www.speechanddebate.org", "description": "Debate and speech competitions that build argument and public speaking skills.", "tags": ["Competition"]},
+      {"id": "icivics", "section": "learn", "title": "iCivics", "url": "https://www.icivics.org", "description": "Free games and lessons on how government and courts work.", "tags": ["Free"]},
+      {"id": "ussyp", "section": "scholarships", "title": "United States Senate Youth Program", "url": "https://ussenateyouth.org", "description": "Two juniors or seniors per state win a week in Washington and a college scholarship.", "tags": ["Competitive", "Juniors & seniors"]},
+      {"id": "exploring", "section": "programs", "title": "Exploring (Learning for Life)", "url": "https://www.exploring.org", "description": "Career exploring posts in law enforcement, fire, and more, hosted by local agencies.", "tags": ["Hands-on"]},
+      {"id": "civil-air-patrol", "section": "programs", "title": "Civil Air Patrol Cadets", "url": "https://www.gocivilairpatrol.com", "description": "Air Force auxiliary cadet program: aviation, emergency services, and leadership.", "tags": ["Leadership"]}
+    ],
+    "trades": [
+      {"id": "skillsusa", "section": "programs", "title": "SkillsUSA", "url": "https://www.skillsusa.org", "description": "Career and technical student organization with skill competitions and scholarships.", "tags": ["Club", "Competition"]},
+      {"id": "mikeroweworks", "section": "scholarships", "title": "mikeroweWORKS Foundation", "url": "https://mikeroweworks.org", "description": "Work Ethic Scholarships for students training in skilled trades.", "tags": ["Trades"]},
+      {"id": "nccer", "section": "learn", "title": "NCCER", "url": "https://www.nccer.org", "description": "Industry-recognized construction craft training and credentials.", "tags": ["Credentials"]},
+      {"id": "hbi", "section": "programs", "title": "Home Builders Institute", "url": "https://www.hbi.org", "description": "Pre-apprenticeship training in building trades.", "tags": ["Training"]}
+    ],
+    "environment": [
+      {"id": "ffa", "section": "programs", "title": "National FFA Organization", "url": "https://www.ffa.org", "description": "Agriculture and natural resources student organization with a large scholarship program.", "tags": ["Club", "Scholarships"]},
+      {"id": "4h", "section": "programs", "title": "4-H", "url": "https://4-h.org", "description": "Hands-on projects in agriculture, environment, and science.", "tags": ["Club"]},
+      {"id": "envirothon", "section": "programs", "title": "Envirothon", "url": "https://envirothon.org", "description": "Team competition on soils, forestry, wildlife, and aquatic ecology.", "tags": ["Team", "Competition"]},
+      {"id": "inaturalist", "section": "programs", "title": "iNaturalist", "url": "https://www.inaturalist.org", "description": "Record plants and animals near you and contribute to real biodiversity research.", "tags": ["Free", "Citizen science"]},
+      {"id": "sca", "section": "programs", "title": "Student Conservation Association", "url": "https://www.thesca.org", "description": "Conservation crews and internships in parks and public lands.", "tags": ["Hands-on", "Summer"]}
+    ],
+    "hospitality": [
+      {"id": "fccla", "section": "programs", "title": "FCCLA", "url": "https://fcclainc.org", "description": "Student organization for culinary, hospitality, and family careers.", "tags": ["Club", "Competition"]},
+      {"id": "prostart", "section": "programs", "title": "ProStart (NRAEF)", "url": "https://chooserestaurants.org", "description": "Two-year culinary and restaurant management program offered in many high schools, with scholarships.", "tags": ["Scholarships"]},
+      {"id": "servsafe", "section": "learn", "title": "ServSafe", "url": "https://www.servsafe.com", "description": "Food safety certification used across the restaurant industry.", "tags": ["Credential"]}
+    ]
+  }
+}

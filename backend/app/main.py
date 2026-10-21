@@ -1,115 +1,123 @@
-from pathlib import Path
-from uuid import uuid4
+import asyncio
+import logging
+from contextlib import asynccontextmanager
 
-from fastapi import (
-    FastAPI,
-    File,
-    HTTPException,
-    UploadFile,
-)
-
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from app.models.profile import (
-    StudentProfile,
-    ProfileAnalysisResponse,
+from app.api.staff_routes import router as staff_router
+from app.api.student_routes import router as student_router
+from app.core.config import get_allowed_origins
+from app.core.security import require_auth_bridge
+from app.services import account_service
+from app.services.auth_service import bootstrap_google_identity
+from app.services.document_service import resume_interrupted
+from app.services.llm_service import check_llm
+from app.services.password_auth_service import (
+    bootstrap_password_identity,
+    link_google_to_password,
+    login_with_password,
+    signup_with_password,
 )
 
-from app.models.question import CareerQuestion
 
-from app.models.progress import (
-    ProgressTaskCreate,
-    ProgressTaskUpdate,
-    ProgressTimelineCreate,
-    ProgressTimelineUpdate,
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
 
-from app.services.llm_service import (
-    check_llm,
-    analyze_profile,
-)
 
-from app.services.relevance_guard import (
-    check_relevance,
-    RelevanceDecision,
-    REJECTION_MESSAGE,
-)
-
-from app.services.intent_classifier import (
-    classify_intent,
-    CareerIntent,
-)
-
-from app.services.career_path_service import generate_career_path
-from app.services.project_service import generate_project_roadmap
-from app.services.interview_service import generate_interview_prep
-from app.services.skill_gap_service import generate_skill_gap
-from app.services.certification_service import generate_certification_guidance
-
-from app.services.section_history_service import (
-    get_section_responses,
-    save_section_response,
-)
-
-from app.services.resume_service import (
-    get_active_resume_metadata,
-    get_active_resume_record,
-    upload_resume_and_update_profile,
-)
-
-from app.services.progress_service import (
-    create_progress_task,
-    create_progress_timeline,
-    delete_progress_task,
-    delete_progress_timeline,
-    get_progress_board,
-    update_progress_task,
-    update_progress_timeline,
-)
-
-from app.services.memory_service import (
-    build_student_context,
-    ensure_student,
-    get_profile,
-    save_message,
-    save_profile,
-)
-
-from app.services.memory_compressor import compress_memory_if_needed
+class GoogleAuthBootstrapRequest(BaseModel):
+    provider: str
+    provider_subject: str
+    email: str
+    name: str = ""
 
 
-class CreateStudentRequest(BaseModel):
-    student_id: str | None = None
+class PasswordSignupRequest(BaseModel):
+    email: str
+    password: str
+    name: str
 
 
-class SaveSectionHistoryRequest(BaseModel):
+class PasswordLoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class GoogleLinkPasswordRequest(BaseModel):
+    provider_subject: str
+    email: str
+    name: str = ""
+    password: str
+
+
+class PasswordBootstrapRequest(BaseModel):
     student_id: str
-    section: str
-    prompt: str
-    backend_prompt: str
-    response: dict
+    auth_time: int | None = None
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    password: str
+
+
+class VerifyEmailRequest(BaseModel):
+    token: str
+
+
+allowed_origins = get_allowed_origins()
+
+if not allowed_origins:
+    raise RuntimeError(
+        "CIE_ALLOWED_ORIGINS is not configured. "
+        "At least one allowed frontend origin is required."
+    )
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Keep a reference so the task isn't garbage-collected mid-run.
+    resume = asyncio.create_task(resume_interrupted())
+    yield
+    resume.cancel()
 
 
 app = FastAPI(
     title="Career Intelligence Engine",
-    version="0.1.0",
+    version="0.2.0",
+    lifespan=lifespan,
 )
 
 
+# Browsers do not call this API directly (the Next.js server proxies every
+# request with the bridge secret), so CORS stays limited to the frontend.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:3000",
-        "http://localhost:3000",
-        "http://127.0.0.1:3001",
-        "http://localhost:3001",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=[
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "OPTIONS",
+    ],
+    allow_headers=[
+        "Content-Type",
+        "Authorization",
+    ],
 )
+
+
+app.include_router(student_router)
+app.include_router(staff_router)
 
 
 @app.get("/health")
@@ -125,375 +133,167 @@ async def health_llm():
     return await check_llm()
 
 
-@app.post("/api/v1/students")
-async def create_student(request: CreateStudentRequest | None = None):
-    if request is not None and request.student_id:
-        student_id = request.student_id
-    else:
-        student_id = str(uuid4())
-
-    await ensure_student(student_id)
-
-    return {
-        "status": "success",
-        "student_id": student_id,
-        "message": "Student created or loaded successfully.",
-    }
-
-
-@app.post(
-    "/api/v1/profile/analyze",
-    response_model=ProfileAnalysisResponse,
-)
-async def profile_analyze(profile: StudentProfile):
-    return await analyze_profile(profile)
-
-
-@app.get("/api/v1/students/{student_id}/profile")
-async def get_student_profile(student_id: str):
-    await ensure_student(student_id)
-
-    profile = await get_profile(student_id)
-
-    if profile is None:
-        return {
-            "status": "not_found",
-            "student_id": student_id,
-            "profile": None,
-            "message": "No saved profile found for this student.",
-        }
-
-    return {
-        "status": "success",
-        "student_id": student_id,
-        "profile": profile,
-    }
-
-
-@app.put("/api/v1/students/{student_id}/profile")
-async def update_student_profile(
-    student_id: str,
-    profile: StudentProfile,
+@app.post("/api/v1/auth/google/bootstrap")
+async def google_auth_bootstrap(
+    request: GoogleAuthBootstrapRequest,
+    x_cie_auth_bridge: str | None = Header(
+        default=None
+    ),
 ):
-    await ensure_student(student_id)
-
-    await save_profile(
-        student_id,
-        profile,
+    require_auth_bridge(
+        x_cie_auth_bridge
     )
 
-    return {
-        "status": "success",
-        "student_id": student_id,
-        "message": "Student profile saved successfully.",
-        "profile": profile,
-    }
-
-
-@app.post("/api/v1/students/{student_id}/resume/upload")
-async def upload_student_resume(
-    student_id: str,
-    resume: UploadFile = File(...),
-):
-    return await upload_resume_and_update_profile(
-        student_id=student_id,
-        resume=resume,
-    )
-
-
-@app.get("/api/v1/students/{student_id}/resume")
-async def get_student_resume(student_id: str):
-    await ensure_student(student_id)
-
-    resume = await get_active_resume_metadata(student_id)
-
-    if resume is None:
-        return {
-            "status": "not_found",
-            "student_id": student_id,
-            "resume": None,
-            "message": "No active resume found for this student.",
-        }
-
-    return {
-        "status": "success",
-        "student_id": student_id,
-        "resume": resume,
-    }
-
-
-@app.get("/api/v1/students/{student_id}/resume/download")
-async def download_student_resume(student_id: str):
-    await ensure_student(student_id)
-
-    resume = await get_active_resume_record(student_id)
-
-    if resume is None:
+    if request.provider != "google":
         raise HTTPException(
-            status_code=404,
-            detail="No active resume found for this student.",
+            status_code=400,
+            detail="Unsupported authentication provider.",
         )
 
-    file_path = Path(resume.file_path)
+    provider_subject = (
+        request.provider_subject.strip()
+    )
 
-    if not file_path.exists():
+    email = (
+        request.email.strip().lower()
+    )
+
+    name = (
+        request.name.strip()
+    )
+
+    if not provider_subject:
         raise HTTPException(
-            status_code=404,
-            detail="Resume file is missing from storage.",
+            status_code=400,
+            detail="Provider subject is required.",
         )
 
-    return FileResponse(
-        path=str(file_path),
-        media_type=resume.content_type or "application/octet-stream",
-        filename=resume.original_filename,
-    )
-
-
-@app.get("/api/v1/students/{student_id}/progress")
-async def get_student_progress(student_id: str):
-    return await get_progress_board(student_id)
-
-
-@app.post("/api/v1/students/{student_id}/progress/timelines")
-async def create_student_progress_timeline(
-    student_id: str,
-    payload: ProgressTimelineCreate,
-):
-    return await create_progress_timeline(
-        student_id=student_id,
-        payload=payload,
-    )
-
-
-@app.put("/api/v1/students/{student_id}/progress/timelines/{timeline_id}")
-async def update_student_progress_timeline(
-    student_id: str,
-    timeline_id: int,
-    payload: ProgressTimelineUpdate,
-):
-    return await update_progress_timeline(
-        student_id=student_id,
-        timeline_id=timeline_id,
-        payload=payload,
-    )
-
-
-@app.delete("/api/v1/students/{student_id}/progress/timelines/{timeline_id}")
-async def delete_student_progress_timeline(
-    student_id: str,
-    timeline_id: int,
-):
-    return await delete_progress_timeline(
-        student_id=student_id,
-        timeline_id=timeline_id,
-    )
-
-
-@app.post("/api/v1/students/{student_id}/progress/timelines/{timeline_id}/tasks")
-async def create_student_progress_task(
-    student_id: str,
-    timeline_id: int,
-    payload: ProgressTaskCreate,
-):
-    return await create_progress_task(
-        student_id=student_id,
-        timeline_id=timeline_id,
-        payload=payload,
-    )
-
-
-@app.put("/api/v1/students/{student_id}/progress/tasks/{task_id}")
-async def update_student_progress_task(
-    student_id: str,
-    task_id: int,
-    payload: ProgressTaskUpdate,
-):
-    return await update_progress_task(
-        student_id=student_id,
-        task_id=task_id,
-        payload=payload,
-    )
-
-
-@app.delete("/api/v1/students/{student_id}/progress/tasks/{task_id}")
-async def delete_student_progress_task(
-    student_id: str,
-    task_id: int,
-):
-    return await delete_progress_task(
-        student_id=student_id,
-        task_id=task_id,
-    )
-
-
-@app.get("/api/v1/students/{student_id}/sections/{section}/history")
-async def get_student_section_history(
-    student_id: str,
-    section: str,
-):
-    await ensure_student(student_id)
-
-    history = await get_section_responses(
-        student_id=student_id,
-        section=section,
-    )
-
-    return {
-        "status": "success",
-        "student_id": student_id,
-        "section": section,
-        "history": history,
-    }
-
-
-@app.post("/api/v1/section-history")
-async def create_section_history(
-    request: SaveSectionHistoryRequest,
-):
-    await ensure_student(request.student_id)
-
-    await save_section_response(
-        student_id=request.student_id,
-        section=request.section,
-        prompt=request.prompt,
-        backend_prompt=request.backend_prompt,
-        response_json=request.response,
-    )
-
-    return {
-        "status": "success",
-        "student_id": request.student_id,
-        "section": request.section,
-        "message": "Section response saved successfully.",
-    }
-
-
-@app.post("/api/v1/career/question")
-async def career_question(request: CareerQuestion):
-    decision, reason = check_relevance(request.question)
-
-    if decision == RelevanceDecision.REJECT:
+    if not email:
         raise HTTPException(
-            status_code=422,
-            detail={
-                "code": "SECURITY_REJECTED",
-                "message": REJECTION_MESSAGE,
-                "reason": reason,
-            },
+            status_code=400,
+            detail="Email is required.",
         )
 
-    intent = classify_intent(request.question)
-
-    if intent == CareerIntent.OUT_OF_SCOPE:
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "code": "OUT_OF_SCOPE",
-                "message": REJECTION_MESSAGE,
-                "reason": (
-                    "The request does not match a supported "
-                    "career-guidance intent."
-                ),
-            },
-        )
-
-    await ensure_student(request.student_id)
-
-    if request.profile is not None:
-        await save_profile(
-            request.student_id,
-            request.profile,
-        )
-
-    await save_message(
-        request.student_id,
-        "user",
-        request.question,
+    return await bootstrap_google_identity(
+        provider="google",
+        provider_subject=provider_subject,
+        email=email,
+        name=name,
     )
 
-    memory_context = await build_student_context(
-        request.student_id
+
+@app.post("/api/v1/auth/password/signup")
+async def password_signup(
+    request: PasswordSignupRequest,
+    x_cie_auth_bridge: str | None = Header(
+        default=None
+    ),
+):
+    require_auth_bridge(
+        x_cie_auth_bridge
     )
 
-    if (
-        memory_context.get("latest_profile") is None
-        and request.profile is None
-    ):
-        return {
-            "status": "needs_profile",
-            "student_id": request.student_id,
-            "intent": intent.value,
-            "message": (
-                "I need the student's profile before giving personalized "
-                "career guidance. Please provide education, skills, "
-                "interests, experience, and target career role."
-            ),
-            "required_fields": [
-                "current_education",
-                "skills",
-                "interests",
-                "career_aspiration",
-                "years_of_experience",
-            ],
-        }
-
-    if intent == CareerIntent.PROJECTS:
-        result = await generate_project_roadmap(
-            request.question,
-            request.profile,
-            memory_context,
-        )
-
-    elif intent == CareerIntent.INTERVIEW:
-        result = await generate_interview_prep(
-            request.question,
-            request.profile,
-            memory_context,
-        )
-
-    elif intent == CareerIntent.SKILL_GAP:
-        result = await generate_skill_gap(
-            request.question,
-            request.profile,
-            memory_context,
-        )
-
-    elif intent == CareerIntent.CERTIFICATION:
-        result = await generate_certification_guidance(
-            request.question,
-            request.profile,
-            memory_context,
-        )
-
-    elif intent == CareerIntent.CAREER_PATH:
-        result = await generate_career_path(
-            request.question,
-            request.profile,
-            memory_context,
-        )
-
-    else:
-        return {
-            "status": "accepted",
-            "student_id": request.student_id,
-            "intent": intent.value,
-            "question": request.question,
-            "message": "This career intent is valid but not implemented yet.",
-        }
-
-    await save_message(
-        request.student_id,
-        "assistant",
-        result.model_dump_json(),
+    created = await signup_with_password(
+        email=request.email,
+        password=request.password,
+        name=request.name,
     )
 
-    await compress_memory_if_needed(
-        request.student_id
+    await account_service.send_verification(created["student_id"])
+
+    return created
+
+
+@app.post("/api/v1/auth/password/login")
+async def password_login(
+    request: PasswordLoginRequest,
+    x_cie_auth_bridge: str | None = Header(
+        default=None
+    ),
+):
+    require_auth_bridge(
+        x_cie_auth_bridge
     )
 
-    return {
-        "status": "success",
-        "student_id": request.student_id,
-        "intent": intent.value,
-        "result": result,
-    }
+    return await login_with_password(
+        email=request.email,
+        password=request.password,
+    )
+
+
+@app.post("/api/v1/auth/password/bootstrap")
+async def password_bootstrap(
+    request: PasswordBootstrapRequest,
+    x_cie_auth_bridge: str | None = Header(
+        default=None
+    ),
+):
+    require_auth_bridge(
+        x_cie_auth_bridge
+    )
+
+    return await bootstrap_password_identity(
+        student_id=request.student_id.strip(),
+        auth_time=request.auth_time,
+    )
+
+
+@app.post("/api/v1/auth/password/forgot")
+async def password_forgot(
+    request: ForgotPasswordRequest,
+    x_cie_auth_bridge: str | None = Header(
+        default=None
+    ),
+):
+    require_auth_bridge(
+        x_cie_auth_bridge
+    )
+
+    return await account_service.request_password_reset(request.email)
+
+
+@app.post("/api/v1/auth/password/reset")
+async def password_reset(
+    request: ResetPasswordRequest,
+    x_cie_auth_bridge: str | None = Header(
+        default=None
+    ),
+):
+    require_auth_bridge(
+        x_cie_auth_bridge
+    )
+
+    return await account_service.reset_password(request.token, request.password)
+
+
+@app.post("/api/v1/auth/email/verify")
+async def email_verify(
+    request: VerifyEmailRequest,
+    x_cie_auth_bridge: str | None = Header(
+        default=None
+    ),
+):
+    require_auth_bridge(
+        x_cie_auth_bridge
+    )
+
+    return await account_service.verify_email(request.token)
+
+
+@app.post("/api/v1/auth/google/link-password")
+async def google_link_password(
+    request: GoogleLinkPasswordRequest,
+    x_cie_auth_bridge: str | None = Header(
+        default=None
+    ),
+):
+    require_auth_bridge(
+        x_cie_auth_bridge
+    )
+
+    return await link_google_to_password(
+        provider_subject=request.provider_subject,
+        email=request.email,
+        name=request.name,
+        password=request.password,
+    )

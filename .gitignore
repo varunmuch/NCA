@@ -1,0 +1,17 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Student data and database dumps (never commit)
+backend/storage/
+backups/
+*.sql
+
+# Runtime logs
+logs/

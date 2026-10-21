@@ -1,37 +1,74 @@
-from typing import List, Optional
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
 class StudentProfile(BaseModel):
-    name: str = Field(..., min_length=1)
+    """
+    Student profile persisted by CIE.
 
-    current_education: str = Field(..., min_length=1)
+    Profile fields may be saved incrementally, so editable fields
+    are allowed to be empty. Individual career services can decide
+    which fields are required for a particular analysis.
+    """
 
-    interests: List[str] = Field(default_factory=list)
+    name: str = ""
 
-    hobbies: List[str] = Field(default_factory=list)
+    email: Optional[str] = None
 
-    career_aspiration: str = Field(..., min_length=1)
+    current_education: str = ""
 
-    skills: List[str] = Field(default_factory=list)
-
-    years_of_experience: Optional[float] = Field(
-        default=None,
-        ge=0
+    interests: list[str] = Field(
+        default_factory=list
     )
 
-    additional_context: Optional[str] = None
+    hobbies: list[str] = Field(
+        default_factory=list
+    )
 
+    career_aspiration: str = ""
 
-class ProfileAnalysis(BaseModel):
-    current_profile_summary: str
-    likely_role_family: str
-    strengths: List[str]
-    identified_skills: List[str]
-    missing_information: List[str]
-    next_step_recommendations: List[str]
+    skills: list[str] = Field(
+        default_factory=list
+    )
 
+    years_of_experience: Optional[float] = 0
 
-class ProfileAnalysisResponse(BaseModel):
-    status: str
-    analysis: ProfileAnalysis
+    additional_context: Optional[str] = ""
+
+    # Student-first fields (added with the counselor redesign).
+
+    preferred_name: str = Field(default="", max_length=80)
+
+    grade_level: str = Field(default="", max_length=40)
+
+    school: str = Field(default="", max_length=160)
+
+    country: str = Field(default="", max_length=80)
+
+    favorite_subjects: list[str] = Field(
+        default_factory=list
+    )
+
+    strengths: list[str] = Field(
+        default_factory=list
+    )
+
+    activities: list[str] = Field(
+        default_factory=list
+    )
+
+    # "have_goal", "exploring", or "" when unanswered.
+    career_status: str = Field(default="", max_length=20)
+
+    academic_goals: str = Field(default="", max_length=1000)
+
+    learning_style: str = Field(default="", max_length=200)
+
+    onboarding_completed: bool = False
+
+    # Interest quiz: RIASEC type -> 0-100, the other answers (work settings,
+    # subjects, training), and when it was taken.
+    interest_scores: dict[str, int] = Field(default_factory=dict)
+    interest_quiz: dict = Field(default_factory=dict)
+    interest_quiz_at: str = ""

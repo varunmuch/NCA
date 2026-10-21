@@ -58,6 +58,7 @@ def timeline_to_dict(
         "end_date": timeline.end_date,
         "status": timeline.status,
         "sort_order": timeline.sort_order,
+        "plan_id": timeline.plan_id,
         "created_at": serialize_datetime(timeline.created_at),
         "updated_at": serialize_datetime(timeline.updated_at),
         "tasks": timeline_tasks,
