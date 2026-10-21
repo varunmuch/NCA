@@ -1,0 +1,94 @@
+{
+  "about": "Curated by NeoCity Academy. Mapped to the catalog's school subjects. scripts/refresh_career_data.py checks every AP name against the College Board course index and every link (Khan Academy links against its sitemap, other links by HTTP status) and drops anything it cannot verify. A school counselor should review this list once a year.",
+  "reviewed": false,
+  "ap_source": {
+    "name": "College Board AP Course Index",
+    "url": "https://apstudents.collegeboard.org/course-index-page"
+  },
+  "ap_courses": {
+    "Math": ["AP Precalculus", "AP Calculus AB", "AP Statistics"],
+    "Biology": ["AP Biology", "AP Environmental Science"],
+    "Chemistry": ["AP Chemistry"],
+    "Physics": ["AP Physics 1", "AP Physics C: Mechanics"],
+    "Computer Science": ["AP Computer Science Principles", "AP Computer Science A", "AP Cybersecurity"],
+    "Engineering & Technology": ["AP Physics 1", "AP Calculus AB", "AP Computer Science Principles"],
+    "Health Science": ["AP Biology", "AP Chemistry", "AP Psychology"],
+    "Psychology": ["AP Psychology", "AP Statistics"],
+    "English": ["AP English Language and Composition", "AP English Literature and Composition"],
+    "Journalism & Media": ["AP English Language and Composition", "AP Seminar"],
+    "Art & Design": ["AP Drawing", "AP Art History"],
+    "Art & Music": ["AP Music Theory", "AP Art History"],
+    "Business": ["AP Business with Personal Finance", "AP Macroeconomics", "AP Microeconomics"],
+    "Economics": ["AP Macroeconomics", "AP Microeconomics"],
+    "Government & Civics": ["AP United States Government and Politics", "AP Comparative Government and Politics"],
+    "History": ["AP United States History", "AP World History: Modern"],
+    "Social Studies": ["AP United States History", "AP Human Geography"],
+    "Geography": ["AP Human Geography", "AP Environmental Science"],
+    "Agriculture": ["AP Environmental Science", "AP Biology"],
+    "Education": ["AP Psychology", "AP Seminar"],
+    "World Languages": ["AP Spanish Language and Culture", "AP French Language and Culture"]
+  },
+  "resources": {
+    "Math": [
+      {"title": "Algebra", "provider": "Khan Academy", "url": "https://www.khanacademy.org/math/algebra", "cost": "Free"},
+      {"title": "Statistics and probability", "provider": "Khan Academy", "url": "https://www.khanacademy.org/math/statistics-probability", "cost": "Free"},
+      {"title": "Precalculus", "provider": "Khan Academy", "url": "https://www.khanacademy.org/math/precalculus", "cost": "Free"}
+    ],
+    "Biology": [
+      {"title": "Biology", "provider": "Khan Academy", "url": "https://www.khanacademy.org/science/biology", "cost": "Free"},
+      {"title": "AP Biology", "provider": "Khan Academy", "url": "https://www.khanacademy.org/science/ap-biology", "cost": "Free"}
+    ],
+    "Chemistry": [
+      {"title": "Chemistry", "provider": "Khan Academy", "url": "https://www.khanacademy.org/science/chemistry", "cost": "Free"}
+    ],
+    "Physics": [
+      {"title": "Physics", "provider": "Khan Academy", "url": "https://www.khanacademy.org/science/physics", "cost": "Free"}
+    ],
+    "Computer Science": [
+      {"title": "Computer programming", "provider": "Khan Academy", "url": "https://www.khanacademy.org/computing/computer-programming", "cost": "Free"},
+      {"title": "CS50x: Introduction to Computer Science", "provider": "Harvard", "url": "https://cs50.harvard.edu/x/", "cost": "Free"},
+      {"title": "Learn to code", "provider": "Code.org", "url": "https://code.org/", "cost": "Free"}
+    ],
+    "Engineering & Technology": [
+      {"title": "Physics", "provider": "Khan Academy", "url": "https://www.khanacademy.org/science/physics", "cost": "Free"},
+      {"title": "MIT OpenCourseWare", "provider": "MIT", "url": "https://ocw.mit.edu/", "cost": "Free"}
+    ],
+    "Health Science": [
+      {"title": "Health and medicine", "provider": "Khan Academy", "url": "https://www.khanacademy.org/science/health-and-medicine", "cost": "Free"}
+    ],
+    "Psychology": [
+      {"title": "Introduction to Psychology", "provider": "Coursera (Yale)", "url": "https://www.coursera.org/learn/introduction-psychology", "cost": "Free to audit"}
+    ],
+    "English": [
+      {"title": "Grammar", "provider": "Khan Academy", "url": "https://www.khanacademy.org/humanities/grammar", "cost": "Free"}
+    ],
+    "Journalism & Media": [
+      {"title": "Grammar", "provider": "Khan Academy", "url": "https://www.khanacademy.org/humanities/grammar", "cost": "Free"}
+    ],
+    "Art & Design": [
+      {"title": "Art history", "provider": "Khan Academy", "url": "https://www.khanacademy.org/humanities/art-history", "cost": "Free"},
+      {"title": "Blender tutorials (3D art)", "provider": "Blender", "url": "https://www.blender.org/support/tutorials/", "cost": "Free"}
+    ],
+    "Business": [
+      {"title": "Economics and finance", "provider": "Khan Academy", "url": "https://www.khanacademy.org/economics-finance-domain", "cost": "Free"},
+      {"title": "Personal finance", "provider": "Khan Academy", "url": "https://www.khanacademy.org/college-careers-more/personal-finance", "cost": "Free"}
+    ],
+    "Economics": [
+      {"title": "Economics and finance", "provider": "Khan Academy", "url": "https://www.khanacademy.org/economics-finance-domain", "cost": "Free"}
+    ],
+    "Government & Civics": [
+      {"title": "US government and civics", "provider": "Khan Academy", "url": "https://www.khanacademy.org/humanities/us-government-and-civics", "cost": "Free"}
+    ],
+    "Education": [
+      {"title": "Learning How to Learn", "provider": "Coursera", "url": "https://www.coursera.org/learn/learning-how-to-learn", "cost": "Free to audit"}
+    ],
+    "Technical Education": [
+      {"title": "Find an apprenticeship", "provider": "U.S. Department of Labor", "url": "https://www.apprenticeship.gov/", "cost": "Free"}
+    ]
+  },
+  "general": [
+    {"title": "College admissions", "provider": "Khan Academy", "url": "https://www.khanacademy.org/college-careers-more/college-admissions", "cost": "Free"},
+    {"title": "BigFuture: plan for college and career", "provider": "College Board", "url": "https://bigfuture.collegeboard.org/", "cost": "Free"},
+    {"title": "My Next Move: explore careers", "provider": "U.S. Department of Labor", "url": "https://www.mynextmove.org/", "cost": "Free"}
+  ]
+}

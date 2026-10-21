@@ -602,6 +602,7 @@ async def career_detail(slug: str, student_id: str = Student):
         "related_careers": related,
         "saved": slug in await _saved_slugs(student_id),
         "source": career_catalog.load_catalog()["source"],
+        "facts": career_catalog.career_facts(slug),
     }
 
 

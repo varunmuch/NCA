@@ -13,6 +13,9 @@ from pathlib import Path
 
 
 CATALOG_PATH = Path(__file__).resolve().parents[1] / "data" / "careers.json"
+# Pay, outlook, education, classes and courses from official sources,
+# written by scripts/refresh_career_data.py.
+CAREER_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "career_data.json"
 
 # Friendly labels for O*NET's six interest types (RIASEC).
 INTEREST_LABELS = {
@@ -30,6 +33,123 @@ def load_catalog() -> dict:
     data = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
     data["by_slug"] = {career["slug"]: career for career in data["careers"]}
     return data
+
+
+@lru_cache(maxsize=1)
+def load_career_data() -> dict:
+    if not CAREER_DATA_PATH.exists():
+        return {"retrieved": None, "sources": {}, "careers": {}}
+
+    return json.loads(CAREER_DATA_PATH.read_text(encoding="utf-8"))
+
+
+def career_facts(slug: str) -> dict | None:
+    """One career's sourced data, with the sources and retrieval date."""
+
+    data = load_career_data()
+    facts = data["careers"].get(slug)
+
+    if not facts:
+        return None
+
+    return {**facts, "sources": data["sources"], "retrieved": data["retrieved"]}
+
+
+def _dollars(value: float | None, *, hourly: bool = False) -> str | None:
+    if value is None:
+        return None
+
+    return f"${value:,.2f}" if hourly else f"${value:,.0f}"
+
+
+def _years(period: str | None) -> str:
+    """'2025–35' -> '2025 to 2035', so either year a reply mentions is sourced."""
+
+    match = re.match(r"(\d{4})[–-](\d{2,4})", period or "")
+
+    if not match:
+        return period or ""
+
+    end = match.group(2)
+    return f"{match.group(1)} to {match.group(1)[:2] + end if len(end) == 2 else end}"
+
+
+def facts_text(slug: str) -> str:
+    """
+    The sourced facts as plain sentences, numbers written exactly as the
+    source has them, so the counselor can quote them and grounding can
+    match them.
+    """
+
+    facts = career_facts(slug)
+
+    if not facts:
+        return ""
+
+    sources = facts["sources"]
+    lines = []
+    national = (facts.get("wages") or {}).get("national") or {}
+    florida = (facts.get("wages") or {}).get("florida") or {}
+
+    if national.get("annual_median"):
+        line = (
+            f"Pay ({sources['wages']['name']}): median {_dollars(national['annual_median'])} a year in the U.S."
+        )
+
+        if florida.get("annual_median"):
+            line += f", {_dollars(florida['annual_median'])} in Florida"
+
+        if national.get("annual_p10") and national.get("annual_p90"):
+            line += (
+                f"; the middle 80% earn {_dollars(national['annual_p10'])} to "
+                f"{_dollars(national['annual_p90'])}"
+            )
+
+        if national.get("hourly_median"):
+            line += f"; median {_dollars(national['hourly_median'], hourly=True)} an hour"
+
+        lines.append(line + ".")
+    elif national.get("hourly_median"):
+        # Some jobs (performers, for example) are published hourly only.
+        lines.append(
+            f"Pay ({sources['wages']['name']}): median "
+            f"{_dollars(national['hourly_median'], hourly=True)} an hour in the U.S."
+        )
+
+    outlook = facts.get("outlook") or {}
+
+    if outlook.get("growth_percent") is not None:
+        lines.append(
+            f"Job outlook ({sources['outlook']['name']}, {_years(outlook.get('period'))}): "
+            f"{outlook['growth_percent']}% change in jobs "
+            f"(all jobs: {sources['outlook']['all_jobs_growth_percent']}%), about "
+            f"{outlook['openings_per_year']:,} openings a year."
+        )
+
+    education = facts.get("education") or {}
+
+    if education.get("typical_entry"):
+        line = f"Typical education to start (BLS): {education['typical_entry']}"
+
+        if education.get("training") and education["training"] != "None":
+            line += f"; training: {education['training']}"
+
+        if education.get("work_experience") and education["work_experience"] != "None":
+            line += f"; experience: {education['work_experience']}"
+
+        lines.append(line + ".")
+
+    if facts.get("ap_courses"):
+        lines.append(f"High school AP classes to consider: {', '.join(facts['ap_courses'])}.")
+
+    if facts.get("licenses"):
+        names = "; ".join(
+            f"{item['title']} ({item['agency']}{', ' + item['url'] if item['url'] else ''})"
+            for item in facts["licenses"]
+        )
+        lines.append(f"Florida licenses ({sources['licenses']['name']}): {names}.")
+
+    return " ".join(lines)
 
 
 def get_career(slug: str) -> dict | None:

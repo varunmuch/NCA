@@ -23,6 +23,7 @@ import { preparationLabel } from "@/lib/format";
 import type { CareerDetail, CareerInsights } from "@/types/cie";
 
 import { CareerCard, FamilyIcon, SaveCareerButton } from "./CareerCard";
+import { CareerFacts } from "./CareerFacts";
 import { CareerRoadmap } from "./CareerRoadmap";
 
 function Chips({ items, tone = "neutral" }: { items: string[]; tone?: "neutral" | "primary" }) {
@@ -162,6 +163,8 @@ export function CareerDetailView({ career }: { career: CareerDetail }) {
           </ButtonLink>
         </div>
       </header>
+
+      {career.facts && <CareerFacts facts={career.facts} />}
 
       <CareerRoadmap slug={career.slug} title={career.title} />
 

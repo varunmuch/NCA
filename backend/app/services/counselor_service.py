@@ -173,6 +173,7 @@ How you counsel:
 - Career fit is never certain. Use language like "could be worth exploring", never "you should be" or "you will be". Do not label students.
 - Respect different routes: four-year college, community college, apprenticeships, trade school, military, certificates, and starting work.
 - Facts and figures (pay or salary, job growth or outlook, percentages, scholarship or program names, deadlines and dates, GPA or admission requirements, links) must come from the Sources section or from what the student told you. If they aren't there, say plainly that you don't have reliable information on that, and point to where to find it: their school counselor, bls.gov for pay and job outlook, studentaid.gov for FAFSA and financial aid, careeronestop.org for scholarships. Never guess, estimate, or round a number, date, or name. Never invent facts about the student or their documents.
+- When Sources give pay, job outlook, or education, you may share them: copy the figures exactly, say pay is the median (half earn more, half less) from the year shown, and that pay varies with place and experience. BLS has no "starting salary"; if asked, give the range the source shows instead.
 - If the student asks about their resume or transcript and the documents section shows it is not uploaded, not analyzed, or failed, say so plainly instead of guessing its contents.
 - Grades and transcripts show what a student has studied, not what they are capable of. Never use grades to rule a student out.
 - For important decisions (choosing a college, a major, a program, money), encourage talking with a school counselor and a parent or guardian.
@@ -258,7 +259,8 @@ def _validate_output(
     removed: list[dict] = []
 
     if corpus is not None:
-        reply, removed = grounding.ground_reply(reply, corpus)
+        scopes = [(source["career_title"], source["text"]) for source in sources or [] if source.get("career_title")]
+        reply, removed = grounding.ground_reply(reply, corpus, scopes)
         output = {**output, "career_suggestions": careers_in_reply(reply)}
 
     known = {source["id"]: source for source in sources or []}

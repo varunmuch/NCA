@@ -1,0 +1,5341 @@
+{
+  "retrieved": "2026-10-21",
+  "sources": {
+    "wages": {
+      "name": "BLS Occupational Employment and Wage Statistics, May 2025",
+      "url": "https://www.bls.gov/oes/",
+      "period": "May 2025",
+      "areas": {
+        "national": "United States",
+        "florida": "Florida"
+      },
+      "retrieved": "2026-10-21"
+    },
+    "outlook": {
+      "name": "BLS Employment Projections, 2025–35",
+      "url": "https://www.bls.gov/emp/",
+      "period": "2025–35",
+      "all_jobs_growth_percent": 3.5,
+      "retrieved": "2026-10-21"
+    },
+    "education": {
+      "name": "BLS Employment Projections: education and training assignments",
+      "url": "https://www.bls.gov/emp/tables/education-and-training-by-occupation.htm",
+      "retrieved": "2026-10-21"
+    },
+    "ap_courses": {
+      "name": "College Board AP Course Index",
+      "url": "https://apstudents.collegeboard.org/course-index-page",
+      "retrieved": "2026-10-21"
+    },
+    "licenses": {
+      "name": "CareerOneStop License Finder, U.S. Department of Labor",
+      "url": "https://www.careeronestop.org/Toolkit/Training/find-licenses.aspx",
+      "state": "Florida",
+      "retrieved": "2026-10-21"
+    },
+    "learning": {
+      "name": "Curated by NeoCity Academy; links verified",
+      "reviewed": false,
+      "retrieved": "2026-10-21"
+    }
+  },
+  "careers": {
+    "accountants-and-auditors": {
+      "soc": "13-2011",
+      "wages": {
+        "national": {
+          "annual_median": 83680.0,
+          "annual_p10": 56020.0,
+          "annual_p90": 144090.0,
+          "hourly_median": 40.23
+        },
+        "florida": {
+          "annual_median": 79250.0,
+          "annual_p10": 50280.0,
+          "annual_p90": 131930.0,
+          "hourly_median": 38.1
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.0,
+        "openings_per_year": 115300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Macroeconomics",
+        "AP Microeconomics",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Certified Public Accountant",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Slot Combo Professional License",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Slot Machine Business Employee",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "actuaries": {
+      "soc": "15-2011",
+      "wages": {
+        "national": {
+          "annual_median": 130000.0,
+          "annual_p10": 78570.0,
+          "annual_p90": 215100.0,
+          "hourly_median": 62.5
+        },
+        "florida": {
+          "annual_median": 132110.0,
+          "annual_p10": 80450.0,
+          "annual_p90": 206700.0,
+          "hourly_median": 63.51
+        }
+      },
+      "outlook": {
+        "growth_percent": 9.2,
+        "openings_per_year": 1500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "Long-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Precalculus",
+        "AP Calculus AB",
+        "AP Macroeconomics",
+        "AP Microeconomics"
+      ],
+      "learning": [
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        },
+        {
+          "title": "Statistics and probability",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/statistics-probability",
+          "cost": "Free"
+        },
+        {
+          "title": "Precalculus",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/precalculus",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "aerospace-engineers": {
+      "soc": "17-2011",
+      "wages": {
+        "national": {
+          "annual_median": 134960.0,
+          "annual_p10": 86700.0,
+          "annual_p90": 205890.0,
+          "hourly_median": 64.89
+        },
+        "florida": {
+          "annual_median": 129280.0,
+          "annual_p10": 84210.0,
+          "annual_p90": 177070.0,
+          "hourly_median": 62.15
+        }
+      },
+      "outlook": {
+        "growth_percent": 8.3,
+        "openings_per_year": 3800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Calculus AB",
+        "AP Drawing",
+        "AP Art History"
+      ],
+      "learning": [
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "MIT OpenCourseWare",
+          "provider": "MIT",
+          "url": "https://ocw.mit.edu/",
+          "cost": "Free"
+        },
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Engineering Intern",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Professional Engineer",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "aircraft-mechanics-and-service-technicians": {
+      "soc": "49-3011",
+      "wages": {
+        "national": {
+          "annual_median": 79870.0,
+          "annual_p10": 48780.0,
+          "annual_p90": 128890.0,
+          "hourly_median": 38.4
+        },
+        "florida": {
+          "annual_median": 76940.0,
+          "annual_p10": 45500.0,
+          "annual_p90": 130190.0,
+          "hourly_median": 36.99
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.4,
+        "openings_per_year": 11400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Postsecondary nondegree award",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Calculus AB",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        },
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "MIT OpenCourseWare",
+          "provider": "MIT",
+          "url": "https://ocw.mit.edu/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "airline-pilots-copilots-and-flight-engineers": {
+      "soc": "53-2011",
+      "wages": {
+        "national": {
+          "annual_median": 232140.0,
+          "annual_p10": 106710.0,
+          "annual_p90": 463830.0,
+          "hourly_median": null
+        },
+        "florida": {
+          "annual_median": 225020.0,
+          "annual_p10": 121240.0,
+          "annual_p90": 356680.0,
+          "hourly_median": null
+        }
+      },
+      "outlook": {
+        "growth_percent": 8.3,
+        "openings_per_year": 11200,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "Less than 5 years",
+        "training": "Moderate-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Human Geography",
+        "AP Environmental Science"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Airmen Certification",
+          "agency": "Federal Aviation Administration, Regulation and Certification",
+          "url": "https://www.faa.gov",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Airmen Certification",
+          "agency": "Federal Aviation Administration, Regulation and Certification",
+          "url": "https://www.faa.gov",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "State Pilot",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "architects-except-landscape-and-naval": {
+      "soc": "17-1011",
+      "wages": {
+        "national": {
+          "annual_median": 99280.0,
+          "annual_p10": 62300.0,
+          "annual_p90": 161420.0,
+          "hourly_median": 47.73
+        },
+        "florida": {
+          "annual_median": 96240.0,
+          "annual_p10": 59990.0,
+          "annual_p90": 138230.0,
+          "hourly_median": 46.27
+        }
+      },
+      "outlook": {
+        "growth_percent": 4.3,
+        "openings_per_year": 6900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "Internship/residency"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Physics 1",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Architect",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "astronomers": {
+      "soc": "19-2011",
+      "wages": {
+        "national": {
+          "annual_median": 128820.0,
+          "annual_p10": 78010.0,
+          "annual_p90": 195190.0,
+          "hourly_median": 61.94
+        },
+        "florida": null
+      },
+      "outlook": {
+        "growth_percent": 7.8,
+        "openings_per_year": 100,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Physics C: Mechanics",
+        "AP Precalculus",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        },
+        {
+          "title": "Statistics and probability",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/statistics-probability",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "athletic-trainers": {
+      "soc": "29-9091",
+      "wages": {
+        "national": {
+          "annual_median": 62520.0,
+          "annual_p10": 48180.0,
+          "annual_p90": 88760.0,
+          "hourly_median": null
+        },
+        "florida": {
+          "annual_median": 61350.0,
+          "annual_p10": 48890.0,
+          "annual_p90": 80370.0,
+          "hourly_median": null
+        }
+      },
+      "outlook": {
+        "growth_percent": 12.7,
+        "openings_per_year": 2400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP Psychology",
+        "AP Statistics"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Athletic Coaching",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Athletic Trainer",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "atmospheric-and-space-scientists": {
+      "soc": "19-2021",
+      "wages": {
+        "national": {
+          "annual_median": 99070.0,
+          "annual_p10": 53060.0,
+          "annual_p90": 161890.0,
+          "hourly_median": 47.63
+        },
+        "florida": {
+          "annual_median": 115960.0,
+          "annual_p10": 52980.0,
+          "annual_p90": 172410.0,
+          "hourly_median": 55.75
+        }
+      },
+      "outlook": {
+        "growth_percent": 2.6,
+        "openings_per_year": 800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Precalculus",
+        "AP Calculus AB",
+        "AP Physics 1",
+        "AP Physics C: Mechanics"
+      ],
+      "learning": [
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        },
+        {
+          "title": "Statistics and probability",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/statistics-probability",
+          "cost": "Free"
+        },
+        {
+          "title": "Precalculus",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/precalculus",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "automotive-service-technicians-and-mechanics": {
+      "soc": "49-3023",
+      "wages": {
+        "national": {
+          "annual_median": 50620.0,
+          "annual_p10": 34660.0,
+          "annual_p90": 81790.0,
+          "hourly_median": 24.34
+        },
+        "florida": {
+          "annual_median": 48260.0,
+          "annual_p10": 31970.0,
+          "annual_p90": 79180.0,
+          "hourly_median": 23.2
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.0,
+        "openings_per_year": 66200,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Postsecondary nondegree award",
+        "work_experience": "None",
+        "training": "Short-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Calculus AB",
+        "AP Computer Science Principles",
+        "AP Computer Science A"
+      ],
+      "learning": [
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        },
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "MIT OpenCourseWare",
+          "provider": "MIT",
+          "url": "https://ocw.mit.edu/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "bioengineers-and-biomedical-engineers": {
+      "soc": "17-2031",
+      "wages": {
+        "national": {
+          "annual_median": 109370.0,
+          "annual_p10": 71850.0,
+          "annual_p90": 168180.0,
+          "hourly_median": 52.58
+        },
+        "florida": {
+          "annual_median": 101730.0,
+          "annual_p10": 62360.0,
+          "annual_p90": 163370.0,
+          "hourly_median": 48.91
+        }
+      },
+      "outlook": {
+        "growth_percent": 7.6,
+        "openings_per_year": 1200,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Calculus AB",
+        "AP Computer Science Principles",
+        "AP Computer Science A"
+      ],
+      "learning": [
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "MIT OpenCourseWare",
+          "provider": "MIT",
+          "url": "https://ocw.mit.edu/",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Engineering Intern",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Professional Engineer",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "biologists": {
+      "soc": "19-1029",
+      "wages": {
+        "national": {
+          "annual_median": 98920.0,
+          "annual_p10": 60430.0,
+          "annual_p90": 168010.0,
+          "hourly_median": 47.56
+        },
+        "florida": {
+          "annual_median": 83780.0,
+          "annual_p10": 43680.0,
+          "annual_p90": 119540.0,
+          "hourly_median": 40.28
+        }
+      },
+      "outlook": {
+        "growth_percent": 4.7,
+        "openings_per_year": 4300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Environmental Science",
+        "AP Psychology",
+        "AP Seminar"
+      ],
+      "learning": [
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        },
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        }
+      ],
+      "licenses": []
+    },
+    "carpenters": {
+      "soc": "47-2031",
+      "wages": {
+        "national": {
+          "annual_median": 60580.0,
+          "annual_p10": 40410.0,
+          "annual_p90": 99910.0,
+          "hourly_median": 29.12
+        },
+        "florida": {
+          "annual_median": 49870.0,
+          "annual_p10": 36910.0,
+          "annual_p90": 69950.0,
+          "hourly_median": 23.98
+        }
+      },
+      "outlook": {
+        "growth_percent": 3.9,
+        "openings_per_year": 62800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "None",
+        "training": "Apprenticeship"
+      },
+      "ap_courses": [
+        "AP Precalculus",
+        "AP Calculus AB",
+        "AP Business with Personal Finance",
+        "AP Macroeconomics"
+      ],
+      "learning": [
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        },
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        },
+        {
+          "title": "Statistics and probability",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/statistics-probability",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "chefs-and-head-cooks": {
+      "soc": "35-1011",
+      "wages": {
+        "national": {
+          "annual_median": 62470.0,
+          "annual_p10": 37900.0,
+          "annual_p90": 98560.0,
+          "hourly_median": 30.03
+        },
+        "florida": {
+          "annual_median": 58240.0,
+          "annual_p10": 31920.0,
+          "annual_p90": 92300.0,
+          "hourly_median": 28.0
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.6,
+        "openings_per_year": 25200,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "5 years or more",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Environmental Science",
+        "AP Biology",
+        "AP Business with Personal Finance",
+        "AP Macroeconomics"
+      ],
+      "learning": [
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        },
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "chemists": {
+      "soc": "19-2031",
+      "wages": {
+        "national": {
+          "annual_median": 91240.0,
+          "annual_p10": 58460.0,
+          "annual_p90": 160830.0,
+          "hourly_median": 43.87
+        },
+        "florida": {
+          "annual_median": 82740.0,
+          "annual_p10": 50200.0,
+          "annual_p90": 150840.0,
+          "hourly_median": 39.78
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.4,
+        "openings_per_year": 5900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Chemistry",
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Precalculus"
+      ],
+      "learning": [
+        {
+          "title": "Chemistry",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/chemistry",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "child-family-and-school-social-workers": {
+      "soc": "21-1021",
+      "wages": {
+        "national": {
+          "annual_median": 59550.0,
+          "annual_p10": 42280.0,
+          "annual_p90": 95530.0,
+          "hourly_median": 28.63
+        },
+        "florida": {
+          "annual_median": 56550.0,
+          "annual_p10": 39760.0,
+          "annual_p90": 79580.0,
+          "hourly_median": 27.19
+        }
+      },
+      "outlook": {
+        "growth_percent": 4.4,
+        "openings_per_year": 33900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP Psychology",
+        "AP Statistics"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "School Social Worker (grades PK-12)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Certified Master Social Worker",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "civil-engineers": {
+      "soc": "17-2051",
+      "wages": {
+        "national": {
+          "annual_median": 100840.0,
+          "annual_p10": 68240.0,
+          "annual_p90": 163220.0,
+          "hourly_median": 48.48
+        },
+        "florida": {
+          "annual_median": 98570.0,
+          "annual_p10": 58640.0,
+          "annual_p90": 166680.0,
+          "hourly_median": 47.39
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.4,
+        "openings_per_year": 22700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Physics 1",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Engineering Intern",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Professional Engineer",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "clinical-and-counseling-psychologists": {
+      "soc": "19-3033",
+      "wages": {
+        "national": {
+          "annual_median": 100580.0,
+          "annual_p10": 55170.0,
+          "annual_p90": 180960.0,
+          "hourly_median": 48.36
+        },
+        "florida": {
+          "annual_median": 85610.0,
+          "annual_p10": 55480.0,
+          "annual_p90": 259990.0,
+          "hourly_median": 41.16
+        }
+      },
+      "outlook": {
+        "growth_percent": 11.7,
+        "openings_per_year": 4100,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "Internship/residency"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP Psychology",
+        "AP Statistics"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "School Psychologist (grades PK-12)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "School Psychologist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Psychologist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "coaches-and-scouts": {
+      "soc": "27-2022",
+      "wages": {
+        "national": {
+          "annual_median": 47320.0,
+          "annual_p10": 28790.0,
+          "annual_p90": 98860.0,
+          "hourly_median": null
+        },
+        "florida": {
+          "annual_median": 39370.0,
+          "annual_p10": 29830.0,
+          "annual_p90": 90000.0,
+          "hourly_median": null
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.1,
+        "openings_per_year": 36400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Psychology",
+        "AP Seminar",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Trainer",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "commercial-and-industrial-designers": {
+      "soc": "27-1021",
+      "wages": {
+        "national": {
+          "annual_median": 83910.0,
+          "annual_p10": 53460.0,
+          "annual_p90": 139770.0,
+          "hourly_median": 40.34
+        },
+        "florida": {
+          "annual_median": 78720.0,
+          "annual_p10": 51440.0,
+          "annual_p90": 120640.0,
+          "hourly_median": 37.85
+        }
+      },
+      "outlook": {
+        "growth_percent": 2.4,
+        "openings_per_year": 2800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Physics 1",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "computer-systems-analysts": {
+      "soc": "15-1211",
+      "wages": {
+        "national": {
+          "annual_median": 105850.0,
+          "annual_p10": 67340.0,
+          "annual_p90": 167710.0,
+          "hourly_median": 50.89
+        },
+        "florida": {
+          "annual_median": 101900.0,
+          "annual_p10": 63030.0,
+          "annual_p90": 161720.0,
+          "hourly_median": 48.99
+        }
+      },
+      "outlook": {
+        "growth_percent": 7.9,
+        "openings_per_year": 32900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Telehealth",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "computer-user-support-specialists": {
+      "soc": "15-1232",
+      "wages": {
+        "national": {
+          "annual_median": 61860.0,
+          "annual_p10": 40980.0,
+          "annual_p90": 100540.0,
+          "hourly_median": 29.74
+        },
+        "florida": {
+          "annual_median": 58740.0,
+          "annual_p10": 38750.0,
+          "annual_p90": 97560.0,
+          "hourly_median": 28.24
+        }
+      },
+      "outlook": {
+        "growth_percent": -3.5,
+        "openings_per_year": 39700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Some college, no degree",
+        "work_experience": "None",
+        "training": "Moderate-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "computer-and-information-research-scientists": {
+      "soc": "15-1221",
+      "wages": {
+        "national": {
+          "annual_median": 140300.0,
+          "annual_p10": 82200.0,
+          "annual_p90": 230630.0,
+          "hourly_median": 67.45
+        },
+        "florida": {
+          "annual_median": 119810.0,
+          "annual_p10": 73780.0,
+          "annual_p90": 194840.0,
+          "hourly_median": 57.6
+        }
+      },
+      "outlook": {
+        "growth_percent": 21.8,
+        "openings_per_year": 2900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP Precalculus",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "conservation-scientists": {
+      "soc": "19-1031",
+      "wages": {
+        "national": {
+          "annual_median": 73010.0,
+          "annual_p10": 47550.0,
+          "annual_p90": 110410.0,
+          "hourly_median": 35.1
+        },
+        "florida": {
+          "annual_median": 51130.0,
+          "annual_p10": 37110.0,
+          "annual_p90": 98360.0,
+          "hourly_median": 24.58
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.3,
+        "openings_per_year": 2100,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Biology",
+        "AP Environmental Science"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "data-scientists": {
+      "soc": "15-2051",
+      "wages": {
+        "national": {
+          "annual_median": 120230.0,
+          "annual_p10": 67240.0,
+          "annual_p90": 199130.0,
+          "hourly_median": 57.8
+        },
+        "florida": {
+          "annual_median": 115820.0,
+          "annual_p10": 63080.0,
+          "annual_p90": 174140.0,
+          "hourly_median": 55.69
+        }
+      },
+      "outlook": {
+        "growth_percent": 34.6,
+        "openings_per_year": 24800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Precalculus",
+        "AP Calculus AB",
+        "AP Computer Science Principles",
+        "AP Computer Science A"
+      ],
+      "learning": [
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        },
+        {
+          "title": "Statistics and probability",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/statistics-probability",
+          "cost": "Free"
+        },
+        {
+          "title": "Precalculus",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/precalculus",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "dental-assistants": {
+      "soc": "31-9091",
+      "wages": {
+        "national": {
+          "annual_median": 48070.0,
+          "annual_p10": 37130.0,
+          "annual_p90": 62250.0,
+          "hourly_median": 23.11
+        },
+        "florida": {
+          "annual_median": 47620.0,
+          "annual_p10": 37800.0,
+          "annual_p90": 58880.0,
+          "hourly_median": 22.89
+        }
+      },
+      "outlook": {
+        "growth_percent": 7.4,
+        "openings_per_year": 53000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Postsecondary nondegree award",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Dental Hygienist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "dentists-general": {
+      "soc": "29-1021",
+      "wages": {
+        "national": {
+          "annual_median": 170950.0,
+          "annual_p10": 86250.0,
+          "annual_p90": 319630.0,
+          "hourly_median": 82.19
+        },
+        "florida": {
+          "annual_median": 174900.0,
+          "annual_p10": 98680.0,
+          "annual_p90": 314860.0,
+          "hourly_median": 84.09
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.7,
+        "openings_per_year": 4200,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP Environmental Science",
+        "AP Business with Personal Finance"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Dentist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "dietitians-and-nutritionists": {
+      "soc": "29-1031",
+      "wages": {
+        "national": {
+          "annual_median": 76400.0,
+          "annual_p10": 49090.0,
+          "annual_p90": 103720.0,
+          "hourly_median": 36.73
+        },
+        "florida": {
+          "annual_median": 76050.0,
+          "annual_p10": 49920.0,
+          "annual_p90": 93530.0,
+          "hourly_median": 36.56
+        }
+      },
+      "outlook": {
+        "growth_percent": 7.7,
+        "openings_per_year": 5700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "Internship/residency"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Environmental Science",
+        "AP Chemistry",
+        "AP English Language and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        },
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Dietitian/Nutritionist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "economists": {
+      "soc": "19-3011",
+      "wages": {
+        "national": {
+          "annual_median": 124720.0,
+          "annual_p10": 67360.0,
+          "annual_p90": 238060.0,
+          "hourly_median": 59.96
+        },
+        "florida": {
+          "annual_median": 102430.0,
+          "annual_p10": 65850.0,
+          "annual_p90": 174900.0,
+          "hourly_median": 49.24
+        }
+      },
+      "outlook": {
+        "growth_percent": 4.7,
+        "openings_per_year": 1100,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Precalculus",
+        "AP Calculus AB",
+        "AP Macroeconomics",
+        "AP Microeconomics"
+      ],
+      "learning": [
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        },
+        {
+          "title": "Statistics and probability",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/statistics-probability",
+          "cost": "Free"
+        },
+        {
+          "title": "Precalculus",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/precalculus",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "educational-guidance-and-career-counselors-and-advisors": {
+      "soc": "21-1012",
+      "wages": {
+        "national": {
+          "annual_median": 64330.0,
+          "annual_p10": 45020.0,
+          "annual_p90": 104770.0,
+          "hourly_median": 30.93
+        },
+        "florida": {
+          "annual_median": 53140.0,
+          "annual_p10": 38290.0,
+          "annual_p90": 82780.0,
+          "hourly_median": 25.55
+        }
+      },
+      "outlook": {
+        "growth_percent": 2.9,
+        "openings_per_year": 27800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Biology",
+        "AP Chemistry"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        }
+      ],
+      "licenses": []
+    },
+    "electrical-engineers": {
+      "soc": "17-2071",
+      "wages": {
+        "national": {
+          "annual_median": 120630.0,
+          "annual_p10": 76550.0,
+          "annual_p90": 184300.0,
+          "hourly_median": 58.0
+        },
+        "florida": {
+          "annual_median": 104780.0,
+          "annual_p10": 65090.0,
+          "annual_p90": 164210.0,
+          "hourly_median": 50.38
+        }
+      },
+      "outlook": {
+        "growth_percent": 9.9,
+        "openings_per_year": 11400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Calculus AB",
+        "AP Computer Science Principles",
+        "AP Computer Science A"
+      ],
+      "learning": [
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "MIT OpenCourseWare",
+          "provider": "MIT",
+          "url": "https://ocw.mit.edu/",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Engineering Intern",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Professional Engineer",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "electricians": {
+      "soc": "47-2111",
+      "wages": {
+        "national": {
+          "annual_median": 63190.0,
+          "annual_p10": 42640.0,
+          "annual_p90": 108510.0,
+          "hourly_median": 30.38
+        },
+        "florida": {
+          "annual_median": 57250.0,
+          "annual_p10": 38190.0,
+          "annual_p90": 77180.0,
+          "hourly_median": 27.52
+        }
+      },
+      "outlook": {
+        "growth_percent": 9.2,
+        "openings_per_year": 72700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "None",
+        "training": "Apprenticeship"
+      },
+      "ap_courses": [
+        "AP Business with Personal Finance",
+        "AP Macroeconomics",
+        "AP Precalculus",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        },
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Provisional Electrical Inspector",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Registered Electrical Contractor",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Standard Electrical Inspector",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "elementary-school-teachers-except-special-education": {
+      "soc": "25-2021",
+      "wages": {
+        "national": {
+          "annual_median": 63970.0,
+          "annual_p10": 47960.0,
+          "annual_p90": 104340.0,
+          "hourly_median": null
+        },
+        "florida": {
+          "annual_median": 58930.0,
+          "annual_p10": 48680.0,
+          "annual_p90": 75780.0,
+          "hourly_median": null
+        }
+      },
+      "outlook": {
+        "growth_percent": -0.4,
+        "openings_per_year": 87500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Psychology",
+        "AP Seminar"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Physical Education (grades K-12)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Prekindergarten/Primary Education (age 3 through grade 3)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Elementary Education (grades K-6)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "emergency-medical-technicians": {
+      "soc": "29-2042",
+      "wages": {
+        "national": {
+          "annual_median": 44470.0,
+          "annual_p10": 34130.0,
+          "annual_p90": 62500.0,
+          "hourly_median": 21.38
+        },
+        "florida": {
+          "annual_median": 39870.0,
+          "annual_p10": 34120.0,
+          "annual_p90": 59000.0,
+          "hourly_median": 19.17
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.8,
+        "openings_per_year": 13800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Postsecondary nondegree award",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [],
+      "learning": [
+        {
+          "title": "College admissions",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/college-admissions",
+          "cost": "Free"
+        },
+        {
+          "title": "BigFuture: plan for college and career",
+          "provider": "College Board",
+          "url": "https://bigfuture.collegeboard.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Emergency Medical Technician (EMT)",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Paramedic",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Emergency Allergy Treatment",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "environmental-engineers": {
+      "soc": "17-2081",
+      "wages": {
+        "national": {
+          "annual_median": 107110.0,
+          "annual_p10": 69990.0,
+          "annual_p90": 162220.0,
+          "hourly_median": 51.5
+        },
+        "florida": {
+          "annual_median": 116840.0,
+          "annual_p10": 57240.0,
+          "annual_p90": 154130.0,
+          "hourly_median": 56.17
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.3,
+        "openings_per_year": 2300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Calculus AB",
+        "AP Drawing",
+        "AP Art History"
+      ],
+      "learning": [
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "MIT OpenCourseWare",
+          "provider": "MIT",
+          "url": "https://ocw.mit.edu/",
+          "cost": "Free"
+        },
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Asbestos Consultant (Doctoral Degree)",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "Third-party exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Engineering Intern",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Professional Engineer",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "environmental-scientists-and-specialists-including-health": {
+      "soc": "19-2041",
+      "wages": {
+        "national": {
+          "annual_median": 82220.0,
+          "annual_p10": 52520.0,
+          "annual_p90": 140010.0,
+          "hourly_median": 39.53
+        },
+        "florida": {
+          "annual_median": 60830.0,
+          "annual_p10": 42600.0,
+          "annual_p90": 109290.0,
+          "hourly_median": 29.24
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.1,
+        "openings_per_year": 7300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Biology",
+        "AP Environmental Science"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "exercise-trainers-and-group-fitness-instructors": {
+      "soc": "39-9031",
+      "wages": {
+        "national": {
+          "annual_median": 47160.0,
+          "annual_p10": 28800.0,
+          "annual_p90": 83100.0,
+          "hourly_median": 22.67
+        },
+        "florida": {
+          "annual_median": 38800.0,
+          "annual_p10": 27450.0,
+          "annual_p90": 72870.0,
+          "hourly_median": 18.65
+        }
+      },
+      "outlook": {
+        "growth_percent": 7.3,
+        "openings_per_year": 68000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "None",
+        "training": "Short-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Psychology",
+        "AP Seminar",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        }
+      ],
+      "licenses": []
+    },
+    "family-medicine-physicians": {
+      "soc": "29-1215",
+      "wages": {
+        "national": {
+          "annual_median": 244180.0,
+          "annual_p10": 76830.0,
+          "annual_p90": 428550.0,
+          "hourly_median": 117.39
+        },
+        "florida": {
+          "annual_median": 227700.0,
+          "annual_p10": 75020.0,
+          "annual_p90": 392610.0,
+          "hourly_median": 109.47
+        }
+      },
+      "outlook": {
+        "growth_percent": 3.3,
+        "openings_per_year": 2900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "Internship/residency"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Osteopathic Physician",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Physician",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Medical Doctor",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "farmers-ranchers-and-other-agricultural-managers": {
+      "soc": "11-9013",
+      "wages": {
+        "national": {
+          "annual_median": 89900.0,
+          "annual_p10": 54320.0,
+          "annual_p90": 160020.0,
+          "hourly_median": 43.22
+        },
+        "florida": {
+          "annual_median": 87080.0,
+          "annual_p10": 53720.0,
+          "annual_p90": 186940.0,
+          "hourly_median": 41.86
+        }
+      },
+      "outlook": {
+        "growth_percent": -3.4,
+        "openings_per_year": 70800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "5 years or more",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Business with Personal Finance",
+        "AP Macroeconomics",
+        "AP Biology",
+        "AP Environmental Science"
+      ],
+      "learning": [
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        },
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "fashion-designers": {
+      "soc": "27-1022",
+      "wages": {
+        "national": {
+          "annual_median": 80960.0,
+          "annual_p10": 39490.0,
+          "annual_p90": 146870.0,
+          "hourly_median": 38.92
+        },
+        "florida": {
+          "annual_median": 43020.0,
+          "annual_p10": 27710.0,
+          "annual_p90": 82330.0,
+          "hourly_median": 20.68
+        }
+      },
+      "outlook": {
+        "growth_percent": 0.1,
+        "openings_per_year": 2500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Computer Science Principles",
+        "AP Computer Science A"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "film-and-video-editors": {
+      "soc": "27-4032",
+      "wages": {
+        "national": {
+          "annual_median": 75420.0,
+          "annual_p10": 40280.0,
+          "annual_p90": 148550.0,
+          "hourly_median": 36.26
+        },
+        "florida": {
+          "annual_median": 60430.0,
+          "annual_p10": 47830.0,
+          "annual_p90": 104810.0,
+          "hourly_median": 29.05
+        }
+      },
+      "outlook": {
+        "growth_percent": 3.7,
+        "openings_per_year": 3100,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP Seminar",
+        "AP English Literature and Composition",
+        "AP Computer Science Principles"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "financial-and-investment-analysts": {
+      "soc": "13-2051",
+      "wages": {
+        "national": {
+          "annual_median": 102740.0,
+          "annual_p10": 63720.0,
+          "annual_p90": 180860.0,
+          "hourly_median": 49.4
+        },
+        "florida": {
+          "annual_median": 94490.0,
+          "annual_p10": 60620.0,
+          "annual_p90": 155470.0,
+          "hourly_median": 45.43
+        }
+      },
+      "outlook": {
+        "growth_percent": 7.2,
+        "openings_per_year": 24700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [],
+      "learning": [
+        {
+          "title": "College admissions",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/college-admissions",
+          "cost": "Free"
+        },
+        {
+          "title": "BigFuture: plan for college and career",
+          "provider": "College Board",
+          "url": "https://bigfuture.collegeboard.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "firefighters": {
+      "soc": "33-2011",
+      "wages": {
+        "national": {
+          "annual_median": 59280.0,
+          "annual_p10": 34910.0,
+          "annual_p90": 101040.0,
+          "hourly_median": 28.5
+        },
+        "florida": {
+          "annual_median": 58550.0,
+          "annual_p10": 37260.0,
+          "annual_p90": 93310.0,
+          "hourly_median": 28.15
+        }
+      },
+      "outlook": {
+        "growth_percent": 3.7,
+        "openings_per_year": 26800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Postsecondary nondegree award",
+        "work_experience": "None",
+        "training": "Long-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP English Language and Composition",
+        "AP Seminar"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "forensic-science-technicians": {
+      "soc": "19-4092",
+      "wages": {
+        "national": {
+          "annual_median": 72060.0,
+          "annual_p10": 48250.0,
+          "annual_p90": 117250.0,
+          "hourly_median": 34.65
+        },
+        "florida": {
+          "annual_median": 64140.0,
+          "annual_p10": 44280.0,
+          "annual_p90": 93870.0,
+          "hourly_median": 30.84
+        }
+      },
+      "outlook": {
+        "growth_percent": 13.3,
+        "openings_per_year": 2800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "Moderate-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP United States Government and Politics",
+        "AP Comparative Government and Politics",
+        "AP Psychology",
+        "AP Seminar"
+      ],
+      "learning": [
+        {
+          "title": "US government and civics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/us-government-and-civics",
+          "cost": "Free"
+        },
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "foresters": {
+      "soc": "19-1032",
+      "wages": {
+        "national": {
+          "annual_median": 76400.0,
+          "annual_p10": 50790.0,
+          "annual_p90": 109700.0,
+          "hourly_median": 36.73
+        },
+        "florida": {
+          "annual_median": 64130.0,
+          "annual_p10": 49920.0,
+          "annual_p90": 112660.0,
+          "hourly_median": 30.83
+        }
+      },
+      "outlook": {
+        "growth_percent": 2.2,
+        "openings_per_year": 900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Environmental Science",
+        "AP Precalculus",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        },
+        {
+          "title": "Algebra",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/math/algebra",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "general-and-operations-managers": {
+      "soc": "11-1021",
+      "wages": {
+        "national": {
+          "annual_median": 105770.0,
+          "annual_p10": 50090.0,
+          "annual_p90": 253390.0,
+          "hourly_median": 50.85
+        },
+        "florida": {
+          "annual_median": 101580.0,
+          "annual_p10": 48670.0,
+          "annual_p90": 226080.0,
+          "hourly_median": 48.84
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.0,
+        "openings_per_year": 285000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "5 years or more",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Business with Personal Finance",
+        "AP Macroeconomics",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Slot Combo Professional License",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Slot Machine Business Employee",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Cardroom supervisor",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "graphic-designers": {
+      "soc": "27-1024",
+      "wages": {
+        "national": {
+          "annual_median": 62960.0,
+          "annual_p10": 39520.0,
+          "annual_p90": 104910.0,
+          "hourly_median": 30.27
+        },
+        "florida": {
+          "annual_median": 61660.0,
+          "annual_p10": 39810.0,
+          "annual_p90": 101860.0,
+          "hourly_median": 29.65
+        }
+      },
+      "outlook": {
+        "growth_percent": -1.7,
+        "openings_per_year": 16000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Music Theory",
+        "AP Computer Science Principles"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "heating-air-conditioning-and-refrigeration-mechanics-and-installers": {
+      "soc": "49-9021",
+      "wages": {
+        "national": {
+          "annual_median": 61010.0,
+          "annual_p10": 40050.0,
+          "annual_p90": 95210.0,
+          "hourly_median": 29.33
+        },
+        "florida": {
+          "annual_median": 56670.0,
+          "annual_p10": 38370.0,
+          "annual_p90": 78210.0,
+          "hourly_median": 27.24
+        }
+      },
+      "outlook": {
+        "growth_percent": 10.9,
+        "openings_per_year": 40600,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Postsecondary nondegree award",
+        "work_experience": "None",
+        "training": "Long-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Business with Personal Finance",
+        "AP Macroeconomics",
+        "AP Psychology",
+        "AP Seminar"
+      ],
+      "learning": [
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        },
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Registered Air Conditioning Contractor, Class C",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "State exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Certified Air Conditioning Contractor, Class A",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "State exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Certified Air Conditioning Contractor, Class C",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "State exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "human-resources-specialists": {
+      "soc": "13-1071",
+      "wages": {
+        "national": {
+          "annual_median": 75940.0,
+          "annual_p10": 47180.0,
+          "annual_p90": 128720.0,
+          "hourly_median": 36.51
+        },
+        "florida": {
+          "annual_median": 66410.0,
+          "annual_p10": 44920.0,
+          "annual_p90": 115920.0,
+          "hourly_median": 31.93
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.4,
+        "openings_per_year": 73700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Business with Personal Finance",
+        "AP Macroeconomics",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Controlling Person",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "Third-party exam required",
+          "education": "",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "information-security-analysts": {
+      "soc": "15-1212",
+      "wages": {
+        "national": {
+          "annual_median": 129180.0,
+          "annual_p10": 75090.0,
+          "annual_p90": 199850.0,
+          "hourly_median": 62.11
+        },
+        "florida": {
+          "annual_median": 124860.0,
+          "annual_p10": 75410.0,
+          "annual_p90": 174600.0,
+          "hourly_median": 60.03
+        }
+      },
+      "outlook": {
+        "growth_percent": 21.0,
+        "openings_per_year": 14100,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "Less than 5 years",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "interior-designers": {
+      "soc": "27-1025",
+      "wages": {
+        "national": {
+          "annual_median": 67190.0,
+          "annual_p10": 41420.0,
+          "annual_p90": 114140.0,
+          "hourly_median": 32.31
+        },
+        "florida": {
+          "annual_median": 60860.0,
+          "annual_p10": 39050.0,
+          "annual_p90": 96930.0,
+          "hourly_median": 29.26
+        }
+      },
+      "outlook": {
+        "growth_percent": 2.7,
+        "openings_per_year": 7700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Interior designer",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "Third-party exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "lawyers": {
+      "soc": "23-1011",
+      "wages": {
+        "national": {
+          "annual_median": 159670.0,
+          "annual_p10": 78360.0,
+          "annual_p90": 351600.0,
+          "hourly_median": 76.76
+        },
+        "florida": {
+          "annual_median": 133180.0,
+          "annual_p10": 75530.0,
+          "annual_p90": 301050.0,
+          "hourly_median": 64.03
+        }
+      },
+      "outlook": {
+        "growth_percent": 4.7,
+        "openings_per_year": 28700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP United States Government and Politics",
+        "AP Comparative Government and Politics",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "US government and civics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/us-government-and-civics",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Lawyer (Attorney)",
+          "agency": "The Florida Bar",
+          "url": "https://www.floridabar.org/names.nsf/MESearch?OpenForm",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "librarians-and-media-collections-specialists": {
+      "soc": "25-4022",
+      "wages": {
+        "national": {
+          "annual_median": 68270.0,
+          "annual_p10": 43660.0,
+          "annual_p90": 103990.0,
+          "hourly_median": 32.82
+        },
+        "florida": {
+          "annual_median": 67060.0,
+          "annual_p10": 49320.0,
+          "annual_p90": 92240.0,
+          "hourly_median": 32.24
+        }
+      },
+      "outlook": {
+        "growth_percent": 2.6,
+        "openings_per_year": 12600,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Psychology",
+        "AP Seminar"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Educational Media Specialist (grades PK-12)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "market-research-analysts-and-marketing-specialists": {
+      "soc": "13-1161",
+      "wages": {
+        "national": {
+          "annual_median": 78760.0,
+          "annual_p10": 43390.0,
+          "annual_p90": 155480.0,
+          "hourly_median": 37.87
+        },
+        "florida": {
+          "annual_median": 75450.0,
+          "annual_p10": 38830.0,
+          "annual_p90": 130570.0,
+          "hourly_median": 36.27
+        }
+      },
+      "outlook": {
+        "growth_percent": 7.0,
+        "openings_per_year": 82000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Business with Personal Finance",
+        "AP Macroeconomics"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "marketing-managers": {
+      "soc": "11-2021",
+      "wages": {
+        "national": {
+          "annual_median": 166790.0,
+          "annual_p10": 90260.0,
+          "annual_p90": 293610.0,
+          "hourly_median": 80.19
+        },
+        "florida": {
+          "annual_median": 142620.0,
+          "annual_p10": 78250.0,
+          "annual_p90": 261310.0,
+          "hourly_median": 68.57
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.9,
+        "openings_per_year": 34000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "5 years or more",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Business with Personal Finance",
+        "AP Macroeconomics",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Promoter",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "Third-party exam required",
+          "education": "",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Cardroom supervisor",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "mechanical-drafters": {
+      "soc": "17-3013",
+      "wages": {
+        "national": {
+          "annual_median": 71550.0,
+          "annual_p10": 48360.0,
+          "annual_p90": 106580.0,
+          "hourly_median": 34.4
+        },
+        "florida": {
+          "annual_median": 68050.0,
+          "annual_p10": 45760.0,
+          "annual_p90": 100400.0,
+          "hourly_median": 32.72
+        }
+      },
+      "outlook": {
+        "growth_percent": -6.0,
+        "openings_per_year": 2900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Associate's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Physics 1",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "mechanical-engineers": {
+      "soc": "17-2141",
+      "wages": {
+        "national": {
+          "annual_median": 104110.0,
+          "annual_p10": 73990.0,
+          "annual_p90": 164340.0,
+          "hourly_median": 50.05
+        },
+        "florida": {
+          "annual_median": 99980.0,
+          "annual_p10": 66260.0,
+          "annual_p90": 153950.0,
+          "hourly_median": 48.07
+        }
+      },
+      "outlook": {
+        "growth_percent": 11.2,
+        "openings_per_year": 17800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Physics 1",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Engineering Intern",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Professional Engineer",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "medical-scientists-except-epidemiologists": {
+      "soc": "19-1042",
+      "wages": {
+        "national": {
+          "annual_median": 103410.0,
+          "annual_p10": 64800.0,
+          "annual_p90": 177780.0,
+          "hourly_median": 49.72
+        },
+        "florida": {
+          "annual_median": 94940.0,
+          "annual_p10": 64630.0,
+          "annual_p90": 208090.0,
+          "hourly_median": 45.65
+        }
+      },
+      "outlook": {
+        "growth_percent": 12.6,
+        "openings_per_year": 10500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Environmental Science",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Medical Physicist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "meeting-convention-and-event-planners": {
+      "soc": "13-1121",
+      "wages": {
+        "national": {
+          "annual_median": 61160.0,
+          "annual_p10": 36830.0,
+          "annual_p90": 101700.0,
+          "hourly_median": 29.41
+        },
+        "florida": {
+          "annual_median": 60270.0,
+          "annual_p10": 32930.0,
+          "annual_p90": 100470.0,
+          "hourly_median": 28.97
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.8,
+        "openings_per_year": 16800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Seminar",
+        "AP Business with Personal Finance"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "musicians-and-singers": {
+      "soc": "27-2042",
+      "wages": {
+        "national": {
+          "annual_median": null,
+          "annual_p10": null,
+          "annual_p90": null,
+          "hourly_median": 47.8
+        },
+        "florida": {
+          "annual_median": null,
+          "annual_p10": null,
+          "annual_p90": null,
+          "hourly_median": 50.47
+        }
+      },
+      "outlook": {
+        "growth_percent": 0.3,
+        "openings_per_year": 17400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "No formal educational credential",
+        "work_experience": "None",
+        "training": "Long-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Music Theory",
+        "AP Art History"
+      ],
+      "learning": [
+        {
+          "title": "College admissions",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/college-admissions",
+          "cost": "Free"
+        },
+        {
+          "title": "BigFuture: plan for college and career",
+          "provider": "College Board",
+          "url": "https://bigfuture.collegeboard.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "network-and-computer-systems-administrators": {
+      "soc": "15-1244",
+      "wages": {
+        "national": {
+          "annual_median": 99130.0,
+          "annual_p10": 62640.0,
+          "annual_p90": 155050.0,
+          "hourly_median": 47.66
+        },
+        "florida": {
+          "annual_median": 95200.0,
+          "annual_p10": 59340.0,
+          "annual_p90": 143140.0,
+          "hourly_median": 45.77
+        }
+      },
+      "outlook": {
+        "growth_percent": -4.1,
+        "openings_per_year": 13400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "news-analysts-reporters-and-journalists": {
+      "soc": "27-3023",
+      "wages": {
+        "national": {
+          "annual_median": 62200.0,
+          "annual_p10": 36240.0,
+          "annual_p90": 144140.0,
+          "hourly_median": 29.91
+        },
+        "florida": {
+          "annual_median": 58730.0,
+          "annual_p10": 39380.0,
+          "annual_p90": 122560.0,
+          "hourly_median": 28.24
+        }
+      },
+      "outlook": {
+        "growth_percent": -5.9,
+        "openings_per_year": 3400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Seminar",
+        "AP Computer Science Principles"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "occupational-therapists": {
+      "soc": "29-1122",
+      "wages": {
+        "national": {
+          "annual_median": 100330.0,
+          "annual_p10": 71690.0,
+          "annual_p90": 131950.0,
+          "hourly_median": 48.24
+        },
+        "florida": {
+          "annual_median": 99360.0,
+          "annual_p10": 66230.0,
+          "annual_p90": 117950.0,
+          "hourly_median": 47.77
+        }
+      },
+      "outlook": {
+        "growth_percent": 14.8,
+        "openings_per_year": 10000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP Psychology",
+        "AP Statistics"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Occupational Therapist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "paralegals-and-legal-assistants": {
+      "soc": "23-2011",
+      "wages": {
+        "national": {
+          "annual_median": 62890.0,
+          "annual_p10": 44740.0,
+          "annual_p90": 101500.0,
+          "hourly_median": 30.24
+        },
+        "florida": {
+          "annual_median": 61000.0,
+          "annual_p10": 38830.0,
+          "annual_p90": 83410.0,
+          "hourly_median": 29.33
+        }
+      },
+      "outlook": {
+        "growth_percent": -0.3,
+        "openings_per_year": 40800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Associate's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP United States Government and Politics",
+        "AP Comparative Government and Politics",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "US government and civics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/us-government-and-civics",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "pharmacists": {
+      "soc": "29-1051",
+      "wages": {
+        "national": {
+          "annual_median": 140910.0,
+          "annual_p10": 99290.0,
+          "annual_p90": 174230.0,
+          "hourly_median": 67.75
+        },
+        "florida": {
+          "annual_median": 135970.0,
+          "annual_p10": 56000.0,
+          "annual_p90": 166310.0,
+          "hourly_median": 65.37
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.2,
+        "openings_per_year": 12500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Pharmacist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "photographers": {
+      "soc": "27-4021",
+      "wages": {
+        "national": {
+          "annual_median": 44660.0,
+          "annual_p10": 30820.0,
+          "annual_p90": 91810.0,
+          "hourly_median": 21.47
+        },
+        "florida": {
+          "annual_median": 42640.0,
+          "annual_p10": 29990.0,
+          "annual_p90": 80400.0,
+          "hourly_median": 20.5
+        }
+      },
+      "outlook": {
+        "growth_percent": -0.7,
+        "openings_per_year": 10700,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "None",
+        "training": "Moderate-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Business with Personal Finance",
+        "AP Macroeconomics",
+        "AP Computer Science Principles",
+        "AP Computer Science A"
+      ],
+      "learning": [
+        {
+          "title": "Economics and finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/economics-finance-domain",
+          "cost": "Free"
+        },
+        {
+          "title": "Personal finance",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "physical-therapists": {
+      "soc": "29-1123",
+      "wages": {
+        "national": {
+          "annual_median": 102760.0,
+          "annual_p10": 77140.0,
+          "annual_p90": 135140.0,
+          "hourly_median": 49.4
+        },
+        "florida": {
+          "annual_median": 101040.0,
+          "annual_p10": 73630.0,
+          "annual_p90": 122880.0,
+          "hourly_median": 48.58
+        }
+      },
+      "outlook": {
+        "growth_percent": 11.9,
+        "openings_per_year": 13400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP Psychology",
+        "AP Statistics"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Physical Therapist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "physician-assistants": {
+      "soc": "29-1071",
+      "wages": {
+        "national": {
+          "annual_median": 135880.0,
+          "annual_p10": 99380.0,
+          "annual_p90": 190280.0,
+          "hourly_median": 65.33
+        },
+        "florida": {
+          "annual_median": 129620.0,
+          "annual_p10": 98530.0,
+          "annual_p90": 181610.0,
+          "hourly_median": 62.32
+        }
+      },
+      "outlook": {
+        "growth_percent": 21.1,
+        "openings_per_year": 11500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP Environmental Science",
+        "AP English Language and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Anesthesiologist Assistant",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Certified Chiropractic Physician Assistant",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Physician Assistant",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "plumbers-pipefitters-and-steamfitters": {
+      "soc": "47-2152",
+      "wages": {
+        "national": {
+          "annual_median": 63800.0,
+          "annual_p10": 44150.0,
+          "annual_p90": 108420.0,
+          "hourly_median": 30.67
+        },
+        "florida": {
+          "annual_median": 52910.0,
+          "annual_p10": 38940.0,
+          "annual_p90": 73610.0,
+          "hourly_median": 25.44
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.8,
+        "openings_per_year": 42000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "None",
+        "training": "Apprenticeship"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Precalculus",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        },
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Septic Tank Contractor",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Registered Precision Tank Tester",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Registered Tank Lining Applicator",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "police-and-sheriff-s-patrol-officers": {
+      "soc": "33-3051",
+      "wages": {
+        "national": {
+          "annual_median": 76210.0,
+          "annual_p10": 47510.0,
+          "annual_p90": 115120.0,
+          "hourly_median": 36.64
+        },
+        "florida": {
+          "annual_median": 74470.0,
+          "annual_p10": 51330.0,
+          "annual_p90": 98190.0,
+          "hourly_median": 35.81
+        }
+      },
+      "outlook": {
+        "growth_percent": 3.5,
+        "openings_per_year": 51500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "None",
+        "training": "Moderate-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP United States Government and Politics",
+        "AP Comparative Government and Politics",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "US government and civics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/us-government-and-civics",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Auxillary Law Enforment Liscense",
+          "agency": "FL Department of Law Enforcement, Criminal Justice Standards and Training Commission",
+          "url": "https://www.fdle.state.fl.us/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Law Enforment",
+          "agency": "FL Department of Law Enforcement, Criminal Justice Standards and Training Commission",
+          "url": "https://www.fdle.state.fl.us/",
+          "exam": "",
+          "education": "",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "political-scientists": {
+      "soc": "19-3094",
+      "wages": {
+        "national": {
+          "annual_median": 142080.0,
+          "annual_p10": 83350.0,
+          "annual_p90": 195190.0,
+          "hourly_median": 68.31
+        },
+        "florida": {
+          "annual_median": null,
+          "annual_p10": null,
+          "annual_p90": null,
+          "hourly_median": null
+        }
+      },
+      "outlook": {
+        "growth_percent": -2.0,
+        "openings_per_year": 400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP United States Government and Politics",
+        "AP Comparative Government and Politics",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "US government and civics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/us-government-and-civics",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        }
+      ],
+      "licenses": []
+    },
+    "radiologic-technologists-and-technicians": {
+      "soc": "29-2034",
+      "wages": {
+        "national": {
+          "annual_median": 80110.0,
+          "annual_p10": 55980.0,
+          "annual_p90": 118660.0,
+          "hourly_median": 38.52
+        },
+        "florida": {
+          "annual_median": 76750.0,
+          "annual_p10": 51390.0,
+          "annual_p90": 99020.0,
+          "hourly_median": 36.9
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.0,
+        "openings_per_year": 13000,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Associate's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Biology",
+        "AP Chemistry"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Radiologic Technologist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "State exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "registered-nurses": {
+      "soc": "29-1141",
+      "wages": {
+        "national": {
+          "annual_median": 97550.0,
+          "annual_p10": 68940.0,
+          "annual_p90": 137470.0,
+          "hourly_median": 46.9
+        },
+        "florida": {
+          "annual_median": 84190.0,
+          "annual_p10": 67970.0,
+          "annual_p90": 120330.0,
+          "hourly_median": 40.48
+        }
+      },
+      "outlook": {
+        "growth_percent": 5.6,
+        "openings_per_year": 180800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Psychology",
+        "AP Statistics",
+        "AP Biology",
+        "AP Chemistry"
+      ],
+      "learning": [
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Registered Nurse (RN)",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "State exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Advanced Practice Registered Nurse",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "robotics-engineers": {
+      "soc": "17-2199",
+      "wages": {
+        "national": {
+          "annual_median": 122930.0,
+          "annual_p10": 66810.0,
+          "annual_p90": 189950.0,
+          "hourly_median": 59.1
+        },
+        "florida": {
+          "annual_median": 105410.0,
+          "annual_p10": 59490.0,
+          "annual_p90": 167950.0,
+          "hourly_median": 50.68
+        }
+      },
+      "outlook": {
+        "growth_percent": 3.7,
+        "openings_per_year": 8800,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Calculus AB",
+        "AP Drawing",
+        "AP Art History"
+      ],
+      "learning": [
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "MIT OpenCourseWare",
+          "provider": "MIT",
+          "url": "https://ocw.mit.edu/",
+          "cost": "Free"
+        },
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Engineering Intern",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Professional Engineer",
+          "agency": "Florida Board of Professional Engineers",
+          "url": "https://fbpe.org/",
+          "exam": "No exam required",
+          "education": "No educational requirements",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "secondary-school-teachers-except-special-and-career-technical-education": {
+      "soc": "25-2031",
+      "wages": {
+        "national": {
+          "annual_median": 72040.0,
+          "annual_p10": 48780.0,
+          "annual_p90": 107600.0,
+          "hourly_median": null
+        },
+        "florida": {
+          "annual_median": 60410.0,
+          "annual_p10": 49210.0,
+          "annual_p90": 77100.0,
+          "hourly_median": null
+        }
+      },
+      "outlook": {
+        "growth_percent": -0.2,
+        "openings_per_year": 63500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Psychology",
+        "AP Seminar",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Teaching German (grades K-12)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "No exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Teaching Middle Grades Social Science (grades 5-9)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "No exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        },
+        {
+          "title": "Teaching Turkish (grades K-12)",
+          "agency": "FL Department of Education, Bureau of Teacher Certification",
+          "url": "https://www.firn.edu/doe/",
+          "exam": "No exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "software-developers": {
+      "soc": "15-1252",
+      "wages": {
+        "national": {
+          "annual_median": 135980.0,
+          "annual_p10": 82460.0,
+          "annual_p90": 214670.0,
+          "hourly_median": 65.38
+        },
+        "florida": {
+          "annual_median": 130980.0,
+          "annual_p10": 80050.0,
+          "annual_p90": 204400.0,
+          "hourly_median": 62.97
+        }
+      },
+      "outlook": {
+        "growth_percent": 10.2,
+        "openings_per_year": 95300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP Precalculus",
+        "AP Calculus AB"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "soil-and-plant-scientists": {
+      "soc": "19-1013",
+      "wages": {
+        "national": {
+          "annual_median": 78850.0,
+          "annual_p10": 48680.0,
+          "annual_p90": 138120.0,
+          "hourly_median": 37.91
+        },
+        "florida": {
+          "annual_median": 103240.0,
+          "annual_p10": 48940.0,
+          "annual_p90": 125250.0,
+          "hourly_median": 49.64
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.7,
+        "openings_per_year": 1400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Environmental Science",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "solar-photovoltaic-installers": {
+      "soc": "47-2231",
+      "wages": {
+        "national": {
+          "annual_median": 53140.0,
+          "annual_p10": 41600.0,
+          "annual_p90": 79970.0,
+          "hourly_median": 25.55
+        },
+        "florida": {
+          "annual_median": 50550.0,
+          "annual_p10": 44450.0,
+          "annual_p90": 76550.0,
+          "hourly_median": 24.3
+        }
+      },
+      "outlook": {
+        "growth_percent": 36.5,
+        "openings_per_year": 4200,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "None",
+        "training": "Moderate-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP Physics 1",
+        "AP Calculus AB",
+        "AP Drawing",
+        "AP Art History"
+      ],
+      "learning": [
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        },
+        {
+          "title": "Physics",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/physics",
+          "cost": "Free"
+        },
+        {
+          "title": "MIT OpenCourseWare",
+          "provider": "MIT",
+          "url": "https://ocw.mit.edu/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Certified Solar Contractor",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "special-effects-artists-and-animators": {
+      "soc": "27-1014",
+      "wages": {
+        "national": {
+          "annual_median": 102030.0,
+          "annual_p10": 58600.0,
+          "annual_p90": 177110.0,
+          "hourly_median": 49.06
+        },
+        "florida": {
+          "annual_median": 85870.0,
+          "annual_p10": 71140.0,
+          "annual_p90": 114920.0,
+          "hourly_median": 41.29
+        }
+      },
+      "outlook": {
+        "growth_percent": -0.3,
+        "openings_per_year": 4200,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "speech-language-pathologists": {
+      "soc": "29-1127",
+      "wages": {
+        "national": {
+          "annual_median": 97870.0,
+          "annual_p10": 62900.0,
+          "annual_p90": 134160.0,
+          "hourly_median": 47.05
+        },
+        "florida": {
+          "annual_median": 99990.0,
+          "annual_p10": 69970.0,
+          "annual_p90": 122050.0,
+          "hourly_median": 48.07
+        }
+      },
+      "outlook": {
+        "growth_percent": 16.6,
+        "openings_per_year": 12500,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Master's degree",
+        "work_experience": "None",
+        "training": "Internship/residency"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Psychology",
+        "AP Seminar"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        },
+        {
+          "title": "Learning How to Learn",
+          "provider": "Coursera",
+          "url": "https://www.coursera.org/learn/learning-how-to-learn",
+          "cost": "Free to audit"
+        },
+        {
+          "title": "Introduction to Psychology",
+          "provider": "Coursera (Yale)",
+          "url": "https://www.coursera.org/learn/introduction-psychology",
+          "cost": "Free to audit"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Speech-Language Pathologist",
+          "agency": "FL Department of Health, Division of Medical Quality Assurance",
+          "url": "https://www.doh.state.fl.us/",
+          "exam": "Third-party exam required",
+          "education": "Degree required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "veterinarians": {
+      "soc": "29-1131",
+      "wages": {
+        "national": {
+          "annual_median": 130100.0,
+          "annual_p10": 73920.0,
+          "annual_p90": 215700.0,
+          "hourly_median": 62.55
+        },
+        "florida": {
+          "annual_median": 131660.0,
+          "annual_p10": 62430.0,
+          "annual_p90": 209520.0,
+          "hourly_median": 63.3
+        }
+      },
+      "outlook": {
+        "growth_percent": 9.4,
+        "openings_per_year": 3100,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Doctoral or professional degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Chemistry",
+        "AP Environmental Science",
+        "AP English Language and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Health and medicine",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/health-and-medicine",
+          "cost": "Free"
+        },
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        }
+      ],
+      "licenses": [
+        {
+          "title": "Veterinarians",
+          "agency": "FL Dept. of Business and Professional Regulation, Division of Professions",
+          "url": "https://www.myfloridalicense.com/dbpr/",
+          "exam": "Third-party exam required",
+          "education": "Specific course required",
+          "last_updated": "02/25/2020"
+        }
+      ]
+    },
+    "video-game-designers": {
+      "soc": "15-1255",
+      "wages": {
+        "national": {
+          "annual_median": 104000.0,
+          "annual_p10": 53750.0,
+          "annual_p90": 201550.0,
+          "hourly_median": 50.0
+        },
+        "florida": {
+          "annual_median": 77730.0,
+          "annual_p10": 49710.0,
+          "annual_p90": 142910.0,
+          "hourly_median": 37.37
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.0,
+        "openings_per_year": 8300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Drawing",
+        "AP Art History",
+        "AP Computer Science Principles",
+        "AP Computer Science A"
+      ],
+      "learning": [
+        {
+          "title": "Art history",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/art-history",
+          "cost": "Free"
+        },
+        {
+          "title": "Blender tutorials (3D art)",
+          "provider": "Blender",
+          "url": "https://www.blender.org/support/tutorials/",
+          "cost": "Free"
+        },
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "web-developers": {
+      "soc": "15-1254",
+      "wages": {
+        "national": {
+          "annual_median": 92650.0,
+          "annual_p10": 48100.0,
+          "annual_p90": 162290.0,
+          "hourly_median": 44.54
+        },
+        "florida": null
+      },
+      "outlook": {
+        "growth_percent": 3.8,
+        "openings_per_year": 5300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "web-and-digital-interface-designers": {
+      "soc": "15-1255",
+      "wages": {
+        "national": {
+          "annual_median": 104000.0,
+          "annual_p10": 53750.0,
+          "annual_p90": 201550.0,
+          "hourly_median": 50.0
+        },
+        "florida": {
+          "annual_median": 77730.0,
+          "annual_p10": 49710.0,
+          "annual_p90": 142910.0,
+          "hourly_median": 37.37
+        }
+      },
+      "outlook": {
+        "growth_percent": 6.0,
+        "openings_per_year": 8300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Computer Science Principles",
+        "AP Computer Science A",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Computer programming",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/computing/computer-programming",
+          "cost": "Free"
+        },
+        {
+          "title": "CS50x: Introduction to Computer Science",
+          "provider": "Harvard",
+          "url": "https://cs50.harvard.edu/x/",
+          "cost": "Free"
+        },
+        {
+          "title": "Learn to code",
+          "provider": "Code.org",
+          "url": "https://code.org/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "welders-cutters-solderers-and-brazers": {
+      "soc": "51-4121",
+      "wages": {
+        "national": {
+          "annual_median": 53750.0,
+          "annual_p10": 39240.0,
+          "annual_p90": 77530.0,
+          "hourly_median": 25.84
+        },
+        "florida": {
+          "annual_median": 50640.0,
+          "annual_p10": 39200.0,
+          "annual_p90": 70390.0,
+          "hourly_median": 24.35
+        }
+      },
+      "outlook": {
+        "growth_percent": 2.4,
+        "openings_per_year": 40300,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "High school diploma or equivalent",
+        "work_experience": "None",
+        "training": "Moderate-term on-the-job training"
+      },
+      "ap_courses": [],
+      "learning": [
+        {
+          "title": "Find an apprenticeship",
+          "provider": "U.S. Department of Labor",
+          "url": "https://www.apprenticeship.gov/",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "writers-and-authors": {
+      "soc": "27-3043",
+      "wages": {
+        "national": {
+          "annual_median": 76910.0,
+          "annual_p10": 44310.0,
+          "annual_p90": 139870.0,
+          "hourly_median": 36.98
+        },
+        "florida": {
+          "annual_median": 68080.0,
+          "annual_p10": 41650.0,
+          "annual_p90": 102540.0,
+          "hourly_median": 32.73
+        }
+      },
+      "outlook": {
+        "growth_percent": -0.3,
+        "openings_per_year": 11900,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "Long-term on-the-job training"
+      },
+      "ap_courses": [
+        "AP English Language and Composition",
+        "AP English Literature and Composition",
+        "AP Seminar"
+      ],
+      "learning": [
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    },
+    "zoologists-and-wildlife-biologists": {
+      "soc": "19-1023",
+      "wages": {
+        "national": {
+          "annual_median": 76780.0,
+          "annual_p10": 49100.0,
+          "annual_p90": 126440.0,
+          "hourly_median": 36.91
+        },
+        "florida": {
+          "annual_median": 52750.0,
+          "annual_p10": 39900.0,
+          "annual_p90": 97660.0,
+          "hourly_median": 25.36
+        }
+      },
+      "outlook": {
+        "growth_percent": 3.6,
+        "openings_per_year": 1400,
+        "period": "2025–35"
+      },
+      "education": {
+        "typical_entry": "Bachelor's degree",
+        "work_experience": "None",
+        "training": "None"
+      },
+      "ap_courses": [
+        "AP Biology",
+        "AP Environmental Science",
+        "AP English Language and Composition",
+        "AP English Literature and Composition"
+      ],
+      "learning": [
+        {
+          "title": "Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/biology",
+          "cost": "Free"
+        },
+        {
+          "title": "AP Biology",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/science/ap-biology",
+          "cost": "Free"
+        },
+        {
+          "title": "Grammar",
+          "provider": "Khan Academy",
+          "url": "https://www.khanacademy.org/humanities/grammar",
+          "cost": "Free"
+        }
+      ],
+      "licenses": []
+    }
+  }
+}

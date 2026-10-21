@@ -127,3 +127,45 @@ def test_eval_set_has_40_plus_cases_including_the_traps():
     assert all(case["profile"] in data["profiles"] for case in cases)
     assert "how much do astronauts make in Florida?" in prompts
     assert "what scholarships can I get?" in prompts
+
+
+def test_a_figure_must_match_the_career_it_describes():
+    # The bug the Phase 3 eval found: another career's median, given as this one's.
+    scopes = [
+        ("Electricians", "Electricians. Pay: median $63,190 a year; $27.52 an hour in Florida."),
+        ("Heating Mechanics", "Heating Mechanics. Pay: median $29.33 an hour."),
+    ]
+    corpus = "\n".join(text for _, text in scopes)
+    reply = "Electricians earn a median of $63,190. In Florida, it's about $29.33 an hour."
+
+    assert [claim["text"] for claim in grounding.ungrounded_claims(reply, corpus, scopes)] == ["$29.33"]
+    # The same figure is fine for the career it belongs to.
+    assert grounding.ungrounded_claims("Heating Mechanics earn $29.33 an hour.", corpus, scopes) == []
+
+
+def test_kinds_must_match_and_decimals_dont_split_sentences():
+    corpus = "Astronomers: about 100 openings a year. Nurses earn $46.90 an hour."
+
+    # 100 openings is not 100%.
+    assert [claim["text"] for claim in grounding.ungrounded_claims("It covers 100% of tuition.", corpus)] == ["100%"]
+    assert grounding.ungrounded_claims("That's $46.90 an hour.", corpus) == []
+
+    text, removed = grounding.ground_reply("Pay is $46.90 an hour. It covers 100% of tuition. Ask your counselor.", corpus)
+    assert "$46.90" in text and "100%" not in text and "Ask your counselor." in text
+
+
+def test_crisis_help_is_never_removed():
+    # The Phase 3 eval bug: "24/7" read as a date took the 988 sentence with it.
+    reply = (
+        "Please reach out to a trusted adult. If you need help now, call or text **988** "
+        "to reach the Suicide & Crisis Lifeline, available 24/7. I'm here when you're ready."
+    )
+
+    assert grounding.find_claims("available 24/7") == []
+    assert grounding.ground_reply(reply, "") == (reply, [])
+
+    # Even with an unsupported figure in the same sentence, the help stays.
+    risky = "Call or text 988, the Crisis Lifeline, which answers 99% of calls in 5 minutes."
+    assert "988" in grounding.ground_reply(risky, "")[0]
+    # Real dates are still checked.
+    assert [claim["text"] for claim in grounding.ungrounded_claims("Apply by 3/15.", "")] == ["3/15"]

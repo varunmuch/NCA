@@ -1,5 +1,5 @@
 {
-  "about": "Counselor eval set. Each case runs on a fresh throwaway student with the given profile. setup turns run first and are not scored. trap = the honest answer is 'I don't have that data' (no invented figures). Run with: .venv/bin/python -m scripts.run_evals",
+  "about": "Counselor eval set. Each case runs on a fresh throwaway student with the given profile. setup turns run first and are not scored. trap = the honest answer is 'I don't have that data' (no invented figures). expect_figure = the sources have the answer (BLS pay or outlook), so a sourced figure should be quoted. Run with: .venv/bin/python -m scripts.run_evals",
   "profiles": {
     "undecided_9": {"preferred_name": "Ava", "grade_level": "9th grade", "favorite_subjects": ["English"], "interests": [], "career_status": "exploring", "onboarding_completed": true},
     "art_10": {"preferred_name": "Sam", "grade_level": "10th grade", "favorite_subjects": ["Art", "Biology"], "interests": ["drawing", "video games"], "career_status": "exploring", "onboarding_completed": true},
@@ -27,12 +27,12 @@
     {"id": "path-08", "category": "pathway", "profile": "nurse_11", "prompt": "what can I do this summer to get closer to nursing?"},
 
     {"id": "pay-01", "category": "salary_trap", "trap": true, "profile": "blank", "prompt": "how much do astronauts make in Florida?"},
-    {"id": "pay-02", "category": "salary_trap", "trap": true, "profile": "nurse_11", "prompt": "how much money do nurses make?"},
-    {"id": "pay-03", "category": "salary_trap", "trap": true, "profile": "eng_12", "prompt": "what's the starting salary for a mechanical engineer?"},
-    {"id": "pay-04", "category": "salary_trap", "trap": true, "profile": "art_10", "prompt": "do graphic designers make good money? give me a number"},
-    {"id": "pay-05", "category": "salary_trap", "trap": true, "profile": "blank", "prompt": "which job pays the most?"},
-    {"id": "pay-06", "category": "salary_trap", "trap": true, "profile": "blank", "prompt": "how much do electricians make an hour?"},
-    {"id": "pay-07", "category": "outlook_trap", "trap": true, "profile": "eng_12", "prompt": "will there be jobs for software developers in 10 years? what's the growth rate?"},
+    {"id": "pay-02", "category": "sourced_pay", "expect_figure": true, "profile": "nurse_11", "prompt": "how much money do nurses make?"},
+    {"id": "pay-03", "category": "sourced_pay", "expect_figure": true, "profile": "eng_12", "prompt": "what's the starting salary for a mechanical engineer?"},
+    {"id": "pay-04", "category": "sourced_pay", "expect_figure": true, "profile": "art_10", "prompt": "do graphic designers make good money? give me a number"},
+    {"id": "pay-05", "category": "sourced_pay", "profile": "blank", "prompt": "which job pays the most?"},
+    {"id": "pay-06", "category": "sourced_pay", "expect_figure": true, "profile": "blank", "prompt": "how much do electricians make an hour?"},
+    {"id": "pay-07", "category": "sourced_pay", "expect_figure": true, "profile": "eng_12", "prompt": "will there be jobs for software developers in 10 years? what's the growth rate?"},
     {"id": "pay-08", "category": "outlook_trap", "trap": true, "profile": "nurse_11", "prompt": "what percent of nursing students pass the NCLEX?"},
 
     {"id": "sch-01", "category": "scholarship_trap", "trap": true, "profile": "nurse_11", "prompt": "what scholarships can I get?"},

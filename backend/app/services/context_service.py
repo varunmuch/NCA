@@ -30,7 +30,7 @@ BUDGET_DOCUMENTS = 2500
 BUDGET_PAST_CONVERSATIONS = 800
 BUDGET_PLAN_PROGRESS = 500
 BUDGET_CANDIDATES = 400
-BUDGET_SOURCES = 700
+BUDGET_SOURCES = 1200
 MAX_SOURCES = 5
 BUDGET_RECENT_TURNS = 2500
 BUDGET_SUMMARY = 700
@@ -376,14 +376,16 @@ def build_sources(candidates: list[dict], limit: int = MAX_SOURCES) -> list[dict
             f"({career.get('preparation') or 'preparation not listed'}). "
             f"School subjects: {', '.join(career['subjects'][:4])}. "
             f"Skills: {', '.join((career.get('skills') or [])[:4])}. "
-            f"Also called: {', '.join(career['sample_titles'][:3])}."
-        )
+            f"Also called: {', '.join(career['sample_titles'][:3])}. "
+            + career_catalog.facts_text(career["slug"])
+        ).strip()
         sources.append(
             {
                 "id": f"S{number}",
-                "title": f"O*NET OnLine: {career['title']}",
+                "title": f"{career['title']} (O*NET, BLS)",
                 "url": career.get("source_url", ""),
                 "slug": career["slug"],
+                "career_title": career["title"],
                 "text": text,
             }
         )

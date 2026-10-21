@@ -161,6 +161,36 @@ export type CareerDetail = CareerSummary & {
   related_careers: CareerSummary[];
   source_url: string;
   source: CatalogSource;
+  facts: CareerFacts | null;
+};
+
+export type WageFigures = {
+  annual_median?: number | null;
+  annual_p10?: number | null;
+  annual_p90?: number | null;
+  hourly_median?: number | null;
+  at_least?: string[];
+};
+
+export type DataSource = { name: string; url: string; period?: string; retrieved: string; all_jobs_growth_percent?: number };
+
+export type CareerFacts = {
+  soc: string;
+  wages: { national: WageFigures | null; florida: WageFigures | null };
+  outlook: { growth_percent: number | null; openings_per_year: number | null; period: string } | null;
+  education: { typical_entry: string | null; work_experience: string | null; training: string | null } | null;
+  ap_courses: string[];
+  learning: { title: string; provider: string; url: string; cost: string }[];
+  licenses: { title: string; agency: string; url: string; exam: string; education: string }[];
+  retrieved: string;
+  sources: {
+    wages: DataSource;
+    outlook: DataSource;
+    education: DataSource;
+    ap_courses: DataSource;
+    licenses?: DataSource & { state: string };
+    learning: DataSource & { reviewed?: boolean };
+  };
 };
 
 export type CareersMeta = {
