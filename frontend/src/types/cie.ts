@@ -292,6 +292,35 @@ export type PlanContent = {
   next_three_actions: string[];
   next_action_task_ids?: number[];
   based_on: string;
+  // Plans written since Phase 5 have schema 2 and the fields below.
+  schema?: number;
+  summary?: string;
+  next_steps?: PlanStep[];
+  careers?: PlanCareer[];
+  this_year?: { period: string; steps: string[] }[];
+  high_school?: { grade: string; focus: string }[];
+  after_high_school?: { route: string; description: string }[];
+  skills?: { skill: string; how: string }[];
+  stage?: { grade: number; name: string; goal: string; priorities: string[] } | null;
+  grounding?: { removed: { kind: string; text: string }[] };
+};
+
+export type PlanStep = { title: string; why: string };
+
+// A plan career: why from the plan, pay and education from BLS data.
+export type PlanCareer = {
+  slug: string;
+  title: string;
+  family_label: string;
+  why: string;
+  pay_median: number | null;
+  pay_median_florida: number | null;
+  pay_hourly: number | null;
+  education: string | null;
+  growth_percent: number | null;
+  pay_source: string | null;
+  outlook_source: string | null;
+  as_of: string | null;
 };
 
 export type PlanSummary = {

@@ -24,6 +24,7 @@ from sqlalchemy import select
 
 from app.core.database import AsyncSessionLocal
 from app.core.llm import chat_json
+from app.services import plan_stages
 from app.db.models import CareerRoadmap, ProgressTimeline
 from app.models.progress import ProgressTaskCreate, ProgressTimelineCreate
 from app.services import career_catalog
@@ -323,6 +324,8 @@ async def generate_roadmap(student_id: str, slug: str) -> dict:
                 "role": "system",
                 "content": (
                     ROADMAP_PROMPT
+                    + "\n\n## Grade stage\n"
+                    + plan_stages.stage_text(context["profile"].get("grade_level", ""))
                     + "\n\n"
                     + context_block(context)
                     + "\n\n## Resources you may pick from (id: title)\n"

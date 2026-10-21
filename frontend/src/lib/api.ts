@@ -18,6 +18,7 @@ import type {
   MeResponse,
   PlanDetail,
   PlanMilestone,
+  PlanStep,
   PlanSummary,
   ProgressStatus,
   ProgressTask,
@@ -344,6 +345,7 @@ export const api = {
     updates: {
       title?: string;
       short_term_milestones?: PlanMilestone[];
+      next_steps?: PlanStep[];
       next_three_actions?: string[];
       long_term_goals?: string[];
     }

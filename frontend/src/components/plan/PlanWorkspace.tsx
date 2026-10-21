@@ -33,9 +33,10 @@ import { InlineNote } from "@/components/ui/Feedback";
 import { useToast } from "@/components/ui/Toast";
 import { api } from "@/lib/api";
 import { formatDate } from "@/lib/format";
-import type { PlanDetail, PlanMilestone, ProgressStatus } from "@/types/cie";
+import type { PlanDetail, PlanMilestone, PlanStep, ProgressStatus } from "@/types/cie";
 
 import { GeneratingPlan } from "./PlanGenerator";
+import { SimplePlan } from "./SimplePlan";
 
 const REVISION_IDEAS = [
   "Make it more hands-on",
@@ -122,6 +123,8 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
 
   const content = plan.content;
   const saved = plan.status === "saved";
+  // Plans written since Phase 5 use the simpler layout.
+  const isSimple = content.schema === 2;
 
   async function savePlan() {
     setBusy("save");
@@ -193,6 +196,17 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
       toast(error instanceof Error ? error.message : "Couldn't update milestones.", "error");
     } finally {
       setBusy("");
+    }
+  }
+
+  async function saveSteps(steps: PlanStep[]) {
+    try {
+      setPlan(await api.updatePlan(plan.id, { next_steps: steps }));
+      toast("Steps updated");
+      return true;
+    } catch (error) {
+      toast(error instanceof Error ? error.message : "Couldn't update your steps.", "error");
+      return false;
     }
   }
 
@@ -282,10 +296,14 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
 
       {!saved && (
         <InlineNote>
-          This is a draft. Read it over, ask for changes, and <strong>save</strong> it when it feels right. Saving turns your next actions and milestones into a checklist on this page.
+          This is a draft. Read it over, ask for changes, and <strong>save</strong> it when it feels right. Saving turns your next steps into a checklist on this page.
         </InlineNote>
       )}
 
+      {isSimple ? (
+        <SimplePlan plan={plan} saved={saved} taskBusy={taskBusy} onToggle={toggleTask} onSaveSteps={saveSteps} />
+      ) : (
+        <>
       <section aria-labelledby="next-actions" className="rounded-[var(--radius-card)] bg-ink p-6 text-white shadow-[var(--shadow-raised)] sm:p-7">
         <h2 id="next-actions" className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">
           My next three actions
@@ -473,8 +491,10 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
           Talk it through
         </ButtonLink>
       </Card>
+        </>
+      )}
 
-      {content.based_on && <p className="text-sm text-ink-muted">How this plan was made: {content.based_on}</p>}
+      {!isSimple && content.based_on && <p className="text-sm text-ink-muted">How this plan was made: {content.based_on}</p>}
       <p className="text-xs text-ink-muted">
         This plan was drafted by an AI counselor from what you&apos;ve shared. Review it with a school counselor or trusted adult before big decisions.
       </p>

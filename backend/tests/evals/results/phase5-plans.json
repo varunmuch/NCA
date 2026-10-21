@@ -1,0 +1,724 @@
+{
+  "label": "phase5-plans",
+  "ran_at": "2026-10-21T18:08:23.728528+00:00",
+  "rows": [
+    {
+      "grade": "9th grade",
+      "seconds": 21.4,
+      "format_ok": true,
+      "facts_ok": true,
+      "grounded": true,
+      "stage_ok": true,
+      "removed_by_app": 0,
+      "ungrounded": [],
+      "next_steps": [
+        "Ask your counselor about joining the Art Club or a similar creative club.",
+        "Sign up for an elective like Art or Computer Science if it's available this semester.",
+        "Spend an hour each week practicing drawing or exploring digital art tools at home."
+      ],
+      "careers": [
+        "Commercial and Industrial Designers",
+        "Graphic Designers",
+        "Special Effects Artists and Animators"
+      ],
+      "plan": {
+        "title": "Career Plan for a 9th Grader with a Passion for Drawing",
+        "career_goal": "Explore careers in design and art while building foundational skills.",
+        "summary": "This plan focuses on exploring creative and design-related careers, developing skills, and setting a path for future education and work opportunities.",
+        "next_steps": [
+          {
+            "title": "Ask your counselor about joining the Art Club or a similar creative club.",
+            "why": "Joining a club will let you meet others who share your interest in drawing and give you a chance to practice and improve your skills."
+          },
+          {
+            "title": "Sign up for an elective like Art or Computer Science if it's available this semester.",
+            "why": "Taking an elective related to art or technology will help you learn new techniques and see how they connect to careers you might enjoy."
+          },
+          {
+            "title": "Spend an hour each week practicing drawing or exploring digital art tools at home.",
+            "why": "Regular practice will help you get better at drawing and let you try out different styles and ideas."
+          }
+        ],
+        "careers": [
+          {
+            "slug": "commercial-and-industrial-designers",
+            "title": "Commercial and Industrial Designers",
+            "family_label": "Arts, Design & Media",
+            "why": "You could use your drawing skills to create designs for products or packaging, turning your art into something practical and useful.",
+            "pay_median": 83910.0,
+            "pay_median_florida": 78720.0,
+            "pay_hourly": 40.34,
+            "education": "Bachelor's degree",
+            "growth_percent": 2.4,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          },
+          {
+            "slug": "graphic-designers",
+            "title": "Graphic Designers",
+            "family_label": "Arts, Design & Media",
+            "why": "Graphic design lets you use your drawing skills to create visual content for websites, advertisements, and more, combining art with technology.",
+            "pay_median": 62960.0,
+            "pay_median_florida": 61660.0,
+            "pay_hourly": 30.27,
+            "education": "Bachelor's degree",
+            "growth_percent": -1.7,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          },
+          {
+            "slug": "special-effects-artists-and-animators",
+            "title": "Special Effects Artists and Animators",
+            "family_label": "Arts, Design & Media",
+            "why": "If you enjoy storytelling and animation, you could turn your drawings into amazing special effects or animated scenes in movies and games.",
+            "pay_median": 102030.0,
+            "pay_median_florida": 85870.0,
+            "pay_hourly": 49.06,
+            "education": "Bachelor's degree",
+            "growth_percent": -0.3,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          }
+        ],
+        "this_year": [
+          {
+            "period": "This fall",
+            "steps": [
+              "Explore art materials and tools available at school or in local libraries.",
+              "Attend any school or community art workshops or events.",
+              "Start a personal art portfolio to collect your best work and ideas."
+            ]
+          },
+          {
+            "period": "This spring",
+            "steps": [
+              "Participate in school art projects or competitions to gain experience.",
+              "Research local art schools or community colleges with strong art programs.",
+              "Meet with your counselor to discuss your interests and future education options."
+            ]
+          }
+        ],
+        "high_school": [
+          {
+            "grade": "9th Grade",
+            "focus": "Join art-related clubs, take art electives, and start building a portfolio."
+          },
+          {
+            "grade": "10th Grade",
+            "focus": "Take more advanced art classes, explore technology in art, and attend career fairs."
+          },
+          {
+            "grade": "11th Grade",
+            "focus": "Consider taking a computer science elective to learn about digital art tools and prepare for college or career applications."
+          },
+          {
+            "grade": "12th Grade",
+            "focus": "Refine your portfolio, apply to art programs or colleges, and prepare for interviews or portfolio reviews."
+          }
+        ],
+        "after_high_school": [
+          {
+            "route": "Enroll in a community college or art school to study art or design.",
+            "description": "This will let you build your skills and explore different areas of art and design before committing to a four-year degree."
+          },
+          {
+            "route": "Apply to a four-year college with a strong art or design program.",
+            "description": "This option offers a more in-depth education and could lead to specialized careers in fields like graphic design or industrial design."
+          },
+          {
+            "route": "Enter an apprenticeship or internship in a design or art-related field.",
+            "description": "This hands-on experience can help you learn practical skills and see what it's like to work in the industry."
+          }
+        ],
+        "skills": [
+          {
+            "skill": "Creativity and problem-solving",
+            "how": "Practice solving design challenges by creating sketches or digital projects that solve real-world problems."
+          },
+          {
+            "skill": "Time management and organization",
+            "how": "Set a regular schedule for practicing art and organizing your portfolio to keep your work neat and ready to share."
+          },
+          {
+            "skill": "Communication and collaboration",
+            "how": "Work on group projects in art class or with club members to learn how to share ideas and work together effectively."
+          }
+        ],
+        "based_on": "This plan is based on your interest in drawing and your current 9th-grade status. It encourages exploration of art-related careers, building foundational skills, and preparing for future education or work opportunities. More information, if",
+        "schema": 2,
+        "stage": {
+          "grade": 9,
+          "name": "Explore",
+          "goal": "Try things and notice what you enjoy.",
+          "priorities": [
+            "join a club or two and try an elective you're curious about",
+            "discover 2 to 3 interests by trying them, not just reading about them",
+            "build good study habits and keep your grades steady"
+          ]
+        },
+        "career_direction": "This plan focuses on exploring creative and design-related careers, developing skills, and setting a path for future education and work opportunities.",
+        "next_three_actions": [
+          "Ask your counselor about joining the Art Club or a similar creative club.",
+          "Sign up for an elective like Art or Computer Science if it's available this semester.",
+          "Spend an hour each week practicing drawing or exploring digital art tools at home."
+        ],
+        "short_term_milestones": [],
+        "careers_exploring": [
+          {
+            "slug": "commercial-and-industrial-designers",
+            "title": "Commercial and Industrial Designers",
+            "why": "You could use your drawing skills to create designs for products or packaging, turning your art into something practical and useful."
+          },
+          {
+            "slug": "graphic-designers",
+            "title": "Graphic Designers",
+            "why": "Graphic design lets you use your drawing skills to create visual content for websites, advertisements, and more, combining art with technology."
+          },
+          {
+            "slug": "special-effects-artists-and-animators",
+            "title": "Special Effects Artists and Animators",
+            "why": "If you enjoy storytelling and animation, you could turn your drawings into amazing special effects or animated scenes in movies and games."
+          }
+        ]
+      }
+    },
+    {
+      "grade": "10th grade",
+      "seconds": 17.8,
+      "format_ok": true,
+      "facts_ok": true,
+      "grounded": true,
+      "stage_ok": true,
+      "removed_by_app": 0,
+      "ungrounded": [],
+      "next_steps": [
+        "Ask your counselor about career fairs or job shadowing opportunities in animal-related or ",
+        "Sign up for a local volunteer program at an animal shelter or wildlife center.",
+        "Spend an hour each week researching one animal-related career from the list below."
+      ],
+      "careers": [
+        "Veterinarians",
+        "Zoologists and Wildlife Biologists",
+        "Foresters"
+      ],
+      "plan": {
+        "title": "Career Exploration Plan for 10th Grade",
+        "career_goal": "Explore careers involving animals and biology, focusing on hands-on experience and skills building.",
+        "summary": "This plan helps you narrow down your interests in animals and biology by trying out different career paths, gaining real-world experience, and building essential skills.",
+        "next_steps": [
+          {
+            "title": "Ask your counselor about career fairs or job shadowing opportunities in animal-related or ",
+            "why": "Connecting with professionals in your field of interest can give you a clearer picture of what each career involves."
+          },
+          {
+            "title": "Sign up for a local volunteer program at an animal shelter or wildlife center.",
+            "why": "Volunteering will let you work directly with animals and learn more about the day-to-day aspects of careers in this field."
+          },
+          {
+            "title": "Spend an hour each week researching one animal-related career from the list below.",
+            "why": "This will help you understand the different paths available and what each involves."
+          }
+        ],
+        "careers": [
+          {
+            "slug": "veterinarians",
+            "title": "Veterinarians",
+            "family_label": "Health & Medicine",
+            "why": "You love animals and are interested in biology, so becoming a veterinarian could let you care for pets and other animals.",
+            "pay_median": 130100.0,
+            "pay_median_florida": 131660.0,
+            "pay_hourly": 62.55,
+            "education": "Doctoral or professional degree",
+            "growth_percent": 9.4,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          },
+          {
+            "slug": "zoologists-and-wildlife-biologists",
+            "title": "Zoologists and Wildlife Biologists",
+            "family_label": "Science & Research",
+            "why": "If you enjoy learning about different species and their habitats, this could be a great way to study wildlife and conservation.",
+            "pay_median": 76780.0,
+            "pay_median_florida": 52750.0,
+            "pay_hourly": 36.91,
+            "education": "Bachelor's degree",
+            "growth_percent": 3.6,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          },
+          {
+            "slug": "foresters",
+            "title": "Foresters",
+            "family_label": "Environment & Agriculture",
+            "why": "If you\u2019re interested in how animals interact with their environment, this career could let you work on protecting forests and wildlife habitats.",
+            "pay_median": 76400.0,
+            "pay_median_florida": 64130.0,
+            "pay_hourly": 36.73,
+            "education": "Bachelor's degree",
+            "growth_percent": 2.2,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          }
+        ],
+        "this_year": [
+          {
+            "period": "This fall",
+            "steps": [
+              "Meet with your counselor to discuss your career interests and how they relate to your school classes.",
+              "Start volunteering at an animal shelter or wildlife center to gain hands-on experience.",
+              "Begin researching one animal-related career each week to understand the different paths available."
+            ]
+          },
+          {
+            "period": "This spring",
+            "steps": [
+              "Attend any career fairs or job shadowing opportunities offered by your school or local community.",
+              "Explore online resources or books about careers in animal science and biology.",
+              "Talk to professionals in the field through virtual or in-person interviews to learn more about their experiences."
+            ]
+          }
+        ],
+        "high_school": [
+          {
+            "grade": "10th grade",
+            "focus": "Narrow down your interests by exploring different careers through volunteering, job shadowing, and research."
+          },
+          {
+            "grade": "11th grade",
+            "focus": "Take advanced classes in biology and related subjects to build your skills and knowledge."
+          },
+          {
+            "grade": "12th grade",
+            "focus": "Prepare for your next steps after high school by considering options like college, trade schools, or apprenticeships in your chosen field."
+          }
+        ],
+        "after_high_school": [
+          {
+            "route": "College",
+            "description": "Pursue a degree in biology, animal science, or a related field to prepare for careers like veterinarian or zoologist."
+          },
+          {
+            "route": "Community College",
+            "description": "Start with an associate degree in a related field, which can lead to jobs like wildlife technician or conservation assistant."
+          },
+          {
+            "route": "Apprenticeship",
+            "description": "Find an apprenticeship program in animal care or wildlife management to gain hands-on experience while learning."
+          }
+        ],
+        "skills": [
+          {
+            "skill": "Communication",
+            "how": "Practice speaking and writing about your experiences with animals and biology by keeping a journal or presenting your research to classmates."
+          },
+          {
+            "skill": "Critical Thinking",
+            "how": "Engage in science projects or discussions that require you to analyze data and solve problems related to animal health or habitats."
+          },
+          {
+            "skill": "Empathy",
+            "how": "Volunteer with animals to develop a deeper understanding of their needs and how to care for them effectively."
+          }
+        ],
+        "based_on": "This plan is based on your interest in animals and biology, as well as the typical steps students take in 10th grade to explore their career options. It focuses on gaining hands-on experience, building relevant skills, and narrowing down to",
+        "schema": 2,
+        "stage": {
+          "grade": 10,
+          "name": "Narrow down",
+          "goal": "Start choosing on purpose.",
+          "priorities": [
+            "pick next year's classes on purpose, toward what you enjoy",
+            "try a project, volunteering, or a job shadow in a field that interests you",
+            "sample a few careers up close and cross some off"
+          ]
+        },
+        "career_direction": "This plan helps you narrow down your interests in animals and biology by trying out different career paths, gaining real-world experience, and building essential skills.",
+        "next_three_actions": [
+          "Ask your counselor about career fairs or job shadowing opportunities in animal-related or ",
+          "Sign up for a local volunteer program at an animal shelter or wildlife center.",
+          "Spend an hour each week researching one animal-related career from the list below."
+        ],
+        "short_term_milestones": [],
+        "careers_exploring": [
+          {
+            "slug": "veterinarians",
+            "title": "Veterinarians",
+            "why": "You love animals and are interested in biology, so becoming a veterinarian could let you care for pets and other animals."
+          },
+          {
+            "slug": "zoologists-and-wildlife-biologists",
+            "title": "Zoologists and Wildlife Biologists",
+            "why": "If you enjoy learning about different species and their habitats, this could be a great way to study wildlife and conservation."
+          },
+          {
+            "slug": "foresters",
+            "title": "Foresters",
+            "why": "If you\u2019re interested in how animals interact with their environment, this career could let you work on protecting forests and wildlife habitats."
+          }
+        ]
+      }
+    },
+    {
+      "grade": "11th grade",
+      "seconds": 16.8,
+      "format_ok": true,
+      "facts_ok": true,
+      "grounded": true,
+      "stage_ok": true,
+      "removed_by_app": 0,
+      "ungrounded": [],
+      "next_steps": [
+        "Ask your counselor about AP or dual enrollment classes in engineering or computer science.",
+        "Sign up for a robotics club or team at school or in the community.",
+        "Spend an hour on online tutorials or coding projects to practice programming skills."
+      ],
+      "careers": [
+        "Robotics Engineers",
+        "Aerospace Engineers",
+        "Computer and Information Research Scientists"
+      ],
+      "plan": {
+        "title": "Personal Career Plan for 11th Grader",
+        "career_goal": "Explore careers in Engineering and Technology, focusing on Robotics and related fields.",
+        "summary": "This plan helps you build skills and explore opportunities in robotics and engineering while preparing for your post-high school path.",
+        "next_steps": [
+          {
+            "title": "Ask your counselor about AP or dual enrollment classes in engineering or computer science.",
+            "why": "Taking advanced classes will give you a deeper understanding of the subjects you're interested in and look great on college applications."
+          },
+          {
+            "title": "Sign up for a robotics club or team at school or in the community.",
+            "why": "Joining a robotics team will let you apply what you're learning in a fun and hands-on way, and it's a great way to meet like-minded people."
+          },
+          {
+            "title": "Spend an hour on online tutorials or coding projects to practice programming skills.",
+            "why": "Learning to code is essential for robotics and will help you stand out when you apply for internships or college programs."
+          }
+        ],
+        "careers": [
+          {
+            "slug": "robotics-engineers",
+            "title": "Robotics Engineers",
+            "family_label": "Engineering & Architecture",
+            "why": "You love working with robots and building things, so being a Robotics Engineer would let you design and create cutting-edge technology.",
+            "pay_median": 122930.0,
+            "pay_median_florida": 105410.0,
+            "pay_hourly": 59.1,
+            "education": "Bachelor's degree",
+            "growth_percent": 3.7,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          },
+          {
+            "slug": "aerospace-engineers",
+            "title": "Aerospace Engineers",
+            "family_label": "Engineering & Architecture",
+            "why": "If you're interested in space and flight, Aerospace Engineering could be a great fit, combining your love for physics and engineering.",
+            "pay_median": 134960.0,
+            "pay_median_florida": 129280.0,
+            "pay_hourly": 64.89,
+            "education": "Bachelor's degree",
+            "growth_percent": 8.3,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          },
+          {
+            "slug": "computer-and-information-research-scientists",
+            "title": "Computer and Information Research Scientists",
+            "family_label": "Technology & Computing",
+            "why": "This career combines your skills in math and computer science, allowing you to innovate in technology and solve complex problems.",
+            "pay_median": 140300.0,
+            "pay_median_florida": 119810.0,
+            "pay_hourly": 67.45,
+            "education": "Master's degree",
+            "growth_percent": 21.8,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          }
+        ],
+        "this_year": [
+          {
+            "period": "This fall",
+            "steps": [
+              "Take AP or dual enrollment classes in engineering or computer science.",
+              "Join a robotics club or team to gain practical experience.",
+              "Start working on small coding projects to build your skills."
+            ]
+          },
+          {
+            "period": "This spring",
+            "steps": [
+              "Prepare for and take the PSAT to get ready for college entrance exams.",
+              "Research summer programs or internships related to robotics or engineering.",
+              "Attend career fairs or workshops to learn more about engineering fields."
+            ]
+          }
+        ],
+        "high_school": [
+          {
+            "grade": "11th grade",
+            "focus": "Focus on building a strong foundation in math, physics, and computer science while exploring robotics through extracurricular activities."
+          },
+          {
+            "grade": "12th grade",
+            "focus": "Apply to summer programs or internships, take the SAT or ACT, and start narrowing down your college or training program options."
+          }
+        ],
+        "after_high_school": [
+          {
+            "route": "College",
+            "description": "Pursue a bachelor's degree in Robotics Engineering, Aerospace Engineering, or a related field."
+          },
+          {
+            "route": "Community College",
+            "description": "Start with an associate degree in Engineering or a related field to build foundational skills before transferring to a four-year program."
+          },
+          {
+            "route": "Apprenticeship",
+            "description": "Find an apprenticeship program in robotics or engineering to gain hands-on experience while learning."
+          }
+        ],
+        "skills": [
+          {
+            "skill": "Problem-solving",
+            "how": "Practice solving complex math and physics problems, and work on coding challenges to build your ability to think critically."
+          },
+          {
+            "skill": "Teamwork",
+            "how": "Join a robotics team or club where you can collaborate with others to design and build projects."
+          },
+          {
+            "skill": "Programming",
+            "how": "Use free online resources like Codecademy or Khan Academy to learn programming languages like Python or C++."
+          }
+        ],
+        "based_on": "This plan is based on your interest in robotics, favorite subjects (math and physics), and the typical steps for 11th graders preparing for college or careers in engineering and technology. It encourages exploration and skill-building while",
+        "schema": 2,
+        "stage": {
+          "grade": 11,
+          "name": "Prepare",
+          "goal": "Build what you'll need for the path you're leaning toward.",
+          "priorities": [
+            "take AP or dual enrollment classes where they fit your path",
+            "prepare for and take the PSAT, SAT, or ACT if college is a possibility",
+            "look for a summer program, internship, or part-time job in your field",
+            "make a shortlist of colleges or training programs"
+          ]
+        },
+        "career_direction": "This plan helps you build skills and explore opportunities in robotics and engineering while preparing for your post-high school path.",
+        "next_three_actions": [
+          "Ask your counselor about AP or dual enrollment classes in engineering or computer science.",
+          "Sign up for a robotics club or team at school or in the community.",
+          "Spend an hour on online tutorials or coding projects to practice programming skills."
+        ],
+        "short_term_milestones": [],
+        "careers_exploring": [
+          {
+            "slug": "robotics-engineers",
+            "title": "Robotics Engineers",
+            "why": "You love working with robots and building things, so being a Robotics Engineer would let you design and create cutting-edge technology."
+          },
+          {
+            "slug": "aerospace-engineers",
+            "title": "Aerospace Engineers",
+            "why": "If you're interested in space and flight, Aerospace Engineering could be a great fit, combining your love for physics and engineering."
+          },
+          {
+            "slug": "computer-and-information-research-scientists",
+            "title": "Computer and Information Research Scientists",
+            "why": "This career combines your skills in math and computer science, allowing you to innovate in technology and solve complex problems."
+          }
+        ]
+      }
+    },
+    {
+      "grade": "12th grade",
+      "seconds": 16.2,
+      "format_ok": true,
+      "facts_ok": true,
+      "grounded": true,
+      "stage_ok": true,
+      "removed_by_app": 0,
+      "ungrounded": [],
+      "next_steps": [
+        "Ask your counselor about college application deadlines",
+        "Sign up for a free FAFSA workshop at school",
+        "Spend an hour on the school's career exploration tool to explore related careers"
+      ],
+      "careers": [
+        "Registered Nurses",
+        "Physician Assistants",
+        "Medical Scientists, Except Epidemiologists"
+      ],
+      "plan": {
+        "title": "Your Personal Career Plan for 12th Grade",
+        "career_goal": "Registered Nurse",
+        "summary": "This plan focuses on helping you apply to nursing programs, explore related careers, and build skills to support your goal of becoming a nurse. It also includes steps to secure financial aid and prepare for your future in healthcare.",
+        "next_steps": [
+          {
+            "title": "Ask your counselor about college application deadlines",
+            "why": "Understanding deadlines will help you stay organized and ensure you submit all your applications on time."
+          },
+          {
+            "title": "Sign up for a free FAFSA workshop at school",
+            "why": "Learning about financial aid options will help you plan how to afford college and pursue your nursing goal."
+          },
+          {
+            "title": "Spend an hour on the school's career exploration tool to explore related careers",
+            "why": "Exploring careers like Physician Assistants or Medical Scientists can give you more options and ideas for your future in healthcare."
+          }
+        ],
+        "careers": [
+          {
+            "slug": "registered-nurses",
+            "title": "Registered Nurses",
+            "family_label": "Health & Medicine",
+            "why": "You love helping people and are passionate about Biology and Chemistry, which are perfect for becoming a nurse.",
+            "pay_median": 97550.0,
+            "pay_median_florida": 84190.0,
+            "pay_hourly": 46.9,
+            "education": "Bachelor's degree",
+            "growth_percent": 5.6,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          },
+          {
+            "slug": "physician-assistants",
+            "title": "Physician Assistants",
+            "family_label": "Health & Medicine",
+            "why": "If you enjoy the idea of having more responsibilities in healthcare, Physician Assistants offer a great way to help patients and make decisions alongside doctors.",
+            "pay_median": 135880.0,
+            "pay_median_florida": 129620.0,
+            "pay_hourly": 65.33,
+            "education": "Master's degree",
+            "growth_percent": 21.1,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          },
+          {
+            "slug": "medical-scientists-except-epidemiologists",
+            "title": "Medical Scientists, Except Epidemiologists",
+            "family_label": "Science & Research",
+            "why": "If you enjoy research and solving problems, this career could allow you to make discoveries that impact public health.",
+            "pay_median": 103410.0,
+            "pay_median_florida": 94940.0,
+            "pay_hourly": 49.72,
+            "education": "Doctoral or professional degree",
+            "growth_percent": 12.6,
+            "pay_source": "BLS Occupational Employment and Wage Statistics, May 2025",
+            "outlook_source": "BLS Employment Projections, 2025\u201335",
+            "as_of": "2026-10-21"
+          }
+        ],
+        "this_year": [
+          {
+            "period": "This fall",
+            "steps": [
+              "Complete your FAFSA application with your counselor's help",
+              "Research nursing programs and start filling out applications",
+              "Attend a career fair to learn more about healthcare opportunities"
+            ]
+          },
+          {
+            "period": "This winter",
+            "steps": [
+              "Request letters of recommendation from teachers who know you well",
+              "Prepare for and take any required standardized tests for nursing schools",
+              "Start a scholarship search with your school counselor"
+            ]
+          },
+          {
+            "period": "This spring",
+            "steps": [
+              "Finalize your nursing school applications and submit them",
+              "Apply for scholarships and financial aid",
+              "Prepare for interviews with nursing programs"
+            ]
+          }
+        ],
+        "high_school": [
+          {
+            "grade": "12th grade",
+            "focus": "Focus on completing your applications, securing financial aid, and exploring healthcare careers"
+          }
+        ],
+        "after_high_school": [
+          {
+            "route": "College",
+            "description": "Apply to and enroll in a nursing program at a four-year university."
+          },
+          {
+            "route": "Community College",
+            "description": "Start at a community college to earn an associate degree in nursing before transferring to a four-year program."
+          },
+          {
+            "route": "Certificates",
+            "description": "Explore certificate programs in healthcare, like medical assistant or EMT, as a stepping stone to nursing."
+          }
+        ],
+        "skills": [
+          {
+            "skill": "Communication",
+            "how": "Practice speaking clearly and listening actively in class discussions and group projects."
+          },
+          {
+            "skill": "Empathy",
+            "how": "Volunteer at a local hospital or nursing home to gain experience interacting with patients and their families."
+          },
+          {
+            "skill": "Time management",
+            "how": "Use a planner or digital calendar to keep track of deadlines and balance your schoolwork, extracurriculars, and volunteer activities."
+          }
+        ],
+        "based_on": "Your expressed interest in becoming a nurse, your favorite subjects (Biology and Chemistry), and your desire to help people. The plan includes steps tailored to your current 12th-grade stage, focusing on applying to nursing programs, career",
+        "schema": 2,
+        "stage": {
+          "grade": 12,
+          "name": "Decide and apply",
+          "goal": "Choose your next step and apply.",
+          "priorities": [
+            "finish college, program, or apprenticeship applications",
+            "complete the FAFSA and look for scholarships with your school counselor",
+            "keep a calendar of deadlines and meet each one",
+            "have a backup path you'd also be happy with"
+          ]
+        },
+        "career_direction": "This plan focuses on helping you apply to nursing programs, explore related careers, and build skills to support your goal of becoming a nurse. It also includes steps to secure financial aid and prepare for your future in healthcare.",
+        "next_three_actions": [
+          "Ask your counselor about college application deadlines",
+          "Sign up for a free FAFSA workshop at school",
+          "Spend an hour on the school's career exploration tool to explore related careers"
+        ],
+        "short_term_milestones": [],
+        "careers_exploring": [
+          {
+            "slug": "registered-nurses",
+            "title": "Registered Nurses",
+            "why": "You love helping people and are passionate about Biology and Chemistry, which are perfect for becoming a nurse."
+          },
+          {
+            "slug": "physician-assistants",
+            "title": "Physician Assistants",
+            "why": "If you enjoy the idea of having more responsibilities in healthcare, Physician Assistants offer a great way to help patients and make decisions alongside doctors."
+          },
+          {
+            "slug": "medical-scientists-except-epidemiologists",
+            "title": "Medical Scientists, Except Epidemiologists",
+            "why": "If you enjoy research and solving problems, this career could allow you to make discoveries that impact public health."
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -18,8 +18,8 @@ from sqlalchemy import select
 from app.core.database import AsyncSessionLocal
 from app.core.llm import chat_json
 from app.db.models import CareerPlan, ProgressTask, ProgressTimeline
-from app.services import career_catalog
-from app.services.context_service import build_context, context_block
+from app.services import career_catalog, grounding, plan_stages
+from app.services.context_service import build_context, context_block, grounding_corpus
 
 
 def _items(properties: dict, required: list[str], max_items: int) -> dict:
@@ -34,94 +34,60 @@ def _text(max_length: int) -> dict:
     return {"type": "string", "maxLength": max_length}
 
 
+# Plans written since Phase 5 (content["schema"] == 2). Older plans keep
+# their original fields and render with the original layout.
+PLAN_SCHEMA_VERSION = 2
+MAX_PLAN_CAREERS = 3
+
 PLAN_SCHEMA = {
     "type": "object",
     "properties": {
         "title": _text(80),
         "career_goal": _text(100),
-        "career_direction": _text(700),
-        "interests_and_strengths": {"type": "array", "items": _text(160), "maxItems": 6},
-        "careers_exploring": _items(
-            {"slug": _text(100), "title": _text(100), "why": _text(260)},
-            ["slug", "title", "why"],
-            4,
+        "summary": _text(300),
+        "next_steps": _items({"title": _text(90), "why": _text(200)}, ["title", "why"], 3),
+        "careers": _items({"slug": _text(100), "why": _text(220)}, ["slug", "why"], MAX_PLAN_CAREERS),
+        "this_year": _items(
+            {"period": _text(30), "steps": {"type": "array", "items": _text(150), "maxItems": 3}},
+            ["period", "steps"],
+            3,
         ),
-        "academic_subjects": _items(
-            {"subject": _text(60), "why": _text(200)}, ["subject", "why"], 5
-        ),
-        "skills_to_develop": _items(
-            {"skill": _text(80), "how": _text(220)}, ["skill", "how"], 5
-        ),
-        "projects_and_activities": _items(
-            {"title": _text(90), "description": _text(240)}, ["title", "description"], 4
-        ),
-        "learning_opportunities": _items(
-            {"title": _text(90), "description": _text(240)}, ["title", "description"], 4
-        ),
-        "high_school_roadmap": _items(
-            {
-                "period": _text(40),
-                "focus": _text(120),
-                "steps": {"type": "array", "items": _text(160), "maxItems": 4},
-            },
-            ["period", "focus", "steps"],
-            5,
-        ),
-        "education_pathways": _items(
-            {"path": _text(90), "description": _text(260)}, ["path", "description"], 4
-        ),
-        "short_term_milestones": _items(
-            {"title": _text(100), "description": _text(200), "timeframe": _text(40)},
-            ["title", "description", "timeframe"],
-            5,
-        ),
-        "long_term_goals": {"type": "array", "items": _text(180), "maxItems": 4},
-        "alternative_pathways": _items(
-            {"title": _text(90), "description": _text(240)}, ["title", "description"], 3
-        ),
-        "next_three_actions": {
-            "type": "array",
-            "items": _text(160),
-            "minItems": 3,
-            "maxItems": 3,
-        },
-        "based_on": _text(300),
+        "high_school": _items({"grade": _text(20), "focus": _text(160)}, ["grade", "focus"], 4),
+        "after_high_school": _items({"route": _text(80), "description": _text(220)}, ["route", "description"], 3),
+        "skills": _items({"skill": _text(60), "how": _text(180)}, ["skill", "how"], 3),
+        "based_on": _text(240),
     },
     "required": [
         "title",
         "career_goal",
-        "career_direction",
-        "interests_and_strengths",
-        "careers_exploring",
-        "academic_subjects",
-        "skills_to_develop",
-        "projects_and_activities",
-        "learning_opportunities",
-        "high_school_roadmap",
-        "education_pathways",
-        "short_term_milestones",
-        "long_term_goals",
-        "alternative_pathways",
-        "next_three_actions",
+        "summary",
+        "next_steps",
+        "careers",
+        "this_year",
+        "high_school",
+        "after_high_school",
+        "skills",
         "based_on",
     ],
 }
+PLAN_SCHEMA["properties"]["next_steps"]["minItems"] = 3
 
 
-PLAN_PROMPT = """You create personalized career plans for high school students at NeoCity Academy. You are an AI; the plan is a starting point the student can change, not a prediction.
+PLAN_PROMPT = """You create short, personal career plans for high school students at NeoCity Academy in Kissimmee, Florida. You are an AI; the plan is a starting point the student can change, not a prediction.
+
+What matters most is next_steps: exactly 3 things the student can do THIS MONTH, each small, concrete, and starting with a verb ("Ask your counselor about...", "Sign up for...", "Spend an hour on..."). why says, in one sentence, how it connects to the student.
 
 Rules:
-- Base every part on the student context below. Connect choices to the student's real interests, subjects, courses, activities, and goals, and name the connection.
-- Fit the plan to the student's grade. If the grade is unknown, write the roadmap by school year ("Grade 9", "Grade 10"...) starting from where they likely are, and say the grade is unknown in based_on.
-- If the student has no fixed goal, make the plan about exploration: 2-4 careers to explore, experiences to test interests, and decision points. Don't force one career.
-- Include several routes where realistic (college, community college, apprenticeship, trade school, military, certificates, work).
-- Prefer free, school-based, or low-cost opportunities (clubs, electives, library, free online courses, volunteering, job shadowing, summer programs) and describe them generically. Do not invent specific program names, deadlines, costs, salaries, admission requirements, or statistics.
-- Never use grades to rule anything out.
-- Milestones must be concrete and checkable, within the next 3-12 months.
-- next_three_actions: the three most useful things to do in the next two weeks, each starting with a verb.
-- careers_exploring: use slugs from the Career catalog candidates list when one fits, otherwise slug "".
-- based_on: one sentence naming what information you used (profile, conversations, resume, transcript) and anything important that is missing.
-- Write in clear, encouraging language a 9th grader understands. Always address the student as "you" (never by name or "the student"), including in career_direction and every "why"."""
+- Fit everything to the student's grade stage (below) and the time of year.
+- Base every part on what you know about the student and name the connection. If they have no fixed goal, make it a plan to explore: careers to try, not one answer.
+- careers: at most 3, each a slug from the Career catalog candidates list, with why in the student's own terms. The app adds official pay and education for each one, so never write pay, salaries, percentages, statistics, costs, deadlines, dates, admission requirements, or program and scholarship names anywhere in the plan.
+- this_year: up to 3 periods (like "This fall", "This spring", "This summer") with up to 3 steps each.
+- high_school: one short focus for each remaining grade, starting with the current one.
+- after_high_school: up to 3 realistic routes (college, community college, apprenticeship, trade school, military, certificates, work).
+- skills: up to 3 skills and how to build them for free or at school.
+- Never use grades to rule anything out. Prefer free, school-based, or low-cost options, described generically.
+- summary: 1 or 2 sentences. based_on: one sentence on what you used and what's missing.
+- Write in clear, encouraging language a 9th grader understands. Address the student as "you"."""
 
 
 def plan_to_dict(plan: CareerPlan, *, include_content: bool = True) -> dict:
@@ -143,24 +109,105 @@ def plan_to_dict(plan: CareerPlan, *, include_content: bool = True) -> dict:
     return data
 
 
-def _clean_content(raw: dict) -> dict:
+def career_card(slug: str, why: str) -> dict | None:
+    """A plan career with its official pay and education, attached by code."""
+
+    career = career_catalog.get_career(slug)
+
+    if career is None:
+        return None
+
+    facts = career_catalog.career_facts(slug) or {}
+    national = (facts.get("wages") or {}).get("national") or {}
+    florida = (facts.get("wages") or {}).get("florida") or {}
+    sources = facts.get("sources") or {}
+
+    return {
+        "slug": slug,
+        "title": career["title"],
+        "family_label": career_catalog.family_label(career["family"]),
+        "why": why.strip(),
+        "pay_median": national.get("annual_median"),
+        "pay_median_florida": florida.get("annual_median"),
+        "pay_hourly": national.get("hourly_median"),
+        "education": ((facts.get("education") or {}).get("typical_entry")),
+        "growth_percent": ((facts.get("outlook") or {}).get("growth_percent")),
+        "pay_source": (sources.get("wages") or {}).get("name"),
+        "outlook_source": (sources.get("outlook") or {}).get("name"),
+        "as_of": facts.get("retrieved"),
+    }
+
+
+PLAN_TEXT_FIELDS = (
+    ("summary", None),
+    ("next_steps", ("title", "why")),
+    ("careers", ("why",)),
+    ("this_year", ("steps",)),
+    ("high_school", ("focus",)),
+    ("after_high_school", ("description",)),
+    ("skills", ("how",)),
+    ("based_on", None),
+)
+
+
+def _ground_plan(content: dict, corpus: str) -> list[dict]:
+    """Remove any sentence with a figure or name no source supports."""
+
+    scopes = list(career_catalog.career_scopes())
+    removed: list[dict] = []
+
+    def clean(text: str) -> str:
+        cleaned, found = grounding.ground_reply(text, corpus, scopes, note=False)
+        removed.extend({"kind": claim["kind"], "text": claim["text"]} for claim in found)
+        return cleaned
+
+    for key, subkeys in PLAN_TEXT_FIELDS:
+        value = content.get(key)
+
+        if subkeys is None:
+            if isinstance(value, str):
+                content[key] = clean(value)
+            continue
+
+        for item in value or []:
+            for subkey in subkeys:
+                if isinstance(item.get(subkey), list):
+                    item[subkey] = [cleaned for text in item[subkey] if (cleaned := clean(text))]
+                elif isinstance(item.get(subkey), str):
+                    item[subkey] = clean(item[subkey])
+
+    return removed
+
+
+def _clean_content(raw: dict, grade_level: str, corpus: str) -> dict:
     content = copy.deepcopy(raw)
+    removed = _ground_plan(content, corpus)
 
-    for career in content.get("careers_exploring", []):
-        match = career_catalog.get_career(career.get("slug", ""))
+    steps = [step for step in content.get("next_steps", []) if step.get("title", "").strip()][:3]
+    cards = []
 
-        if match is None:
-            career["slug"] = ""
-        else:
-            career["title"] = match["title"]
+    for career in content.get("careers", []):
+        card = career_card(career.get("slug", ""), career.get("why", ""))
 
-    # Stable ids let milestones link to progress tasks across edits.
-    for milestone in content.get("short_term_milestones", []):
-        milestone.setdefault("id", uuid4().hex[:12])
+        if card and card["slug"] not in {item["slug"] for item in cards}:
+            cards.append(card)
 
-    content["next_three_actions"] = [
-        action for action in content.get("next_three_actions", []) if action.strip()
-    ][:3]
+    content.update(
+        {
+            "schema": PLAN_SCHEMA_VERSION,
+            "next_steps": steps,
+            "careers": cards[:MAX_PLAN_CAREERS],
+            "stage": plan_stages.stage_for(grade_level),
+            # Older readers (Home, the counselor's context, the checklist) use these.
+            "career_direction": content.get("summary", ""),
+            "next_three_actions": [step["title"] for step in steps],
+            "short_term_milestones": [],
+            "careers_exploring": [{"slug": card["slug"], "title": card["title"], "why": card["why"]} for card in cards],
+        }
+    )
+
+    if removed:
+        content["grounding"] = {"removed": removed}
 
     return content
 
@@ -195,8 +242,11 @@ async def _generate_content(
             "Create the student's career plan from everything you know about them."
         )
 
+    grade_level = context["profile"].get("grade_level", "")
     system = (
         PLAN_PROMPT
+        + "\n\n## Grade stage\n"
+        + plan_stages.stage_text(grade_level)
         + "\n\n"
         + context_block(context)
         + "\n\n## Career catalog candidates (slug: title)\n"
@@ -210,11 +260,11 @@ async def _generate_content(
         ],
         schema=PLAN_SCHEMA,
         schema_name="career_plan",
-        max_tokens=5000,
+        max_tokens=2500,
         temperature=0.4,
     )
 
-    return _clean_content(raw)
+    return _clean_content(raw, grade_level, grounding_corpus(context, query))
 
 
 async def list_plans(student_id: str) -> list[dict]:
@@ -281,11 +331,14 @@ async def revise_plan(
 ) -> dict:
     source = await get_owned_plan(student_id, plan_id)
 
-    previous = {
-        key: value
-        for key, value in (source.content or {}).items()
-        if key != "based_on"
-    }
+    content = source.content or {}
+
+    if content.get("schema") == PLAN_SCHEMA_VERSION:
+        # Only what the model wrote; pay and education are added by code.
+        previous = {key: content[key] for key in PLAN_SCHEMA["properties"] if key in content and key != "based_on"}
+        previous["careers"] = [{"slug": card["slug"], "why": card["why"]} for card in content.get("careers", [])]
+    else:
+        previous = {key: value for key, value in content.items() if key != "based_on"}
 
     content = await _generate_content(
         student_id,
@@ -329,6 +382,7 @@ EDITABLE_LIST_KEYS = {
     "short_term_milestones",
     "next_three_actions",
     "long_term_goals",
+    "next_steps",
 }
 
 
@@ -374,6 +428,15 @@ async def update_plan(student_id: str, plan_id: str, updates: dict) -> dict:
                     )
 
                 content[key] = cleaned
+            elif key == "next_steps":
+                steps = [
+                    {"title": str(item.get("title", "")).strip()[:90], "why": str(item.get("why", "")).strip()[:200]}
+                    for item in value[:5]
+                    if str(item.get("title", "")).strip()
+                ]
+                content["next_steps"] = steps
+                # The checklist follows the steps.
+                content["next_three_actions"] = [step["title"] for step in steps]
             else:
                 content[key] = [str(item).strip()[:200] for item in value if str(item).strip()][:6]
 

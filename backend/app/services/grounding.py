@@ -204,6 +204,8 @@ def ground_reply(
     reply: str,
     corpus: str,
     scopes: list[tuple[str, str]] | None = None,
+    *,
+    note: bool = True,
 ) -> tuple[str, list[dict]]:
     """
     The reply without sentences that carry ungrounded claims, plus the
@@ -249,6 +251,7 @@ def ground_reply(
         # Every flagged claim sat in a safety sentence that had to stay.
         return reply, []
 
-    text = (text + "\n\n" + NOTE).strip() if text else NOTE
+    if note:
+        text = (text + "\n\n" + NOTE).strip() if text else NOTE
 
     return text, removed
