@@ -167,7 +167,7 @@ export function MemoryReview() {
           <button
             type="button"
             onClick={() => setStatus(fact, "confirmed")}
-            className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-white hover:bg-accent-hover"
+            className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-on-accent hover:bg-accent-hover"
           >
             <Check aria-hidden className="size-3.5" /> Confirm
           </button>
@@ -242,7 +242,7 @@ export function MemoryReview() {
           <div className="grid gap-x-8 gap-y-5 md:grid-cols-2">
             {Object.entries(grouped).map(([label, items]) => (
               <div key={label}>
-                <h3 className="px-3 text-xs font-semibold uppercase tracking-[0.1em] text-ink-muted">{label}</h3>
+                <h3 className="px-3 text-xs font-semibold text-ink-muted">{label}</h3>
                 <ul className="mt-1">{items.map((fact) => factRow(fact, "confirmed"))}</ul>
               </div>
             ))}

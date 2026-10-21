@@ -3,55 +3,62 @@
 /*
  * NeoCity Academy design tokens.
  *
- * Light theme only for now: every pairing below is checked for WCAG AA
- * (ink and ink-muted on canvas/surface, white on primary/accent/warm-ink).
+ * One accent (steel blue, "primary") on calm neutrals. Two status colors
+ * only: green ("accent") for done or on file, amber ("sun") for drafts and
+ * warnings. "warm" is a neutral kept for older class names. Dark values
+ * are below in :root under prefers-color-scheme. Every text pairing is
+ * checked for WCAG AA in both themes (ink and ink-muted on canvas and
+ * surface; white on primary and accent).
  */
 @theme {
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 
-  --color-canvas: #fafaf7;
+  --color-canvas: #f7f7f5;
   --color-surface: #ffffff;
-  --color-surface-2: #f4f3ef;
-  --color-surface-3: #ecebe5;
+  --color-surface-2: #f1f1ee;
+  --color-surface-3: #e7e7e3;
 
-  --color-ink: #172033;
-  --color-ink-muted: #5b6478;
-  --color-ink-soft: #8a92a3;
+  --color-ink: #1c1f24;
+  --color-ink-muted: #565b64;
+  --color-ink-soft: #6d727a;
 
-  --color-line: #e7e5df;
-  --color-line-strong: #d6d3cb;
+  --color-line: #e4e4e0;
+  --color-line-strong: #cfcfca;
 
-  --color-primary: #4338ca;
-  --color-primary-hover: #3730a3;
-  --color-primary-soft: #ede9fe;
-  --color-primary-softer: #f5f3ff;
-  --color-primary-ink: #312e81;
+  --color-primary: #275d8c;
+  --color-primary-hover: #1f4c73;
+  --color-primary-soft: #e3edf5;
+  --color-primary-softer: #f1f6fa;
+  --color-primary-ink: #1b4266;
+  /* Text on a primary or accent fill: white in light, near-black in dark. */
+  --color-on-primary: #ffffff;
+  --color-on-accent: #ffffff;
 
-  --color-accent: #0d9488;
-  --color-accent-hover: #0f766e;
-  --color-accent-soft: #ccfbf1;
-  --color-accent-softer: #effcf9;
-  --color-accent-ink: #115e59;
+  --color-accent: #2e7d4f;
+  --color-accent-hover: #256840;
+  --color-accent-soft: #e3f1e8;
+  --color-accent-softer: #f1f8f3;
+  --color-accent-ink: #1d5535;
 
-  --color-warm: #f97362;
-  --color-warm-soft: #ffe8e3;
-  --color-warm-ink: #b23a2a;
+  --color-warm: #8a8f96;
+  --color-warm-soft: #f1f1ee;
+  --color-warm-ink: #4f545b;
 
-  --color-sun: #f5b544;
-  --color-sun-soft: #fef3d7;
-  --color-sun-ink: #8a5a00;
+  --color-sun: #b7791f;
+  --color-sun-soft: #f7f0e1;
+  --color-sun-ink: #7a5410;
 
   --color-danger: #b42318;
-  --color-danger-soft: #fee4e2;
+  --color-danger-soft: #fbe9e7;
 
-  --radius-input: 0.625rem;
-  --radius-card: 1rem;
-  --radius-hero: 1.5rem;
+  --radius-input: 0.5rem;
+  --radius-card: 0.75rem;
+  --radius-hero: 1rem;
 
-  --shadow-card: 0 1px 2px rgb(23 32 51 / 0.04), 0 4px 16px -6px rgb(23 32 51 / 0.08);
-  --shadow-raised: 0 2px 6px rgb(23 32 51 / 0.05), 0 16px 40px -12px rgb(67 56 202 / 0.18);
-  --shadow-focus: 0 0 0 3px rgb(67 56 202 / 0.28);
+  --shadow-card: 0 1px 2px rgb(28 31 36 / 0.04);
+  --shadow-raised: 0 2px 8px rgb(28 31 36 / 0.08);
+  --shadow-focus: 0 0 0 3px rgb(39 93 140 / 0.3);
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -105,7 +112,52 @@
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: #121417;
+    --color-surface: #1a1d21;
+    --color-surface-2: #22262b;
+    --color-surface-3: #2c3036;
+
+    --color-ink: #e9eaec;
+    --color-ink-muted: #a9adb4;
+    --color-ink-soft: #8b9098;
+
+    --color-line: #2c3036;
+    --color-line-strong: #3a3f46;
+
+    --color-primary: #7aaee0;
+    --color-primary-hover: #93bee8;
+    --color-primary-soft: #1d2c3b;
+    --color-primary-softer: #18222d;
+    --color-primary-ink: #a9c9ea;
+    --color-on-primary: #0f1a24;
+    --color-on-accent: #0f1f16;
+
+    --color-accent: #6cc493;
+    --color-accent-hover: #86d1a6;
+    --color-accent-soft: #1c2e24;
+    --color-accent-softer: #17241d;
+    --color-accent-ink: #8fd1aa;
+
+    --color-warm: #8b9098;
+    --color-warm-soft: #22262b;
+    --color-warm-ink: #c3c6cb;
+
+    --color-sun: #d19a3a;
+    --color-sun-soft: #33291a;
+    --color-sun-ink: #e9c27a;
+
+    --color-danger: #ef8a7f;
+    --color-danger-soft: #3a1f1d;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+    --shadow-raised: 0 2px 10px rgb(0 0 0 / 0.4);
+    --shadow-focus: 0 0 0 3px rgb(122 174 224 / 0.45);
+  }
 }
 
 html {

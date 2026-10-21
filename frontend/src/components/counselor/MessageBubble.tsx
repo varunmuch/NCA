@@ -13,7 +13,6 @@ import {
   MessageCircle,
   RotateCcw,
   Route,
-  Sparkles,
   Target,
   UserRoundPen,
   X,
@@ -39,17 +38,13 @@ export const ACTION_META: Record<CounselorAction, { label: string; icon: typeof 
   career_roadmap: { label: "Career roadmap", icon: Route, prompt: "Can you show me a roadmap for this career?" },
 };
 
+/** The school's own mark: who is talking, without AI sparkle. */
 export function CounselorAvatar({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
-  const box = size === "lg" ? "size-14" : size === "sm" ? "size-7" : "size-8";
-  const glyph = size === "lg" ? "size-7" : size === "sm" ? "size-3.5" : "size-4";
+  const box = size === "lg" ? "size-12" : size === "sm" ? "size-6" : "size-7";
 
   return (
-    <span
-      aria-hidden
-      className={`flex ${box} shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary via-[#5b4fd6] to-accent text-white shadow-[0_4px_12px_-4px_rgb(67_56_202/0.5)]`}
-    >
-      <Sparkles className={glyph} />
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/brand/neocity-knight-mark.png" alt="" aria-hidden className={`dark:rounded-full dark:bg-[#f7f7f5] dark:p-0.5 ${box} shrink-0 object-contain`} />
   );
 }
 
@@ -109,8 +104,8 @@ function ProposedFacts({ facts }: { facts: StudentFact[] }) {
   }
 
   return (
-    <div className="mt-4 rounded-2xl border border-accent/20 bg-accent-softer p-3.5">
-      <p className="text-xs font-semibold uppercase tracking-[0.1em] text-accent-ink">Remember this about you?</p>
+    <div className="mt-4 rounded-xl border border-line bg-surface p-3.5">
+      <p className="text-xs font-semibold text-accent-ink">Remember this about you?</p>
       <ul className="mt-2 space-y-2">
         {facts.map((fact) => {
           const status = states[fact.id];
@@ -127,7 +122,7 @@ function ProposedFacts({ facts }: { facts: StudentFact[] }) {
                     type="button"
                     disabled={busy === fact.id}
                     onClick={() => set(fact, "confirmed")}
-                    className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white hover:bg-accent-hover disabled:opacity-60"
+                    className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-on-accent hover:bg-accent-hover disabled:opacity-60"
                   >
                     <Check aria-hidden className="size-3.5" /> Save
                   </button>
@@ -181,7 +176,7 @@ export function MessageBubble({
     return (
       <div className="flex justify-end animate-[var(--animate-fade-up)]">
         <div className="max-w-[85%] sm:max-w-[75%]">
-          <div className="whitespace-pre-wrap rounded-[1.25rem] rounded-br-md bg-primary px-4 py-2.5 text-[15px] leading-relaxed text-white shadow-[0_1px_2px_rgb(23_32_51/0.06)]">
+          <div className="whitespace-pre-wrap rounded-2xl bg-surface-2 px-4 py-2.5 text-[15px] leading-relaxed text-ink">
             {message.content}
           </div>
           {message.created_at && (
@@ -194,9 +189,8 @@ export function MessageBubble({
 
   if (metadata.error) {
     return (
-      <div className="flex gap-3">
-        <CounselorAvatar />
-        <div role="alert" className="rounded-2xl border border-danger/20 bg-danger-soft/50 px-4 py-3 text-sm">
+      <div>
+        <div role="alert" className="rounded-xl border border-line bg-surface px-4 py-3 text-sm">
           <p className="text-ink">I couldn&apos;t answer just now. Your message is saved.</p>
           <button
             type="button"
@@ -219,9 +213,8 @@ export function MessageBubble({
   // No entrance animation: the reply streams in, and the saved message that
   // replaces the streamed one must not flash.
   return (
-    <div className="flex gap-3">
-      <CounselorAvatar />
-      <div className="min-w-0 flex-1 pt-0.5">
+    <div>
+      <div className="min-w-0">
         {metadata.streaming && (
           <span className="sr-only" aria-live="polite">
             Your counselor is writing
@@ -230,7 +223,7 @@ export function MessageBubble({
         {message.content && (
           <Markdown
             text={message.content}
-            className={`text-[15px] leading-[1.7] text-ink ${metadata.streaming ? "[&>*:last-child]:after:ml-0.5 [&>*:last-child]:after:inline-block [&>*:last-child]:after:h-[1.05em] [&>*:last-child]:after:w-[2px] [&>*:last-child]:after:translate-y-[0.2em] [&>*:last-child]:after:animate-pulse [&>*:last-child]:after:bg-ink-muted [&>*:last-child]:after:content-['']" : ""}`}
+            className={`text-[16px] leading-[1.75] text-ink ${metadata.streaming ? "[&>*:last-child]:after:ml-0.5 [&>*:last-child]:after:inline-block [&>*:last-child]:after:h-[1.05em] [&>*:last-child]:after:w-[2px] [&>*:last-child]:after:translate-y-[0.2em] [&>*:last-child]:after:animate-pulse [&>*:last-child]:after:bg-ink-muted [&>*:last-child]:after:content-['']" : ""}`}
           />
         )}
 

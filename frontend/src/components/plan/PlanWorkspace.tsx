@@ -17,12 +17,12 @@ import {
   MessageCircle,
   Pencil,
   Plus,
+  RefreshCw,
   Route,
   Save,
   Signpost,
   Target,
   Trash2,
-  WandSparkles,
 } from "lucide-react";
 
 import { Badge, Card } from "@/components/ui/Card";
@@ -100,7 +100,7 @@ function CheckButton({
       disabled={disabled}
       onClick={onToggle}
       className={`flex size-7 shrink-0 items-center justify-center rounded-full border-2 transition-colors disabled:opacity-50 ${
-        done ? "border-accent bg-accent text-white" : "border-line-strong bg-surface hover:border-accent"
+        done ? "border-accent bg-accent text-on-accent" : "border-line-strong bg-surface hover:border-accent"
       }`}
     >
       {done && <Check aria-hidden className="size-4" />}
@@ -263,7 +263,7 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
         )}
       </div>
 
-      <header className="relative overflow-hidden rounded-[var(--radius-hero)] border border-line bg-gradient-to-br from-primary-softer via-surface to-accent-softer p-6 shadow-[var(--shadow-card)] sm:p-8">
+      <header className="relative overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-8">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone={saved ? "accent" : "sun"}>{saved ? "Saved" : "Draft"}</Badge>
           <Badge>Version {plan.version}</Badge>
@@ -279,7 +279,7 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
               Save plan
             </Button>
           )}
-          <Button variant={saved ? "primary" : "secondary"} onClick={() => setReviseOpen("revise")} icon={<WandSparkles aria-hidden className="size-4" />}>
+          <Button variant={saved ? "primary" : "secondary"} onClick={() => setReviseOpen("revise")} icon={<RefreshCw aria-hidden className="size-4" />}>
             Revise with AI
           </Button>
           <Button variant="secondary" onClick={() => setReviseOpen("goal")} icon={<Target aria-hidden className="size-4" />}>
@@ -304,8 +304,8 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
         <SimplePlan plan={plan} saved={saved} taskBusy={taskBusy} onToggle={toggleTask} onSaveSteps={saveSteps} />
       ) : (
         <>
-      <section aria-labelledby="next-actions" className="rounded-[var(--radius-card)] bg-ink p-6 text-white shadow-[var(--shadow-raised)] sm:p-7">
-        <h2 id="next-actions" className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">
+      <section aria-labelledby="next-actions" className="rounded-[var(--radius-card)] bg-ink p-6 text-canvas shadow-[var(--shadow-raised)] sm:p-7">
+        <h2 id="next-actions" className="text-xs font-semibold text-canvas/70">
           My next three actions
         </h2>
         <ol className="mt-4 grid gap-3 md:grid-cols-3">
@@ -314,7 +314,7 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
             const done = Boolean(taskId) && plan.task_status[String(taskId)] === "done";
 
             return (
-              <li key={action} className="flex gap-3 rounded-2xl bg-white/8 p-4 ring-1 ring-white/10">
+              <li key={action} className="flex gap-3 rounded-2xl bg-canvas/8 p-4 ring-1 ring-canvas/10">
                 {saved && taskId ? (
                   <button
                     type="button"
@@ -324,15 +324,15 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
                     disabled={taskBusy === taskId}
                     onClick={() => toggleTask(taskId)}
                     className={`flex size-7 shrink-0 items-center justify-center rounded-full border-2 ${
-                      done ? "border-accent bg-accent" : "border-white/40 hover:border-white"
+                      done ? "border-accent bg-accent" : "border-canvas/40 hover:border-canvas"
                     }`}
                   >
                     {done && <Check aria-hidden className="size-4" />}
                   </button>
                 ) : (
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white/15 text-sm font-bold">{index + 1}</span>
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-canvas/15 text-sm font-bold">{index + 1}</span>
                 )}
-                <p className={`pt-0.5 leading-relaxed ${done ? "text-white/60 line-through" : ""}`}>{action}</p>
+                <p className={`pt-0.5 leading-relaxed ${done ? "text-canvas/60 line-through" : ""}`}>{action}</p>
               </li>
             );
           })}
@@ -388,7 +388,7 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
         <ol className="relative space-y-6 pl-8 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-0.5 before:bg-line">
           {content.high_school_roadmap.map((stage, index) => (
             <li key={`${stage.period}-${index}`} className="relative">
-              <span className="absolute -left-8 top-0.5 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-white ring-4 ring-surface">
+              <span className="absolute -left-8 top-0.5 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary ring-4 ring-surface">
                 {index + 1}
               </span>
               <p className="text-sm font-semibold text-primary">{stage.period}</p>
@@ -535,7 +535,7 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
             <Button
               onClick={revise}
               disabled={reviseOpen === "goal" ? !newGoal.trim() : !instruction.trim()}
-              icon={<WandSparkles aria-hidden className="size-4" />}
+              icon={<RefreshCw aria-hidden className="size-4" />}
             >
               Create new version
             </Button>

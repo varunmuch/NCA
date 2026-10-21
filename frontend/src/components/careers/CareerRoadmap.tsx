@@ -11,9 +11,9 @@ import {
   GraduationCap,
   ListPlus,
   Map as MapIcon,
+  MessageCircle,
   RefreshCw,
   Rocket,
-  Sparkles,
   Star,
 } from "lucide-react";
 
@@ -43,14 +43,14 @@ const WAITING_LINES = [
   "Almost there…",
 ];
 
-// Ladder colors move from near-term (warm) to long-term (primary).
+// One hue, light to strong, from this week out to five years.
 const RUNG_TONES = [
-  "bg-warm text-white",
-  "bg-sun text-ink",
-  "bg-accent text-white",
-  "bg-accent-hover text-white",
-  "bg-primary text-white",
-  "bg-primary-ink text-white",
+  "bg-surface-3 text-ink",
+  "bg-surface-3 text-ink",
+  "bg-primary-soft text-primary-ink",
+  "bg-primary-soft text-primary-ink",
+  "bg-primary text-on-primary",
+  "bg-primary text-on-primary",
 ];
 
 function ExternalItem({
@@ -130,7 +130,7 @@ function NeedsRoadmap({ onBuild, loading }: { onBuild: () => void; loading: bool
   return (
     <div className="rounded-2xl border border-dashed border-line-strong bg-surface-2 p-5 text-center">
       <p className="text-sm text-ink-muted">This part is personalized to you.</p>
-      <Button className="mt-3" size="sm" onClick={onBuild} loading={loading} icon={<Sparkles aria-hidden className="size-4" />}>
+      <Button className="mt-3" size="sm" onClick={onBuild} loading={loading} icon={<MessageCircle aria-hidden className="size-4" />}>
         Build my roadmap
       </Button>
     </div>
@@ -152,7 +152,7 @@ function Ladder({ roadmap }: { roadmap: CareerRoadmapContent }) {
             {index + 1}
           </span>
           <div className="min-w-0 flex-1 pb-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-muted">{rung.horizon}</p>
+            <p className="text-xs font-semibold text-ink-muted">{rung.horizon}</p>
             <p className="mt-0.5 font-semibold leading-snug text-ink">{rung.goal}</p>
             {rung.steps.length > 0 && (
               <ul className="mt-2 space-y-1.5">
@@ -280,7 +280,7 @@ export function CareerRoadmap({ slug, title }: { slug: string; title: string }) 
 
   return (
     <Card className="overflow-hidden" id="roadmap">
-      <div className="bg-gradient-to-br from-primary-softer via-surface to-accent-softer p-6 sm:p-8">
+      <div className="bg-surface-2 p-6 sm:p-8">
         <div className="flex flex-wrap items-center gap-2">
           <MapIcon aria-hidden className="size-5 text-primary" />
           <h2 className="text-xl font-bold">Your roadmap: {title}</h2>
@@ -294,7 +294,7 @@ export function CareerRoadmap({ slug, title }: { slug: string; title: string }) 
               through five years out, what to learn, which courses to take, programs and scholarships to look at, and colleges
               to research.
             </p>
-            <Button className="mt-5" size="lg" onClick={build} icon={<Sparkles aria-hidden className="size-[18px]" />}>
+            <Button className="mt-5" size="lg" onClick={build} icon={<MessageCircle aria-hidden className="size-[18px]" />}>
               Build my roadmap
             </Button>
             <p className="mt-2 text-xs text-ink-muted">Takes about a minute. The resource lists below are ready now.</p>
@@ -325,7 +325,7 @@ export function CareerRoadmap({ slug, title }: { slug: string; title: string }) 
               <div className="mt-4 flex gap-3 rounded-2xl bg-surface p-4 shadow-[var(--shadow-card)]">
                 <Flag aria-hidden className="mt-0.5 size-5 shrink-0 text-warm" />
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-warm-ink">Do this today</p>
+                  <p className="text-xs font-semibold text-warm-ink">Do this today</p>
                   <p className="mt-0.5 font-medium text-ink">{roadmap.first_step}</p>
                 </div>
               </div>

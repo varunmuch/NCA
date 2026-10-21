@@ -230,3 +230,16 @@ def test_career_cards_come_only_from_careers_the_reply_names():
     assert [card["slug"] for card in cards] == ["graphic-designers"]
     assert cards[0]["why"] == "A graphic designer makes visuals."
     assert cs.careers_in_reply("No careers here.") == []
+
+
+def test_each_card_gets_the_sentence_that_names_it():
+    # Seen in the Phase 7 screenshots: two careers in one paragraph both got
+    # the paragraph's first sentence as their reason.
+    reply = (
+        "You like drawing and computers. One option could be Special Effects Artists and Animators, "
+        "who bring art to life. Another could be Graphic Designers, who design visuals."
+    )
+    cards = {card["slug"]: card["why"] for card in cs.careers_in_reply(reply)}
+
+    assert cards["special-effects-artists-and-animators"].startswith("One option could be Special Effects")
+    assert cards["graphic-designers"].startswith("Another could be Graphic Designers")

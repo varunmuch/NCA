@@ -11,7 +11,6 @@ import {
   ListChecks,
   Map as MapIcon,
   MessageCircle,
-  Sparkles,
   Wrench,
 } from "lucide-react";
 
@@ -63,9 +62,9 @@ function Insights({ slug }: { slug: string }) {
 
   return (
     <Card className="overflow-hidden">
-      <div className="bg-gradient-to-br from-primary-softer to-accent-softer p-6">
+      <div className="bg-surface-2 p-6">
         <div className="flex items-center gap-2">
-          <Sparkles aria-hidden className="size-5 text-primary" />
+          <MessageCircle aria-hidden className="size-5 text-primary" />
           <h2 className="text-lg font-bold">Make it personal</h2>
           <Badge tone="primary">AI</Badge>
         </div>
@@ -144,9 +143,9 @@ export function CareerDetailView({ career }: { career: CareerDetail }) {
               <p className="mt-2 text-sm text-ink-muted">Also called: {career.sample_titles.slice(0, 4).join(", ")}</p>
             )}
             <div className="mt-3 flex flex-wrap gap-2">
-              {prep && <Badge tone="sun">{prep}</Badge>}
+              {prep && <Badge>{prep}</Badge>}
               {career.interest_labels.slice(0, 2).map((label) => (
-                <Badge key={label} tone="accent">
+                <Badge key={label}>
                   {label}
                 </Badge>
               ))}

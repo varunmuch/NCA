@@ -258,10 +258,10 @@ function TradeoffsPart({
               onClick={() => choose(key)}
               aria-pressed={chosen === key}
               className={`flex min-h-36 flex-col justify-between rounded-[var(--radius-card)] border-2 p-5 text-left transition-colors ${
-                chosen === key ? "border-ink bg-ink text-white" : "border-line bg-surface text-ink hover:border-ink-soft"
+                chosen === key ? "border-ink bg-ink text-canvas" : "border-line bg-surface text-ink hover:border-ink-soft"
               }`}
             >
-              <span className={`text-xs font-semibold uppercase tracking-[0.12em] ${chosen === key ? "text-white/60" : "text-ink-soft"}`}>
+              <span className={`text-xs font-semibold ${chosen === key ? "text-canvas/60" : "text-ink-soft"}`}>
                 {key === "a" ? "Option A" : "Option B"}
               </span>
               <span className="mt-4 text-xl font-semibold leading-snug">{item[key].text}</span>
@@ -334,12 +334,12 @@ function ChoicePart({
               onClick={() => toggle(option.key)}
               className={`flex items-center gap-3 border text-left transition-colors disabled:opacity-40 ${
                 layout === "tiles" ? "rounded-xl px-4 py-3.5 text-[15px]" : "rounded-full px-4 py-2 text-sm"
-              } ${on ? "border-ink bg-ink text-white" : "border-line bg-surface text-ink hover:border-ink-soft"}`}
+              } ${on ? "border-ink bg-ink text-canvas" : "border-line bg-surface text-ink hover:border-ink-soft"}`}
             >
               {layout === "tiles" && (
                 <span
                   className={`flex size-5 shrink-0 items-center justify-center rounded-md border ${
-                    on ? "border-white bg-white text-ink" : "border-line-strong"
+                    on ? "border-canvas bg-canvas text-ink" : "border-line-strong"
                   }`}
                 >
                   {on && <Check aria-hidden className="size-3.5" />}
@@ -397,15 +397,15 @@ function TrainingPart({
               aria-checked={on}
               onClick={() => onChange(option.key)}
               className={`flex w-full items-center gap-4 rounded-xl border px-4 py-3.5 text-left transition-colors ${
-                on ? "border-ink bg-ink text-white" : "border-line bg-surface text-ink hover:border-ink-soft"
+                on ? "border-ink bg-ink text-canvas" : "border-line bg-surface text-ink hover:border-ink-soft"
               }`}
             >
-              <span className={`flex size-5 shrink-0 items-center justify-center rounded-full border-2 ${on ? "border-white" : "border-line-strong"}`}>
-                {on && <span className="size-2 rounded-full bg-white" />}
+              <span className={`flex size-5 shrink-0 items-center justify-center rounded-full border-2 ${on ? "border-canvas" : "border-line-strong"}`}>
+                {on && <span className="size-2 rounded-full bg-canvas" />}
               </span>
               <span>
                 <span className="block font-semibold">{option.label}</span>
-                <span className={`block text-sm ${on ? "text-white/70" : "text-ink-muted"}`}>{option.description}</span>
+                <span className={`block text-sm ${on ? "text-canvas/70" : "text-ink-muted"}`}>{option.description}</span>
               </span>
             </button>
           );
@@ -564,7 +564,7 @@ function Results({ result, onRetake }: { result: InterestQuizResult; onRetake: (
               <span
                 key={letter}
                 className={`flex size-16 items-center justify-center rounded-2xl text-3xl font-bold sm:size-20 sm:text-4xl ${
-                  index === 0 ? "bg-ink text-white" : "border-2 border-ink text-ink"
+                  index === 0 ? "bg-ink text-canvas" : "border-2 border-ink text-ink"
                 }`}
               >
                 {letter}

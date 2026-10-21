@@ -34,13 +34,13 @@ export function SectionTitle({
     <div className="flex items-start justify-between gap-3">
       <div className="flex items-center gap-3">
         {icon && (
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary-softer text-primary">
+          <span className="flex shrink-0 items-center justify-center text-ink-muted">
             {icon}
           </span>
         )}
         <div>
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-muted">
+            <p className="text-xs font-semibold text-ink-muted">
               {eyebrow}
             </p>
           )}
@@ -67,7 +67,7 @@ export function PageHeader({
     <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
         {eyebrow && (
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+          <p className="text-sm font-medium text-ink-muted">
             {eyebrow}
           </p>
         )}

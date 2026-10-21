@@ -79,7 +79,7 @@ export function SimplePlan({
                     disabled={taskBusy === taskId}
                     onClick={() => onToggle(taskId)}
                     className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border-2 transition-colors disabled:opacity-50 ${
-                      isDone ? "border-accent bg-accent text-white" : "border-line-strong hover:border-accent"
+                      isDone ? "border-accent bg-accent text-on-accent" : "border-line-strong hover:border-accent"
                     }`}
                   >
                     {isDone && <Check aria-hidden className="size-4" />}

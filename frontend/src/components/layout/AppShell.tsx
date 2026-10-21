@@ -58,11 +58,11 @@ export function BrandMark({ compact = false }: { compact?: boolean }) {
         alt=""
         width={36}
         height={36}
-        className="size-9 shrink-0 object-contain"
+        className="dark:rounded-full dark:bg-[#f7f7f5] dark:p-0.5 size-9 shrink-0 object-contain"
       />
       {!compact && (
         <span className="leading-tight">
-          <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+          <span className="block text-[11px] font-semibold text-ink-muted">
             NeoCity Academy
           </span>
           <span className="font-display block text-[17px] font-semibold text-ink">Career Explorer</span>
@@ -78,7 +78,7 @@ function Avatar({ size = "md" }: { size?: "sm" | "md" }) {
   return (
     <span
       aria-hidden
-      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent font-semibold text-white ${
+      className={`flex shrink-0 items-center justify-center rounded-full bg-surface-3 font-semibold text-ink ${
         size === "sm" ? "size-8 text-xs" : "size-9 text-sm"
       }`}
     >
@@ -179,7 +179,7 @@ function Sidebar({
 
       <div className={`mt-6 border-t border-line pt-4 ${collapsed ? "w-full" : ""}`}>
         {!collapsed && (
-          <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft">More</p>
+          <p className="px-3 pb-1.5 text-[11px] font-semibold text-ink-soft">More</p>
         )}
         <nav aria-label="More" className={`flex flex-col gap-1 ${collapsed ? "items-center" : ""}`}>
           {moreNav(Boolean(me.is_staff)).map((item) => (
@@ -323,7 +323,7 @@ function Shell({ children }: { children: ReactNode }) {
     <div className="min-h-dvh">
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-canvas"
       >
         Skip to content
       </a>

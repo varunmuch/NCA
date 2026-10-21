@@ -49,7 +49,7 @@ export function StaffStudentView({ student }: { student: StaffStudentDetail }) {
       </Link>
 
       <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">Student overview</p>
+        <p className="text-xs font-semibold text-primary">Student overview</p>
         <h1 className="font-display mt-1 text-[2rem] font-semibold leading-tight">{student.name || "Student"}</h1>
         <p className="mt-1 text-sm text-ink-muted">Read-only. Chat messages are private to the student and not shown here.</p>
       </header>

@@ -2,10 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowLeft, ArrowRight, Compass, Sparkles, Target } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Compass,
+  MessageCircle,
+  Target,
+} from "lucide-react";
 
 import { BrandMark } from "@/components/layout/AppShell";
-import { PathIllustration } from "@/components/home/PathIllustration";
 import { Button } from "@/components/ui/Button";
 import { ChipInput, TextInput } from "@/components/ui/Field";
 import { ErrorNotice } from "@/components/ui/Feedback";
@@ -64,7 +69,7 @@ function Choice({
       onClick={onClick}
       className={`rounded-full border px-4 py-2.5 text-[15px] font-semibold transition-colors ${
         selected
-          ? "border-primary bg-primary text-white"
+          ? "border-primary bg-primary text-on-primary"
           : "border-line-strong bg-surface text-ink hover:border-primary/40 hover:bg-primary-softer"
       }`}
     >
@@ -145,7 +150,7 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
     careerStatus === "have_goal" ? "/counselor?start=have_goal" : careerStatus === "exploring" ? "/counselor?start=exploring" : "/counselor";
 
   return (
-    <div className="flex min-h-dvh flex-col bg-gradient-to-b from-primary-softer via-canvas to-canvas">
+    <div className="flex min-h-dvh flex-col bg-canvas">
       <header className="mx-auto flex w-full max-w-3xl items-center justify-between px-5 py-5">
         <BrandMark />
         <button
@@ -236,11 +241,11 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
               <p className="mt-3 text-lg text-ink-muted">
                 Pick a few favorite subjects and interests, or type your own. There are no wrong answers.
               </p>
-              <h2 className="mt-8 text-sm font-bold uppercase tracking-[0.1em] text-ink-muted">Favorite subjects</h2>
+              <h2 className="mt-8 text-sm font-bold text-ink-muted">Favorite subjects</h2>
               <div className="mt-3">
                 <ChipInput value={subjects} onChange={setSubjects} placeholder="Type a subject" suggestions={SUBJECTS} />
               </div>
-              <h2 className="mt-7 text-sm font-bold uppercase tracking-[0.1em] text-ink-muted">Interests & hobbies</h2>
+              <h2 className="mt-7 text-sm font-bold text-ink-muted">Interests & hobbies</h2>
               <div className="mt-3">
                 <ChipInput value={interests} onChange={setInterests} placeholder="Type an interest" suggestions={INTERESTS} />
               </div>
@@ -304,7 +309,6 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
 
           {step === 5 && (
             <section className="text-center">
-              <PathIllustration className="mx-auto w-full max-w-[300px]" />
               <h1 className="font-display mt-4 text-[2.25rem] font-semibold leading-tight">
                 You&apos;re all set{preferredName ? `, ${preferredName}` : ""}!
               </h1>
@@ -312,7 +316,7 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
                 Your AI Career Counselor is ready to help you explore, ask questions, and build a plan that works for you.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <Button size="lg" loading={saving} onClick={() => finish(counselorStart)} icon={<Sparkles aria-hidden className="size-[18px]" />}>
+                <Button size="lg" loading={saving} onClick={() => finish(counselorStart)} icon={<MessageCircle aria-hidden className="size-[18px]" />}>
                   Talk to my counselor
                 </Button>
                 <Button size="lg" variant="secondary" disabled={saving} onClick={() => finish("/")}>

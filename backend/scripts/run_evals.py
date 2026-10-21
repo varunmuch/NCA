@@ -45,8 +45,9 @@ from app.services.student_service import save_profile_dict  # noqa: E402
 EVALS = Path(__file__).resolve().parents[1] / "tests" / "evals"
 
 DECLINE = re.compile(
-    r"don't have|do not have|can't (?:give|tell|say|provide|share)|cannot (?:give|tell|provide)|"
-    r"not able to|I'm not sure (?:of|about) the|no reliable|couldn't verify|check (?:with|out)|"
+    # ['’] : replies use straight or curly apostrophes.
+    r"don['’]t have|do not have|can['’]t (?:give|tell|say|provide|share)|cannot (?:give|tell|provide)|"
+    r"not able to|I['’]m not sure (?:of|about) the|no reliable|couldn['’]t verify|check (?:with|out)|"
     r"ask (?:your|a) |look (?:it |them )?up|official|bls\.gov|careeronestop|studentaid|"
     r"onetonline|varies|depends on",
     re.IGNORECASE,

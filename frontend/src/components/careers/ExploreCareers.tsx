@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { GitCompare, Lightbulb, Search, Sparkles, X } from "lucide-react";
+import {
+  GitCompare,
+  Lightbulb,
+  MessageCircle,
+  Search,
+  X,
+} from "lucide-react";
 
 import { PageHeader } from "@/components/ui/Card";
 import { ButtonLink } from "@/components/ui/Button";
@@ -159,7 +165,7 @@ export function ExploreCareers() {
       {!filtering && forYou && forYou.length > 0 && (
         <section aria-labelledby="for-you">
           <div className="flex items-center gap-2">
-            <Sparkles aria-hidden className="size-5 text-primary" />
+            <MessageCircle aria-hidden className="size-5 text-primary" />
             <h2 id="for-you" className="text-lg font-bold">
               Picked for you
             </h2>
@@ -184,7 +190,7 @@ export function ExploreCareers() {
           <p className="text-sm text-primary-ink">
             <span className="font-semibold">Want personal picks?</span> Add favorite subjects and interests to your profile, or tell your counselor what you enjoy.
           </p>
-          <ButtonLink href="/counselor" size="sm" icon={<Sparkles aria-hidden className="size-4" />}>
+          <ButtonLink href="/counselor" size="sm" icon={<MessageCircle aria-hidden className="size-4" />}>
             Help me discover
           </ButtonLink>
         </div>
@@ -386,7 +392,7 @@ export function ExploreCareers() {
 
       {compare.length > 0 && (
         <div className="fixed inset-x-0 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 flex justify-center px-4 lg:bottom-6 lg:pl-[264px]">
-          <div className="flex w-full max-w-md items-center justify-between gap-3 rounded-full bg-ink py-2 pl-5 pr-2 text-white shadow-[var(--shadow-raised)] animate-[var(--animate-fade-up)]">
+          <div className="flex w-full max-w-md items-center justify-between gap-3 rounded-full bg-ink py-2 pl-5 pr-2 text-canvas shadow-[var(--shadow-raised)] animate-[var(--animate-fade-up)]">
             <p className="text-sm">
               <span className="font-semibold">{compare.length}</span> of {MAX_COMPARE} selected
             </p>
@@ -394,14 +400,14 @@ export function ExploreCareers() {
               <button
                 type="button"
                 onClick={() => setCompare([])}
-                className="rounded-full px-3 py-2 text-sm text-white/75 hover:text-white"
+                className="rounded-full px-3 py-2 text-sm text-canvas/75 hover:text-canvas"
               >
                 Clear
               </button>
               <Link
                 href={`/explore/compare?c=${compare.join(",")}`}
                 aria-disabled={compare.length < 2}
-                className={`inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink ${
+                className={`inline-flex items-center gap-2 rounded-full bg-canvas px-4 py-2 text-sm font-semibold text-ink ${
                   compare.length < 2 ? "pointer-events-none opacity-50" : "hover:bg-primary-soft"
                 }`}
               >

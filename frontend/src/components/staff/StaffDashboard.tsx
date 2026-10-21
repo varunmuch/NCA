@@ -101,7 +101,7 @@ export function StaffDashboard({ students }: { students: StaffStudentRow[] }) {
               aria-pressed={filter === item.key}
               onClick={() => setFilter(item.key)}
               className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
-                filter === item.key ? "border-primary bg-primary text-white" : "border-line-strong bg-surface text-ink hover:bg-surface-2"
+                filter === item.key ? "border-primary bg-primary text-on-primary" : "border-line-strong bg-surface text-ink hover:bg-surface-2"
               }`}
             >
               {item.label}

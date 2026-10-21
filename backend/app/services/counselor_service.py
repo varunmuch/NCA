@@ -453,7 +453,9 @@ def careers_in_reply(reply: str, limit: int = MAX_CAREER_SUGGESTIONS) -> list[di
         line = re.sub(rf"^{re.escape(career['title'])}\s*[:\-–—]\s*", "", line, flags=re.IGNORECASE)
         sentences = re.split(r"(?<=[.!?])\s+", line)
         # The sentence that names it; after "Title:" was dropped, the first.
-        why = next((item for item in sentences if re.search(rf"\b{pattern}", item.lower())), sentences[0])
+        title = career["title"].lower()
+        own = re.escape(title[:-1] if title.endswith("s") else title)
+        why = next((item for item in sentences if re.search(rf"\b{own}", item.lower())), sentences[0])
 
         cards.append({"slug": career["slug"], "title": career["title"], "why": why[:300]})
 

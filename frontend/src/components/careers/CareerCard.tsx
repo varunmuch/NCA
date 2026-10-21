@@ -26,24 +26,23 @@ import type { CareerSummary } from "@/types/cie";
 
 type FamilyStyle = { icon: LucideIcon; tile: string };
 
-// Four calm tones shared across eleven families keeps the page from
-// turning into a rainbow.
+// One neutral tone for every family; the icon tells them apart.
 const FAMILY_STYLES: Record<string, FamilyStyle> = {
-  technology: { icon: Cpu, tile: "bg-primary-soft text-primary" },
-  engineering: { icon: DraftingCompass, tile: "bg-primary-soft text-primary" },
-  science: { icon: FlaskConical, tile: "bg-accent-soft text-accent-ink" },
-  environment: { icon: Leaf, tile: "bg-accent-soft text-accent-ink" },
-  health: { icon: HeartPulse, tile: "bg-warm-soft text-warm-ink" },
-  arts: { icon: Palette, tile: "bg-warm-soft text-warm-ink" },
-  education: { icon: GraduationCap, tile: "bg-sun-soft text-sun-ink" },
-  hospitality: { icon: ChefHat, tile: "bg-sun-soft text-sun-ink" },
-  business: { icon: Briefcase, tile: "bg-surface-3 text-ink" },
-  law: { icon: Scale, tile: "bg-surface-3 text-ink" },
-  trades: { icon: Wrench, tile: "bg-surface-3 text-ink" },
+  technology: { icon: Cpu, tile: "bg-surface-2 text-ink-muted" },
+  engineering: { icon: DraftingCompass, tile: "bg-surface-2 text-ink-muted" },
+  science: { icon: FlaskConical, tile: "bg-surface-2 text-ink-muted" },
+  environment: { icon: Leaf, tile: "bg-surface-2 text-ink-muted" },
+  health: { icon: HeartPulse, tile: "bg-surface-2 text-ink-muted" },
+  arts: { icon: Palette, tile: "bg-surface-2 text-ink-muted" },
+  education: { icon: GraduationCap, tile: "bg-surface-2 text-ink-muted" },
+  hospitality: { icon: ChefHat, tile: "bg-surface-2 text-ink-muted" },
+  business: { icon: Briefcase, tile: "bg-surface-2 text-ink-muted" },
+  law: { icon: Scale, tile: "bg-surface-2 text-ink-muted" },
+  trades: { icon: Wrench, tile: "bg-surface-2 text-ink-muted" },
 };
 
 export function familyStyle(family: string): FamilyStyle {
-  return FAMILY_STYLES[family] ?? { icon: Briefcase, tile: "bg-surface-3 text-ink" };
+  return FAMILY_STYLES[family] ?? { icon: Briefcase, tile: "bg-surface-2 text-ink-muted" };
 }
 
 export function FamilyIcon({ family, size = "md" }: { family: string; size?: "sm" | "md" | "lg" }) {
@@ -180,7 +179,7 @@ export function CareerCard({
         <SaveCareerButton slug={career.slug} title={career.title} saved={Boolean(career.saved)} />
       </div>
 
-      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.1em] text-ink-muted">
+      <p className="mt-4 text-xs font-semibold text-ink-muted">
         {career.family_label}
       </p>
       <h3 className="mt-1 text-[17px] font-bold leading-snug text-ink">

@@ -98,7 +98,7 @@ function ExtractionSummary({ detail }: { detail: DocumentDetail }) {
       )}
       {filled.map(([label, items]) => (
         <div key={label}>
-          <h4 className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-muted">{label}</h4>
+          <h4 className="text-xs font-semibold text-ink-muted">{label}</h4>
           <ul className="mt-1.5 flex flex-wrap gap-1.5">
             {items.map((item) => (
               <li key={item} className="rounded-full bg-surface-2 px-2.5 py-1 text-sm text-ink">

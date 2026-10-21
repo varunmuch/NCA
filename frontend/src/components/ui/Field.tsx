@@ -104,7 +104,7 @@ export function ChipInput({
               type="button"
               onClick={() => onChange(value.filter((existing) => existing !== item))}
               aria-label={`Remove ${item}`}
-              className="rounded-full p-0.5 hover:bg-white/60"
+              className="rounded-full p-0.5 hover:bg-surface/60"
             >
               <X aria-hidden className="size-3.5" />
             </button>

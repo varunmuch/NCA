@@ -66,7 +66,7 @@ export function EarlierAnswers() {
                 className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
               >
                 <span className="min-w-0">
-                  <span className="block text-xs font-semibold uppercase tracking-[0.08em] text-ink-muted">
+                  <span className="block text-xs font-semibold text-ink-muted">
                     {SECTION_LABEL[answer.section] ?? answer.section} · {formatDate(answer.created_at)}
                   </span>
                   <span className="mt-0.5 block truncate font-medium text-ink">{answer.prompt}</span>

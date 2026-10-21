@@ -65,7 +65,7 @@ export function ModuleResult({
           <Icon aria-hidden className="size-4" />
         </span>
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.1em] text-primary">{meta.title}</p>
+          <p className="text-xs font-semibold text-primary">{meta.title}</p>
           {heading && <p className="truncate font-bold text-ink">{heading}</p>}
         </div>
       </div>

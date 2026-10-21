@@ -6,14 +6,9 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import {
   ArrowDown,
   ArrowLeft,
-  Compass,
   History,
   Info,
-  PanelLeftClose,
-  PanelLeftOpen,
-  PanelRightOpen,
   Plus,
-  Target,
   UserRoundPen,
 } from "lucide-react";
 
@@ -28,7 +23,7 @@ import type { ChatMessage, ConversationSummary, CounselorAction, StudentDocument
 
 import { Composer, type ComposerHandle } from "./Composer";
 import { ConversationList } from "./ConversationList";
-import { ACTION_META, CounselorAvatar, MessageBubble } from "./MessageBubble";
+import { ACTION_META, MessageBubble } from "./MessageBubble";
 
 const EXAMPLES = [
   "Help me figure out what I might enjoy doing.",
@@ -51,53 +46,44 @@ function Intro({
   onExample: (text: string) => void;
 }) {
   return (
-    <div className="mx-auto flex max-w-2xl flex-col items-center px-1 pb-6 pt-6 text-center sm:pt-12 animate-[var(--animate-fade-up)]">
-      <CounselorAvatar size="lg" />
-      <h1 className="font-display mt-5 text-[2rem] font-semibold leading-tight sm:text-[2.5rem]">
-        Hi{name ? ` ${name}` : ""}! I&apos;m your AI Career Counselor.
+    <div className="pb-6 pt-10 sm:pt-20">
+      <h1 className="font-display text-[1.75rem] font-semibold leading-tight text-ink sm:text-[2.25rem]">
+        {name ? `Hi ${name}. What's on your mind?` : "What's on your mind?"}
       </h1>
-      <p className="mt-3 max-w-lg text-[17px] leading-relaxed text-ink-muted">
-        I&apos;m here to help you understand your interests, explore careers, and make a plan that works for you.
+      <p className="mt-3 max-w-lg leading-relaxed text-ink-muted">
+        Talk through what you enjoy, a career you&apos;re curious about, or what to do next. I remember what you confirm.
       </p>
 
-      <div className="mt-8 grid w-full gap-3 sm:grid-cols-2">
-        <button
-          type="button"
-          onClick={() => onStart("have_goal")}
-          className="group rounded-[var(--radius-card)] border border-line bg-surface p-5 text-left shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[var(--shadow-raised)]"
-        >
-          <span className="flex size-10 items-center justify-center rounded-xl bg-primary-soft text-primary">
-            <Target aria-hidden className="size-5" />
-          </span>
-          <p className="mt-3 font-bold text-ink">I have a career in mind</p>
-          <p className="mt-1 text-sm text-ink-muted">Let&apos;s figure out the steps to get there.</p>
-        </button>
+      <div className="mt-8 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => onStart("exploring")}
-          className="group rounded-[var(--radius-card)] border border-line bg-surface p-5 text-left shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-accent/30 hover:shadow-[var(--shadow-raised)]"
+          className="rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-ink hover:border-ink-soft hover:bg-surface-2"
         >
-          <span className="flex size-10 items-center justify-center rounded-xl bg-accent-soft text-accent-ink">
-            <Compass aria-hidden className="size-5" />
-          </span>
-          <p className="mt-3 font-bold text-ink">I&apos;m still figuring it out</p>
-          <p className="mt-1 text-sm text-ink-muted">Totally normal. Let&apos;s discover what fits you.</p>
+          I&apos;m still figuring it out
+        </button>
+        <button
+          type="button"
+          onClick={() => onStart("have_goal")}
+          className="rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-ink hover:border-ink-soft hover:bg-surface-2"
+        >
+          I have a career in mind
         </button>
       </div>
 
-      <p className="mt-8 text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft">Or try asking</p>
-      <div className="mt-3 flex flex-wrap justify-center gap-2">
+      <ul className="mt-8 divide-y divide-line border-y border-line">
         {EXAMPLES.map((example) => (
-          <button
-            key={example}
-            type="button"
-            onClick={() => onExample(example)}
-            className="rounded-full border border-line bg-surface px-3.5 py-2 text-sm text-ink-muted transition-colors hover:border-primary/30 hover:bg-primary-softer hover:text-primary-ink"
-          >
-            {example}
-          </button>
+          <li key={example}>
+            <button
+              type="button"
+              onClick={() => onExample(example)}
+              className="w-full py-3 text-left text-[15px] text-ink-muted hover:text-ink"
+            >
+              {example}
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
@@ -125,14 +111,8 @@ function ContextPanel({ onClose }: { onClose: () => void }) {
   ].filter((row): row is [string, string] => Boolean(row[1]));
 
   return (
-    <aside className="hidden w-80 shrink-0 flex-col border-l border-line bg-surface/60 xl:flex">
-      <div className="flex h-16 items-center justify-between px-5">
-        <p className="font-bold">What I know about you</p>
-        <IconButton label="Close panel" onClick={onClose}>
-          <PanelRightOpen aria-hidden className="size-[18px]" />
-        </IconButton>
-      </div>
-      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 pb-6 text-sm">
+    <div className="flex flex-col">
+      <div className="space-y-5 text-sm">
         {rows.length === 0 && confirmed.length === 0 && facts !== null && (
           <p className="text-ink-muted">Not much yet. As we talk, I&apos;ll ask before remembering anything.</p>
         )}
@@ -140,7 +120,7 @@ function ContextPanel({ onClose }: { onClose: () => void }) {
           <dl className="space-y-2.5">
             {rows.map(([label, value]) => (
               <div key={label}>
-                <dt className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">{label}</dt>
+                <dt className="text-xs font-semibold text-ink-soft">{label}</dt>
                 <dd className="mt-0.5 text-ink">{value}</dd>
               </div>
             ))}
@@ -151,7 +131,7 @@ function ContextPanel({ onClose }: { onClose: () => void }) {
         ) : (
           confirmed.length > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-ink-soft">Things you confirmed</p>
+              <p className="text-xs font-semibold text-ink-soft">Things you confirmed</p>
               <ul className="mt-2 flex flex-wrap gap-1.5">
                 {confirmed.slice(0, 18).map((fact) => (
                   <li key={fact.id} className="rounded-full bg-surface-2 px-2.5 py-1 text-xs text-ink">
@@ -167,12 +147,12 @@ function ContextPanel({ onClose }: { onClose: () => void }) {
             {pending.length} thing{pending.length === 1 ? "" : "s"} waiting for your review.
           </div>
         )}
-        <Link href="/profile#memory" className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline">
+        <Link href="/profile#memory" onClick={onClose} className="inline-flex items-center gap-1.5 font-semibold text-primary hover:underline">
           <UserRoundPen aria-hidden className="size-4" />
           Review or correct
         </Link>
       </div>
-    </aside>
+    </div>
   );
 }
 
@@ -204,7 +184,6 @@ export function CounselorWorkspace({
   const [pendingLabel, setPendingLabel] = useState("");
   const [modelAvailable, setModelAvailable] = useState(true);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [historyCollapsed, setHistoryCollapsed] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [showJump, setShowJump] = useState(false);
@@ -532,20 +511,8 @@ export function CounselorWorkspace({
 
   return (
     <div className="flex h-dvh">
-      {!historyCollapsed && (
-        <aside className="hidden w-72 shrink-0 flex-col border-r border-line bg-surface/60 p-4 lg:flex">
-          <div className="mb-3 flex items-center justify-between">
-            <p className="px-1 text-sm font-bold">Conversations</p>
-            <IconButton label="Hide conversations" onClick={() => setHistoryCollapsed(true)}>
-              <PanelLeftClose aria-hidden className="size-[18px]" />
-            </IconButton>
-          </div>
-          {historyList}
-        </aside>
-      )}
-
       <section className="relative flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-1 border-b border-line/70 bg-canvas/85 px-2 backdrop-blur-xl sm:h-16 sm:px-4">
+        <header className="flex h-14 shrink-0 items-center gap-1 border-b border-line bg-canvas px-2 sm:px-4">
           <Link
             href="/"
             aria-label="Back to Home"
@@ -553,19 +520,13 @@ export function CounselorWorkspace({
           >
             <ArrowLeft aria-hidden className="size-5" />
           </Link>
-          <IconButton label="Show conversations" onClick={() => setHistoryOpen(true)} className="lg:hidden">
+          <IconButton label="Conversations" onClick={() => setHistoryOpen(true)}>
             <History aria-hidden className="size-5" />
           </IconButton>
-          {historyCollapsed && (
-            <IconButton label="Show conversations" onClick={() => setHistoryCollapsed(false)} className="hidden lg:inline-flex">
-              <PanelLeftOpen aria-hidden className="size-[18px]" />
-            </IconButton>
-          )}
           <div className="min-w-0 flex-1 px-1">
-            <p className="truncate font-semibold text-ink">{title || "AI Career Counselor"}</p>
-            <p className="hidden text-xs text-ink-muted sm:block">AI counselor · remembers what you confirm</p>
+            <p className="truncate text-[15px] font-medium text-ink">{title || "Counselor"}</p>
           </div>
-          <IconButton label="What the counselor knows" onClick={() => setContextOpen((current) => !current)} className="hidden xl:inline-flex">
+          <IconButton label="What the counselor knows about you" onClick={() => setContextOpen(true)}>
             <Info aria-hidden className="size-[18px]" />
           </IconButton>
           <IconButton label="New conversation" onClick={newConversation}>
@@ -574,12 +535,11 @@ export function CounselorWorkspace({
         </header>
 
         <div ref={scrollRef} onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
+          <div className="mx-auto w-full max-w-[720px] px-4 py-6 sm:px-6">
             {loading && (
               <div className="space-y-6" role="status" aria-label="Loading conversation">
                 <Skeleton className="ml-auto h-10 w-2/3 rounded-2xl" />
                 <div className="flex gap-3">
-                  <Skeleton className="size-8 rounded-full" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-4 w-full" />
                     <Skeleton className="h-4 w-5/6" />
@@ -618,8 +578,7 @@ export function CounselorWorkspace({
 
               {sending && !messages.some((message) => message.metadata.streaming && message.content) && (
                 <div className="flex items-center gap-3" aria-live="polite">
-                  <CounselorAvatar />
-                  <div className="flex items-center gap-3 px-1 py-3">
+                  <div className="flex items-center gap-3 py-2">
                     <ThinkingDots />
                     {pendingLabel ? (
                       <span className="text-sm text-ink-muted">{pendingLabel}</span>
@@ -647,7 +606,7 @@ export function CounselorWorkspace({
         )}
 
         <div className="shrink-0 bg-gradient-to-t from-canvas via-canvas to-canvas/0 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 sm:px-6">
-          <div className="mx-auto w-full max-w-3xl">
+          <div className="mx-auto w-full max-w-[720px]">
             {!modelAvailable && (
               <p role="status" className="mb-2 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink">
                 Your counselor is taking a short break. Try again in a few minutes. Everything else in Career Explorer still works.
@@ -666,7 +625,9 @@ export function CounselorWorkspace({
         </div>
       </section>
 
-      {contextOpen && <ContextPanel onClose={() => setContextOpen(false)} />}
+      <Dialog open={contextOpen} onClose={() => setContextOpen(false)} title="What I know about you" side="right">
+        {contextOpen && <ContextPanel onClose={() => setContextOpen(false)} />}
+      </Dialog>
 
       <Dialog open={historyOpen} onClose={() => setHistoryOpen(false)} title="Conversations" side="left">
         {historyList}

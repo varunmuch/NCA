@@ -22,7 +22,7 @@ export function Dialog({
   title: string;
   description?: ReactNode;
   children: ReactNode;
-  side?: "center" | "left";
+  side?: "center" | "left" | "right";
 }) {
   const ref = useRef<HTMLDialogElement>(null);
 
@@ -43,7 +43,9 @@ export function Dialog({
   const position =
     side === "left"
       ? "m-0 h-dvh max-h-dvh w-[min(22rem,88vw)] max-w-none rounded-none rounded-r-[var(--radius-hero)]"
-      : "m-auto w-[min(32rem,calc(100vw-2rem))] rounded-[var(--radius-hero)]";
+      : side === "right"
+        ? "m-0 ml-auto h-dvh max-h-dvh w-[min(22rem,88vw)] max-w-none rounded-none rounded-l-[var(--radius-hero)]"
+        : "m-auto w-[min(32rem,calc(100vw-2rem))] rounded-[var(--radius-hero)]";
 
   return (
     <dialog

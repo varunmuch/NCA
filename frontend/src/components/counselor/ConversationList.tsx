@@ -72,7 +72,7 @@ export function ConversationList({
         ) : (
           group(conversations).map((section) => (
             <div key={section.label} className="mb-4">
-              <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+              <p className="px-3 pb-1 text-[11px] font-semibold text-ink-soft">
                 {section.label}
               </p>
               <ul className="space-y-0.5">

@@ -171,7 +171,7 @@ export function ProfileEditor() {
               <label
                 key={label}
                 className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
-                  form.career_status === value ? "border-primary bg-primary text-white" : "border-line-strong bg-surface text-ink hover:bg-surface-2"
+                  form.career_status === value ? "border-primary bg-primary text-on-primary" : "border-line-strong bg-surface text-ink hover:bg-surface-2"
                 }`}
               >
                 <input

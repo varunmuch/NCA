@@ -34,7 +34,7 @@ export default async function VerifyEmailPage({
     <AuthLayout title={ok ? "Email confirmed" : "We couldn't confirm your email"} subtitle={message}>
       <Link
         href="/"
-        className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-5 text-base font-semibold text-white hover:bg-primary-hover"
+        className="inline-flex h-12 w-full items-center justify-center rounded-full bg-primary px-5 text-base font-semibold text-on-primary hover:bg-primary-hover"
       >
         Continue to Career Explorer
       </Link>

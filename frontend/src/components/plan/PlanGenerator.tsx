@@ -36,7 +36,7 @@ export function GeneratingPlan({ label = "Building your plan" }: { label?: strin
           <li key={item} className={`flex items-center gap-3 text-sm ${index <= step ? "text-ink" : "text-ink-soft"}`}>
             <span
               className={`flex size-6 shrink-0 items-center justify-center rounded-full ${
-                index < step ? "bg-accent text-white" : index === step ? "bg-primary-soft text-primary" : "bg-surface-2"
+                index < step ? "bg-accent text-on-accent" : index === step ? "bg-primary-soft text-primary" : "bg-surface-2"
               }`}
             >
               {index < step ? <Check aria-hidden className="size-3.5" /> : <span className="size-1.5 rounded-full bg-current" />}

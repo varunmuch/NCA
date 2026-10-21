@@ -8,7 +8,7 @@ import {
   Map,
   MessagesSquare,
   Settings,
-  Sparkles,
+  MessageCircle,
   UserRound,
   type LucideIcon,
 } from "lucide-react";
@@ -22,7 +22,7 @@ export type NavItem = {
 
 export const primaryNav: NavItem[] = [
   { href: "/", label: "Home", icon: House },
-  { href: "/counselor", label: "AI Counselor", shortLabel: "Counselor", icon: Sparkles },
+  { href: "/counselor", label: "AI Counselor", shortLabel: "Counselor", icon: MessageCircle },
   { href: "/discover", label: "Interest Quiz", shortLabel: "Quiz", icon: Lightbulb },
   { href: "/explore", label: "Explore Careers", shortLabel: "Explore", icon: Compass },
   { href: "/plan", label: "My Career Plan", shortLabel: "Plan", icon: Map },

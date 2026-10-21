@@ -87,7 +87,7 @@ Rules:
 - skills: up to 3 skills and how to build them for free or at school.
 - Never use grades to rule anything out. Prefer free, school-based, or low-cost options, described generically.
 - summary: 1 or 2 sentences. based_on: one sentence on what you used and what's missing.
-- Write in clear, encouraging language a 9th grader understands. Address the student as "you"."""
+- Write in clear, encouraging language a 9th grader understands. Address the student as "you" everywhere, including the title and summary; never use their name or "the student"."""
 
 
 def plan_to_dict(plan: CareerPlan, *, include_content: bool = True) -> dict:

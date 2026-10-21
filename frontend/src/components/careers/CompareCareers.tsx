@@ -55,7 +55,7 @@ export function CompareCareers({ careers }: { careers: CareerDetail[] }) {
         <table className="w-full min-w-[640px] border-separate border-spacing-0 overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface text-sm shadow-[var(--shadow-card)]">
           <thead>
             <tr>
-              <th scope="col" className="w-40 bg-surface-2 p-4 text-left align-bottom text-xs font-semibold uppercase tracking-[0.1em] text-ink-muted">
+              <th scope="col" className="w-40 bg-surface-2 p-4 text-left align-bottom text-xs font-semibold text-ink-muted">
                 <span className="sr-only">Detail</span>
               </th>
               {careers.map((career) => (
@@ -72,7 +72,7 @@ export function CompareCareers({ careers }: { careers: CareerDetail[] }) {
           <tbody>
             {ROWS.map((row) => (
               <tr key={row.label}>
-                <th scope="row" className="border-t border-line p-4 text-left align-top text-xs font-semibold uppercase tracking-[0.08em] text-ink-muted">
+                <th scope="row" className="border-t border-line p-4 text-left align-top text-xs font-semibold text-ink-muted">
                   {row.label}
                 </th>
                 {careers.map((career) => (

@@ -62,7 +62,7 @@ export const Composer = forwardRef<
         event.preventDefault();
         submit();
       }}
-      className="flex items-end gap-2 rounded-[1.5rem] border border-line-strong bg-surface p-2 shadow-[var(--shadow-raised)] transition-[border-color,box-shadow] focus-within:border-primary/50"
+      className="flex items-end gap-2 rounded-2xl border border-line-strong bg-surface p-2 transition-colors focus-within:border-ink-soft"
     >
       <button
         type="button"
@@ -91,7 +91,7 @@ export const Composer = forwardRef<
         type="submit"
         disabled={disabled || !text.trim()}
         aria-label="Send message"
-        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary-hover disabled:bg-surface-3 disabled:text-ink-soft"
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary transition-colors hover:bg-primary-hover disabled:bg-surface-3 disabled:text-ink-soft"
       >
         <ArrowUp aria-hidden className="size-5" />
       </button>

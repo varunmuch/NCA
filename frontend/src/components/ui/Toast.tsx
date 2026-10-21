@@ -47,7 +47,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
               key={item.id}
               role={item.tone === "error" ? "alert" : "status"}
-              className="pointer-events-auto flex w-full max-w-sm animate-[var(--animate-fade-up)] items-start gap-3 rounded-2xl bg-ink px-4 py-3 text-sm text-white shadow-[var(--shadow-raised)]"
+              className="pointer-events-auto flex w-full max-w-sm animate-[var(--animate-fade-up)] items-start gap-3 rounded-2xl bg-ink px-4 py-3 text-sm text-canvas shadow-[var(--shadow-raised)]"
             >
               <Icon
                 aria-hidden
@@ -58,7 +58,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 type="button"
                 onClick={() => dismiss(item.id)}
                 aria-label="Dismiss"
-                className="-mr-1 rounded-full p-0.5 text-white/70 hover:text-white"
+                className="-mr-1 rounded-full p-0.5 text-canvas/70 hover:text-canvas"
               >
                 <X aria-hidden className="size-4" />
               </button>

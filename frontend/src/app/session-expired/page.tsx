@@ -13,7 +13,7 @@ export default function SessionExpiredPage() {
     >
       <SignOutButton
         label="Go to sign in"
-        className="h-12 w-full rounded-full bg-primary px-5 text-base font-semibold text-white hover:bg-primary-hover"
+        className="h-12 w-full rounded-full bg-primary px-5 text-base font-semibold text-on-primary hover:bg-primary-hover"
       />
     </AuthLayout>
   );

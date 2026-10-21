@@ -18,7 +18,7 @@ const inputClass =
 const labelClass = "text-sm font-semibold text-ink";
 
 const submitClass =
-  "h-12 w-full rounded-full bg-primary px-5 text-base font-semibold text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60";
+  "h-12 w-full rounded-full bg-primary px-5 text-base font-semibold text-on-primary transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60";
 
 
 function FormError({
