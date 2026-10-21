@@ -30,6 +30,8 @@ BUDGET_DOCUMENTS = 2500
 BUDGET_PAST_CONVERSATIONS = 800
 BUDGET_PLAN_PROGRESS = 500
 BUDGET_CANDIDATES = 400
+BUDGET_SOURCES = 700
+MAX_SOURCES = 5
 BUDGET_RECENT_TURNS = 2500
 BUDGET_SUMMARY = 700
 
@@ -352,6 +354,72 @@ def _candidates(profile: dict, facts: list[dict], query: str) -> tuple[str, list
     return _fit("\n".join(lines), BUDGET_CANDIDATES), matches
 
 
+def build_sources(candidates: list[dict], limit: int = MAX_SOURCES) -> list[dict]:
+    """
+    Numbered catalog facts for the best-fitting careers. Factual claims in
+    a reply must come from these (or the student's own words); grounding.py
+    checks that after the reply is written.
+    """
+
+    sources = []
+
+    for match in candidates:
+        career = career_catalog.get_career(match["slug"])
+
+        if career is None:
+            continue
+
+        number = len(sources) + 1
+        text = (
+            f"{career['title']}. {career['description']} "
+            f"Education: {career.get('education_summary') or 'not listed'} "
+            f"({career.get('preparation') or 'preparation not listed'}). "
+            f"School subjects: {', '.join(career['subjects'][:4])}. "
+            f"Skills: {', '.join((career.get('skills') or [])[:4])}. "
+            f"Also called: {', '.join(career['sample_titles'][:3])}."
+        )
+        sources.append(
+            {
+                "id": f"S{number}",
+                "title": f"O*NET OnLine: {career['title']}",
+                "url": career.get("source_url", ""),
+                "slug": career["slug"],
+                "text": text,
+            }
+        )
+
+        if number >= limit:
+            break
+
+    return sources
+
+
+def sources_block(sources: list[dict]) -> str:
+    return "\n".join(f"[{source['id']}] {source['text']}" for source in sources)
+
+
+def grounding_corpus(context: dict, student_message: str) -> str:
+    """
+    Everything a reply's figures and names may come from: the sources, what
+    the student said (profile, facts, this and earlier messages), and their
+    own documents.
+    """
+
+    student_turns = [turn["content"] for turn in context["turns"] if turn["role"] == "user"]
+
+    return "\n".join(
+        [
+            sources_block(context.get("sources") or []),
+            " ".join(source["url"] for source in context.get("sources") or []),
+            context["profile_text"],
+            context["documents_text"],
+            context["candidates_text"],
+            *student_turns,
+            student_message,
+        ]
+    )
+
+
 async def build_context(
     student_id: str,
     conversation: Conversation | None,
@@ -418,6 +486,8 @@ async def build_context(
         ),
         "candidates_text": candidates_text,
         "candidates": candidates,
+        "sources": (sources := build_sources(candidates)),
+        "sources_text": _fit(sources_block(sources), BUDGET_SOURCES),
         "turns": turns,
     }
 

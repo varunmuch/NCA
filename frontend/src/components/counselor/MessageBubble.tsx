@@ -263,6 +263,24 @@ export function MessageBubble({
           </div>
         )}
 
+        {!metadata.streaming && (metadata.sources?.length ?? 0) > 0 && (
+          <p className="mt-3 text-xs leading-relaxed text-ink-muted">
+            <span className="font-semibold">Sources: </span>
+            {metadata.sources!.map((source, index) => (
+              <span key={source.id}>
+                {index > 0 && " · "}
+                {source.url ? (
+                  <a href={source.url} target="_blank" rel="noreferrer" className="underline decoration-line-strong underline-offset-2 hover:text-ink">
+                    {source.title}
+                  </a>
+                ) : (
+                  source.title
+                )}
+              </span>
+            ))}
+          </p>
+        )}
+
         {/* Newer replies ask their question in the text; the taps sit under it. */}
         {!metadata.follow_up_question && quickReplies.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">

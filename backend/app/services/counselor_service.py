@@ -26,10 +26,10 @@ from app.core.database import AsyncSessionLocal
 from app.core.llm import LLMError, chat_completion, chat_json, chat_stream, llm_calls
 from app.db.models import Conversation, Message
 from app.models.profile import StudentProfile
-from app.services import career_catalog
+from app.services import career_catalog, grounding
 from app.services.career_path_service import generate_career_path
 from app.services.certification_service import generate_certification_guidance
-from app.services.context_service import build_context, context_block
+from app.services.context_service import build_context, context_block, grounding_corpus
 from app.services.conversation_service import (
     DEFAULT_TITLE,
     add_message,
@@ -143,8 +143,14 @@ EXTRAS_SCHEMA = {
             },
         },
         "conversation_title": {"type": "string", "maxLength": 60},
+        "source_ids": {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 4},
+            "maxItems": 4,
+        },
     },
     "required": [
+        "source_ids",
         "quick_replies",
         "suggested_actions",
         "facts_to_remember",
@@ -166,7 +172,7 @@ How you counsel:
 - Students with a goal: explain realistic pathways, what they can do in high school now, and related alternatives.
 - Career fit is never certain. Use language like "could be worth exploring", never "you should be" or "you will be". Do not label students.
 - Respect different routes: four-year college, community college, apprenticeships, trade school, military, certificates, and starting work.
-- Do not invent facts about the student, their documents, schools, programs, salaries, admission requirements, or job statistics. If you don't know, say so and suggest how to find out (for example a school counselor or the program's website).
+- Facts and figures (pay or salary, job growth or outlook, percentages, scholarship or program names, deadlines and dates, GPA or admission requirements, links) must come from the Sources section or from what the student told you. If they aren't there, say plainly that you don't have reliable information on that, and point to where to find it: their school counselor, bls.gov for pay and job outlook, studentaid.gov for FAFSA and financial aid, careeronestop.org for scholarships. Never guess, estimate, or round a number, date, or name. Never invent facts about the student or their documents.
 - If the student asks about their resume or transcript and the documents section shows it is not uploaded, not analyzed, or failed, say so plainly instead of guessing its contents.
 - Grades and transcripts show what a student has studied, not what they are capable of. Never use grades to rule a student out.
 - For important decisions (choosing a college, a major, a program, money), encourage talking with a school counselor and a parent or guardian.
@@ -177,7 +183,7 @@ How you write each reply:
 - Short: usually 2-5 sentences, under 120 words. Use a short list (at most 3 items) only when the student asks for options or steps.
 - Mention at most 2 careers, each with a one-line reason tied to the student. Use the careers' names as written in the candidates list when one fits.
 - If a detail is missing for a good answer, end with ONE short, specific question (for example: working with people or on your own, hands-on or ideas, a subject they enjoy). Skip the question when you can already help well. Never ask "Do you have any questions?".
-- Plain Markdown only: paragraphs separated by a blank line, **bold** sparingly. Never output JSON or field names."""
+- Plain Markdown only: paragraphs separated by a blank line, **bold** sparingly. Never output JSON, field names, or source ids like [S1]."""
 
 
 EXTRAS_PROMPT = """You add the interactive parts around a career counselor's reply to a high school student. You never change the reply. Output JSON only.
@@ -185,7 +191,8 @@ EXTRAS_PROMPT = """You add the interactive parts around a career counselor's rep
 - quick_replies: if the reply ends with a question, up to 3 short answers the student could tap (include "I'm not sure" when it fits); otherwise [].
 - suggested_actions: up to 3 genuinely useful next steps from the allowed list. build_plan when they are ready for a plan; skill_check, project_ideas, certificates, interview_practice, or career_roadmap when they have a specific career in mind; upload_document when a resume or transcript would clearly help; explore_careers when browsing would help; update_profile rarely. [] when none fit.
 - facts_to_remember: only facts the student stated about themselves in their LATEST message (grade, subjects they like, interests, hobbies, skills, activities, careers they are curious about, goals, constraints). evidence must be an exact quote from that message. Never your own guesses. [] if none.
-- conversation_title: a 3-6 word title for this conversation."""
+- conversation_title: a 3-6 word title for this conversation.
+- source_ids: ids of the Sources (like "S1") whose facts the reply uses. [] if it uses none."""
 
 
 def _quote_in_message(evidence: str, message: str) -> bool:
@@ -230,8 +237,38 @@ def _drop_trailing_question(reply: str, follow_up: str) -> str:
     return trimmed if len(trimmed) > 40 else reply
 
 
-def _validate_output(output: dict, student_message: str, candidates: list[dict]) -> dict:
+def _validate_output(
+    output: dict,
+    student_message: str,
+    candidates: list[dict],
+    *,
+    corpus: str | None = None,
+    sources: list[dict] | None = None,
+) -> dict:
+    """
+    Check everything the model proposed. With a corpus (the streamed chat
+    path), sentences carrying figures or names no source supports are
+    removed from the reply, and career cards are taken from the careers
+    the corrected reply names.
+    """
+
     candidate_slugs = {candidate["slug"] for candidate in candidates}
+    follow_up = output.get("follow_up_question", "")
+    reply = _drop_trailing_question(_tidy_markdown(output.get("reply", "")), follow_up)
+    removed: list[dict] = []
+
+    if corpus is not None:
+        reply, removed = grounding.ground_reply(reply, corpus)
+        output = {**output, "career_suggestions": careers_in_reply(reply)}
+
+    known = {source["id"]: source for source in sources or []}
+    cited = [known[source_id] for source_id in dict.fromkeys(output.get("source_ids") or []) if source_id in known]
+    card_slugs = {card.get("slug") for card in output.get("career_suggestions") or []}
+
+    # A card's own catalog page is always a source for it.
+    for source in known.values():
+        if source["slug"] in card_slugs and source not in cited:
+            cited.append(source)
 
     suggestions = []
 
@@ -269,11 +306,8 @@ def _validate_output(output: dict, student_message: str, candidates: list[dict])
             actions.append(action)
 
     return {
-        "reply": _drop_trailing_question(
-            _tidy_markdown(output.get("reply", "")),
-            output.get("follow_up_question", ""),
-        ),
-        "follow_up_question": output.get("follow_up_question", "").strip(),
+        "reply": reply,
+        "follow_up_question": follow_up.strip(),
         "quick_replies": [
             reply.strip() for reply in output.get("quick_replies", []) if reply.strip()
         ][:MAX_QUICK_REPLIES],
@@ -281,6 +315,8 @@ def _validate_output(output: dict, student_message: str, candidates: list[dict])
         "suggested_actions": actions[:MAX_ACTIONS],
         "facts": facts,
         "title": output.get("conversation_title", "").strip(),
+        "sources": [{"id": source["id"], "title": source["title"], "url": source["url"]} for source in cited],
+        "grounding": {"removed": [{"kind": claim["kind"], "text": claim["text"]} for claim in removed]},
     }
 
 
@@ -298,6 +334,8 @@ def counselor_messages(context: dict, student_name: str) -> list[dict]:
         + context_block(context)
         + "\n\n## Career catalog candidates (slug: title), best fit first\n"
         + context["candidates_text"]
+        + "\n\n## Sources (career facts you may state; nothing else is verified)\n"
+        + (context.get("sources_text") or "(none)")
     )
 
     return [{"role": "system", "content": system}, *context["turns"]]
@@ -309,7 +347,9 @@ def extras_messages(context: dict, student_message: str, reply: str) -> list[dic
         {
             "role": "user",
             "content": (
-                "## The student's latest message\n"
+                "## Sources\n"
+                + "\n".join(f"{source['id']}: {source['title']}" for source in context.get("sources") or [])
+                + "\n\n## The student's latest message\n"
                 + student_message
                 + "\n\n## The counselor's reply\n"
                 + reply
@@ -502,9 +542,11 @@ async def run_turn_stream(
             extras = await _extras(context, text, reply)
             timer.lap("extras")
             output = _validate_output(
-                {**extras, "reply": reply, "career_suggestions": careers_in_reply(reply)},
+                {**extras, "reply": reply},
                 text,
                 context["candidates"],
+                corpus=grounding_corpus(context, text),
+                sources=context.get("sources"),
             )
             timer.lap("validate")
     except Exception:
@@ -540,6 +582,13 @@ async def run_turn_stream(
         "suggested_actions": output["suggested_actions"],
         "proposed_facts": proposed,
     }
+
+    if output.get("sources"):
+        metadata["sources"] = output["sources"]
+
+    if (output.get("grounding") or {}).get("removed"):
+        # Kept so evals and staff can see what was taken out, and why.
+        metadata["grounding"] = output["grounding"]
 
     if "module" in output:
         metadata["module"] = output["module"]

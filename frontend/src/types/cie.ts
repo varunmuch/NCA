@@ -77,6 +77,10 @@ export type MessageMetadata = {
   module?: { type: ModuleType; result: Record<string, unknown> };
   action?: CounselorAction;
   error?: boolean;
+  // Catalog pages the reply's facts come from.
+  sources?: { id: string; title: string; url: string }[];
+  // Figures or names removed because no source supported them.
+  grounding?: { removed: { kind: string; text: string }[] };
   // Set only in the browser while a reply is still arriving.
   streaming?: boolean;
 };
