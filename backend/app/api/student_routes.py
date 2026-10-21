@@ -3,6 +3,7 @@ Student-owned API. Every route resolves the student from the verified
 session identity (see app.core.security); no route accepts a student ID.
 """
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -16,12 +17,13 @@ from fastapi import (
     Query,
     UploadFile,
 )
-from fastapi.responses import FileResponse, Response
+from fastapi.responses import FileResponse, Response, StreamingResponse
+from starlette.background import BackgroundTask
 from pydantic import BaseModel, Field
 from sqlalchemy import delete, select
 
 from app.core.database import AsyncSessionLocal
-from app.core.llm import LLMError, chat_json
+from app.core.llm import LLMError, chat_json, model_healthy
 from app.core.security import current_student_id
 from app.db.models import (
     CareerPlan,
@@ -47,7 +49,7 @@ from app.services import progress_service as progress
 from app.services import roadmap_service as roadmaps
 from app.services import staff_service
 from app.services.context_service import build_context, context_block
-from app.services.counselor_service import run_turn, summarize_if_needed
+from app.services.counselor_service import run_turn, run_turn_stream, summarize_if_needed
 from app.services.home_service import home_summary
 from app.services.plan_pdf import render_plan_pdf
 from app.services.student_service import (
@@ -315,6 +317,56 @@ async def send_counselor_message(
     )
     background.add_task(summarize_if_needed, result["conversation_id"])
     return result
+
+
+def _sse(event: dict) -> str:
+    name = event["event"]
+    data = json.dumps({key: value for key, value in event.items() if key != "event"}, default=str)
+    return f"event: {name}\ndata: {data}\n\n"
+
+
+@router.post("/me/counselor/messages/stream")
+async def stream_counselor_message(payload: CounselorMessage, student_id: str = Student):
+    """
+    The same turn as POST /me/counselor/messages, as server-sent events:
+    start, delta (reply text as it is written), then done or error.
+    """
+
+    # Check ownership before the stream starts, so a bad id is a plain 404.
+    if payload.conversation_id:
+        await conversations.get_owned_conversation(student_id, payload.conversation_id)
+
+    started: dict = {}
+
+    async def events():
+        async for event in run_turn_stream(
+            student_id,
+            conversation_id=payload.conversation_id,
+            text=payload.text.strip(),
+            action=payload.action,
+        ):
+            if event["event"] == "start":
+                started["conversation_id"] = event["conversation_id"]
+
+            yield _sse(event)
+
+    async def summarize_after():
+        if started.get("conversation_id"):
+            await summarize_if_needed(started["conversation_id"])
+
+    return StreamingResponse(
+        events(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
+        background=BackgroundTask(summarize_after),
+    )
+
+
+@router.get("/health/model")
+async def model_health(student_id: str = Student):
+    """Whether the counselor's model is answering (cached for 15 seconds)."""
+
+    return {"available": await model_healthy()}
 
 
 @router.post("/me/conversations/{conversation_id}/retry")

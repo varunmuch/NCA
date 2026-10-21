@@ -216,12 +216,22 @@ export function MessageBubble({
   const facts = metadata.proposed_facts ?? [];
   const quickReplies = isLast ? metadata.quick_replies ?? [] : [];
 
+  // No entrance animation: the reply streams in, and the saved message that
+  // replaces the streamed one must not flash.
   return (
-    <div className="flex gap-3 animate-[var(--animate-fade-up)]">
+    <div className="flex gap-3">
       <CounselorAvatar />
       <div className="min-w-0 flex-1 pt-0.5">
+        {metadata.streaming && (
+          <span className="sr-only" aria-live="polite">
+            Your counselor is writing
+          </span>
+        )}
         {message.content && (
-          <Markdown text={message.content} className="text-[15px] leading-[1.7] text-ink" />
+          <Markdown
+            text={message.content}
+            className={`text-[15px] leading-[1.7] text-ink ${metadata.streaming ? "[&>*:last-child]:after:ml-0.5 [&>*:last-child]:after:inline-block [&>*:last-child]:after:h-[1.05em] [&>*:last-child]:after:w-[2px] [&>*:last-child]:after:translate-y-[0.2em] [&>*:last-child]:after:animate-pulse [&>*:last-child]:after:bg-ink-muted [&>*:last-child]:after:content-['']" : ""}`}
+          />
         )}
 
         {metadata.module && (
@@ -250,6 +260,23 @@ export function MessageBubble({
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Newer replies ask their question in the text; the taps sit under it. */}
+        {!metadata.follow_up_question && quickReplies.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {quickReplies.map((reply) => (
+              <button
+                key={reply}
+                type="button"
+                disabled={disabled}
+                onClick={() => onQuickReply(reply)}
+                className="rounded-full border border-line-strong bg-surface px-3.5 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink-soft hover:bg-surface-2 disabled:opacity-60"
+              >
+                {reply}
+              </button>
+            ))}
           </div>
         )}
 

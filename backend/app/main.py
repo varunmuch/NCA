@@ -12,6 +12,8 @@ from app.core.config import get_allowed_origins
 from app.core.security import require_auth_bridge
 from app.services import account_service
 from app.services.auth_service import bootstrap_google_identity
+from app.core.llm import warm_up
+from app.services.counselor_service import SYSTEM_PROMPT
 from app.services.document_service import resume_interrupted
 from app.services.llm_service import check_llm
 from app.services.password_auth_service import (
@@ -84,8 +86,12 @@ if not allowed_origins:
 async def lifespan(_app: FastAPI):
     # Keep a reference so the task isn't garbage-collected mid-run.
     resume = asyncio.create_task(resume_interrupted())
+    # Wake the model and cache the fixed system prompt in the background,
+    # so startup isn't blocked while vLLM is still loading.
+    warm = asyncio.create_task(warm_up(SYSTEM_PROMPT))
     yield
     resume.cancel()
+    warm.cancel()
 
 
 app = FastAPI(

@@ -10,6 +10,7 @@ import type {
   ConversationDetail,
   ConversationSummary,
   CounselorAction,
+  CounselorStreamEvent,
   CounselorTurnResponse,
   DocumentDetail,
   EarlierAnswer,
@@ -145,6 +146,91 @@ export const api = {
       { method: "POST", body: json(payload) },
       "The counselor couldn't answer just now. Please try again."
     ),
+
+  /**
+   * Send a message and receive the reply as it is written. `onEvent` sees
+   * every event; the promise resolves with the final done or error event.
+   */
+  streamMessage: async (
+    payload: { conversation_id?: string | null; text: string; action?: CounselorAction | null },
+    onEvent: (event: CounselorStreamEvent) => void
+  ): Promise<CounselorTurnResponse> => {
+    let response: Response;
+
+    try {
+      response = await fetch(`${BASE}/me/counselor/messages/stream`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        body: json(payload),
+      });
+    } catch {
+      throw new ApiError("You seem to be offline. Check your connection and try again.", 0);
+    }
+
+    if (!response.ok || !response.body) {
+      const data = await response.json().catch(() => null);
+      throw new ApiError(errorMessage(data, "The counselor couldn't answer just now. Please try again."), response.status);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    // An object, not a let: TypeScript does not see assignments in callbacks.
+    const result: { final: CounselorTurnResponse | null } = { final: null };
+
+    const handle = (block: string) => {
+      let name = "";
+      let data = "";
+
+      for (const line of block.split("\n")) {
+        if (line.startsWith("event: ")) {
+          name = line.slice(7).trim();
+        } else if (line.startsWith("data: ")) {
+          data += line.slice(6);
+        }
+      }
+
+      if (!name || !data) {
+        return;
+      }
+
+      const event = { event: name, ...JSON.parse(data) } as CounselorStreamEvent;
+      onEvent(event);
+
+      if (event.event === "done" || event.event === "error") {
+        result.final = event;
+      }
+    };
+
+    for (;;) {
+      const { value, done } = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      buffer += decoder.decode(value, { stream: true });
+      let boundary = buffer.indexOf("\n\n");
+
+      while (boundary !== -1) {
+        handle(buffer.slice(0, boundary));
+        buffer = buffer.slice(boundary + 2);
+        boundary = buffer.indexOf("\n\n");
+      }
+    }
+
+    if (buffer.trim()) {
+      handle(buffer);
+    }
+
+    if (!result.final) {
+      throw new ApiError("The connection dropped before the counselor finished. Please try again.", 0);
+    }
+
+    return result.final;
+  },
+
+  modelHealth: () => request<{ available: boolean }>("/health/model"),
 
   retryMessage: (conversationId: string) =>
     request<CounselorTurnResponse>(`/me/conversations/${conversationId}/retry`, {

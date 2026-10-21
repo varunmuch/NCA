@@ -4,8 +4,9 @@ The AI Career Counselor: one bounded, observable turn at a time.
 A turn is:
 1. save the student's message
 2. assemble context (profile, facts, documents, past conversations, plan)
-3. either run one structured counselor call, or, when the student picked a
-   deep-dive action, run the matching existing CIE module
+3. stream a plain-text reply, then make one small structured call for what
+   the app shows around it (quick replies, careers, facts, actions, title);
+   or, when the student picked a deep-dive action, run the matching module
 4. validate the output against the catalog and the student's own words
 5. save the reply and propose facts for the student to confirm
 6. summarize older turns in the background
@@ -15,11 +16,14 @@ The model never writes to the database directly; it can only propose.
 
 import logging
 import re
+import time
+from collections.abc import AsyncIterator
+from contextvars import ContextVar
 
 from sqlalchemy import select
 
 from app.core.database import AsyncSessionLocal
-from app.core.llm import LLMError, chat_completion, chat_json
+from app.core.llm import LLMError, chat_completion, chat_json, chat_stream, llm_calls
 from app.db.models import Conversation, Message
 from app.models.profile import StudentProfile
 from app.services import career_catalog
@@ -43,6 +47,42 @@ from app.services.student_service import FACT_CATEGORIES, add_facts
 
 logger = logging.getLogger("cie.counselor")
 
+# The last turn's stage timings in this task; read by the latency benchmark.
+last_turn_timing: ContextVar[dict | None] = ContextVar("last_turn_timing", default=None)
+
+
+class _TurnTimer:
+    """Wall time per stage of one turn, logged as one line (never content)."""
+
+    def __init__(self) -> None:
+        self.stages: dict[str, float] = {}
+        self._start = self._mark = time.monotonic()
+        self._token = llm_calls.set([])
+
+    def lap(self, stage: str) -> None:
+        now = time.monotonic()
+        self.stages[stage] = round(now - self._mark, 3)
+        self._mark = now
+
+    def finish(self, kind: str, ok: bool) -> dict:
+        calls = llm_calls.get() or []
+        llm_calls.reset(self._token)
+
+        record = {
+            "kind": kind,
+            "ok": ok,
+            **self.stages,
+            "total": round(time.monotonic() - self._start, 3),
+            "llm_calls": len(calls),
+            "prompt_tokens": sum(call["prompt_tokens"] for call in calls),
+            "completion_tokens": sum(call["completion_tokens"] for call in calls),
+        }
+
+        logger.info("turn timing %s", " ".join(f"{key}={value}" for key, value in record.items()))
+        last_turn_timing.set(record)
+
+        return record
+
 
 ACTIONS = [
     "build_plan",
@@ -65,33 +105,29 @@ MODULE_ACTIONS = {
 }
 
 
-COUNSELOR_SCHEMA = {
+# Limits the validator enforces on every reply.
+MAX_CAREER_SUGGESTIONS = 2
+MAX_QUICK_REPLIES = 3
+MAX_ACTIONS = 3
+
+# A normal reply is 2-5 sentences (well under 200 tokens); this leaves room
+# for an occasional short list without letting replies run long.
+REPLY_MAX_TOKENS = 450
+EXTRAS_MAX_TOKENS = 250
+
+# The second, structured call: what the app shows around the reply.
+EXTRAS_SCHEMA = {
     "type": "object",
     "properties": {
-        "reply": {"type": "string", "maxLength": 2400},
-        "follow_up_question": {"type": "string", "maxLength": 300},
         "quick_replies": {
             "type": "array",
             "items": {"type": "string", "maxLength": 60},
-            "maxItems": 4,
-        },
-        "career_suggestions": {
-            "type": "array",
-            "maxItems": 3,
-            "items": {
-                "type": "object",
-                "properties": {
-                    "slug": {"type": "string", "maxLength": 100},
-                    "title": {"type": "string", "maxLength": 100},
-                    "why": {"type": "string", "maxLength": 300},
-                },
-                "required": ["slug", "title", "why"],
-            },
+            "maxItems": MAX_QUICK_REPLIES,
         },
         "suggested_actions": {
             "type": "array",
             "items": {"type": "string", "enum": ACTIONS},
-            "maxItems": 3,
+            "maxItems": MAX_ACTIONS,
         },
         "facts_to_remember": {
             "type": "array",
@@ -109,10 +145,7 @@ COUNSELOR_SCHEMA = {
         "conversation_title": {"type": "string", "maxLength": 60},
     },
     "required": [
-        "reply",
-        "follow_up_question",
         "quick_replies",
-        "career_suggestions",
         "suggested_actions",
         "facts_to_remember",
         "conversation_title",
@@ -120,15 +153,16 @@ COUNSELOR_SCHEMA = {
 }
 
 
+# Fixed text first: vLLM caches the shared prefix, so everything that is the
+# same for every student and turn belongs at the top of the prompt.
 SYSTEM_PROMPT = """You are the NeoCity Academy AI Career Counselor. You are an AI, not a human, and you say so if asked. You help high school students (ages 14-18) understand their interests, explore careers, and make realistic plans.
 
 How you counsel:
-- Be warm, encouraging, and direct. Never patronizing. Write at a level a 9th grader reads easily. Use short paragraphs; use a bulleted list only when listing options or steps.
+- Be warm, encouraging, and direct. Never patronizing. Write at a level a 9th grader reads easily.
 - Ground everything in what you actually know about the student (below), including their favorite subjects, interests, activities, and documents, not only their latest message. When you connect a career to them, say which of their interests, subjects, or experiences it connects to.
 - Never ask for something already known. Check the student context first.
-- If an important detail is missing for a good answer, ask ONE short, specific follow-up question in follow_up_question. Do not interrogate. Skip the question when you can already help well. Students may say "I'm not sure" or skip; that is fine, keep helping.
 - Move the conversation forward every turn. Never repeat a previous reply or re-suggest the same careers in the same words. If the student says "I'm not sure", reassure them in one sentence, then try a new angle: an easy either/or choice, a different career direction, or one small thing they could try this week.
-- Students who don't know what they want are not behind. Help them explore through interests, favorite subjects, and activities, and show several possibilities rather than one answer.
+- Students who don't know what they want are not behind. Help them explore through interests, favorite subjects, and activities.
 - Students with a goal: explain realistic pathways, what they can do in high school now, and related alternatives.
 - Career fit is never certain. Use language like "could be worth exploring", never "you should be" or "you will be". Do not label students.
 - Respect different routes: four-year college, community college, apprenticeships, trade school, military, certificates, and starting work.
@@ -139,14 +173,19 @@ How you counsel:
 - Stay focused on school, careers, skills, and planning. If asked something unrelated, briefly and kindly steer back.
 - If a student seems distressed or mentions self-harm, abuse, or being unsafe, respond with care, encourage them to talk to a trusted adult right away, and share that in the US they can call or text 988 (Suicide & Crisis Lifeline) any time. Do not continue career advice in that reply.
 
-Output fields:
-- reply: your answer in Markdown, usually 60-200 words. Format it for easy reading on a phone: separate paragraphs with a blank line ("\n\n"), and put each list item on its own line starting with "- " or "1. ". Use **bold** sparingly for key terms. Never end the reply with a question; questions go only in follow_up_question. When you suggest careers, give each a one-line reason tied to the student; the app also shows a card for each career_suggestion.
-- follow_up_question: one question that teaches you something about the student that would improve your next answer (for example: working with people vs. on your own, hands-on vs. ideas, indoors vs. outdoors, a subject they enjoy, how much more school they'd consider). Never a generic "Do you have any questions?". Use "" when no question is needed.
-- quick_replies: up to 4 short answers the student could tap for your follow-up question (include "I'm not sure" when it fits), or [].
-- career_suggestions: up to 3 careers worth exploring that you discuss in the reply, ideally from different directions. The candidates list is ordered by fit with the student; use a slug from it when one fits, otherwise slug "". "why" must cite the student's own information. Use [] when this turn isn't about specific careers.
-- suggested_actions: up to 3 helpful next steps from the allowed list, only when genuinely useful. build_plan when they are ready for a plan; skill_check, project_ideas, certificates, interview_practice, or career_roadmap when they have a specific career in mind; upload_document when a resume or transcript would clearly help; explore_careers when browsing would help; update_profile rarely.
-- facts_to_remember: only facts the student stated about themselves in their LATEST message (grade, subjects they like, interests, hobbies, skills, activities, careers they are curious about, goals, constraints). evidence must be an exact quote from that message. Never include your own guesses or interpretations. [] if none.
-- conversation_title: 3-6 word title for this conversation."""
+How you write each reply:
+- Short: usually 2-5 sentences, under 120 words. Use a short list (at most 3 items) only when the student asks for options or steps.
+- Mention at most 2 careers, each with a one-line reason tied to the student. Use the careers' names as written in the candidates list when one fits.
+- If a detail is missing for a good answer, end with ONE short, specific question (for example: working with people or on your own, hands-on or ideas, a subject they enjoy). Skip the question when you can already help well. Never ask "Do you have any questions?".
+- Plain Markdown only: paragraphs separated by a blank line, **bold** sparingly. Never output JSON or field names."""
+
+
+EXTRAS_PROMPT = """You add the interactive parts around a career counselor's reply to a high school student. You never change the reply. Output JSON only.
+
+- quick_replies: if the reply ends with a question, up to 3 short answers the student could tap (include "I'm not sure" when it fits); otherwise [].
+- suggested_actions: up to 3 genuinely useful next steps from the allowed list. build_plan when they are ready for a plan; skill_check, project_ideas, certificates, interview_practice, or career_roadmap when they have a specific career in mind; upload_document when a resume or transcript would clearly help; explore_careers when browsing would help; update_profile rarely. [] when none fit.
+- facts_to_remember: only facts the student stated about themselves in their LATEST message (grade, subjects they like, interests, hobbies, skills, activities, careers they are curious about, goals, constraints). evidence must be an exact quote from that message. Never your own guesses. [] if none.
+- conversation_title: a 3-6 word title for this conversation."""
 
 
 def _quote_in_message(evidence: str, message: str) -> bool:
@@ -196,7 +235,7 @@ def _validate_output(output: dict, student_message: str, candidates: list[dict])
 
     suggestions = []
 
-    for suggestion in output.get("career_suggestions", [])[:3]:
+    for suggestion in output.get("career_suggestions", [])[:MAX_CAREER_SUGGESTIONS]:
         slug = suggestion.get("slug", "")
         career = career_catalog.get_career(slug) if slug else None
 
@@ -237,33 +276,105 @@ def _validate_output(output: dict, student_message: str, candidates: list[dict])
         "follow_up_question": output.get("follow_up_question", "").strip(),
         "quick_replies": [
             reply.strip() for reply in output.get("quick_replies", []) if reply.strip()
-        ][:4],
+        ][:MAX_QUICK_REPLIES],
         "career_suggestions": [item for item in suggestions if item["title"]],
-        "suggested_actions": actions[:3],
+        "suggested_actions": actions[:MAX_ACTIONS],
         "facts": facts,
         "title": output.get("conversation_title", "").strip(),
     }
 
 
-async def _counselor_reply(context: dict, student_name: str) -> dict:
+def counselor_messages(context: dict, student_name: str) -> list[dict]:
+    """
+    The reply prompt, most stable parts first so vLLM reuses the cached
+    prefix: fixed instructions, then this student, then what this message
+    retrieved (candidates), then the conversation.
+    """
+
     system = (
         SYSTEM_PROMPT
+        + (f"\n\nThe student's name is {student_name}." if student_name else "")
         + "\n\n"
         + context_block(context)
-        + "\n\n## Career catalog candidates (slug: title)\n"
+        + "\n\n## Career catalog candidates (slug: title), best fit first\n"
         + context["candidates_text"]
-        + (f"\n\nThe student's name is {student_name}." if student_name else "")
     )
 
-    messages = [{"role": "system", "content": system}, *context["turns"]]
+    return [{"role": "system", "content": system}, *context["turns"]]
 
-    return await chat_json(
-        messages,
-        schema=COUNSELOR_SCHEMA,
-        schema_name="counselor_turn",
-        max_tokens=1400,
-        temperature=0.5,
-    )
+
+def extras_messages(context: dict, student_message: str, reply: str) -> list[dict]:
+    return [
+        {"role": "system", "content": EXTRAS_PROMPT},
+        {
+            "role": "user",
+            "content": (
+                "## The student's latest message\n"
+                + student_message
+                + "\n\n## The counselor's reply\n"
+                + reply
+            ),
+        },
+    ]
+
+
+def _plain(text: str) -> str:
+    text = re.sub(r"[*_`#>]+", "", text)
+    return re.sub(r"^\s*(?:[-•]|\d{1,2}[.)])\s+", "", text).strip()
+
+
+def careers_in_reply(reply: str, limit: int = MAX_CAREER_SUGGESTIONS) -> list[dict]:
+    """
+    Career cards for the catalog careers the reply actually names, in the
+    order it names them. The reason shown is the reply's own sentence, so a
+    card can never say something the reply didn't.
+    """
+
+    lowered = reply.lower()
+    found: list[tuple[int, dict]] = []
+
+    for career in career_catalog.load_catalog()["careers"]:
+        title = career["title"].lower()
+        # "Graphic Designers" also matches "graphic designer".
+        pattern = re.escape(title[:-1] if title.endswith("s") else title)
+        match = re.search(rf"\b{pattern}", lowered)
+
+        if match:
+            found.append((match.start(), career))
+
+    found.sort(key=lambda item: item[0])
+    cards = []
+
+    for position, career in found[:limit]:
+        # The line (list item) or sentence that names the career.
+        start = reply.rfind("\n", 0, position) + 1
+        end = reply.find("\n", position)
+        line = _plain(reply[start : end if end != -1 else len(reply)])
+        # Drop a leading "Graphic Designers:" so the card doesn't repeat its title.
+        line = re.sub(rf"^{re.escape(career['title'])}\s*[:\-–—]\s*", "", line, flags=re.IGNORECASE)
+        sentences = re.split(r"(?<=[.!?])\s+", line)
+        # The sentence that names it; after "Title:" was dropped, the first.
+        why = next((item for item in sentences if re.search(rf"\b{pattern}", item.lower())), sentences[0])
+
+        cards.append({"slug": career["slug"], "title": career["title"], "why": why[:300]})
+
+    return cards
+
+
+async def _extras(context: dict, student_message: str, reply: str) -> dict:
+    """The structured parts around a reply. A failure here keeps the reply."""
+
+    try:
+        return await chat_json(
+            extras_messages(context, student_message, reply),
+            schema=EXTRAS_SCHEMA,
+            schema_name="counselor_extras",
+            max_tokens=EXTRAS_MAX_TOKENS,
+            temperature=0.2,
+        )
+    except LLMError as exc:
+        logger.warning("Counselor extras failed: %s", exc)
+        return {}
 
 
 async def _module_reply(action: str, question: str, context: dict) -> dict:
@@ -310,14 +421,27 @@ async def _module_reply(action: str, question: str, context: dict) -> dict:
     }
 
 
-async def run_turn(
+async def run_turn_stream(
     student_id: str,
     *,
     conversation_id: str | None,
     text: str,
     action: str | None = None,
     retry: bool = False,
-) -> dict:
+) -> AsyncIterator[dict]:
+    """
+    One counselor turn as events:
+      start  {conversation_id, user_message}
+      delta  {text}                  reply text as it is generated
+      done   {conversation_id, conversation_title, user_message, assistant_message}
+      error  {conversation_id, user_message, assistant_message, error}
+
+    Deep-dive modules are not streamed: they go straight from start to done.
+    """
+
+    timer = _TurnTimer()
+    kind = action if action in MODULE_ACTIONS else "chat"
+
     if conversation_id:
         conversation = await get_owned_conversation(student_id, conversation_id)
     else:
@@ -333,35 +457,73 @@ async def run_turn(
         user_message = last
         text = last.content
         action = (last.metadata_json or {}).get("action")
+        kind = action if action in MODULE_ACTIONS else "chat"
     else:
         user_metadata = {"action": action} if action else {}
         user_message = await add_message(
             student_id, conversation.id, "user", text, user_metadata
         )
 
+    timer.lap("setup")
+    yield {
+        "event": "start",
+        "conversation_id": conversation.id,
+        "user_message": message_to_dict(user_message),
+    }
+
     context = await build_context(student_id, conversation, text)
+    timer.lap("context")
 
     try:
         if action in MODULE_ACTIONS:
             output = await _module_reply(action, text, context)
+            timer.lap("model")
         else:
-            raw = await _counselor_reply(context, context["name"])
-            output = _validate_output(raw, text, context["candidates"])
+            parts: list[str] = []
+
+            async for piece in chat_stream(
+                counselor_messages(context, context["name"]),
+                max_tokens=REPLY_MAX_TOKENS,
+                temperature=0.5,
+                name="counselor_reply",
+            ):
+                if not parts:
+                    timer.lap("first_token")
+
+                parts.append(piece)
+                yield {"event": "delta", "text": piece}
+
+            timer.lap("reply")
+            reply = "".join(parts).strip()
+
+            if not reply:
+                raise LLMError("The model returned an empty reply.")
+
+            extras = await _extras(context, text, reply)
+            timer.lap("extras")
+            output = _validate_output(
+                {**extras, "reply": reply, "career_suggestions": careers_in_reply(reply)},
+                text,
+                context["candidates"],
+            )
+            timer.lap("validate")
     except Exception:
         logger.exception("Counselor turn failed")
-        failed = {
-            "id": None,
-            "role": "assistant",
-            "content": "",
-            "metadata": {"error": True},
-            "created_at": None,
-        }
-        return {
+        timer.finish(kind, ok=False)
+        yield {
+            "event": "error",
             "conversation_id": conversation.id,
             "user_message": message_to_dict(user_message),
-            "assistant_message": failed,
+            "assistant_message": {
+                "id": None,
+                "role": "assistant",
+                "content": "",
+                "metadata": {"error": True},
+                "created_at": None,
+            },
             "error": "The counselor couldn't answer just now. Please try again.",
         }
+        return
 
     proposed = await add_facts(
         student_id,
@@ -397,13 +559,39 @@ async def run_turn(
         )
 
     refreshed = await get_owned_conversation(student_id, conversation.id)
+    timer.lap("save")
+    timer.finish(kind, ok=True)
 
-    return {
+    yield {
+        "event": "done",
         "conversation_id": conversation.id,
         "conversation_title": refreshed.title,
         "user_message": message_to_dict(user_message),
         "assistant_message": message_to_dict(assistant_message),
     }
+
+
+async def run_turn(
+    student_id: str,
+    *,
+    conversation_id: str | None,
+    text: str,
+    action: str | None = None,
+    retry: bool = False,
+) -> dict:
+    """The same turn, returned whole (the non-streaming endpoints)."""
+
+    async for event in run_turn_stream(
+        student_id,
+        conversation_id=conversation_id,
+        text=text,
+        action=action,
+        retry=retry,
+    ):
+        if event["event"] in ("done", "error"):
+            return {key: value for key, value in event.items() if key != "event"}
+
+    raise LLMError("The counselor turn ended without a reply.")
 
 
 async def _last_message(conversation_id: str) -> Message | None:

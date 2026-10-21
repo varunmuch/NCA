@@ -84,6 +84,14 @@ async function forward(
 
   responseHeaders.set("cache-control", "no-store");
 
+  // Counselor replies stream as server-sent events. "no-transform" keeps
+  // Next's response compression from buffering them; X-Accel-Buffering
+  // does the same for an nginx in front, if one is ever added.
+  if (response.headers.get("content-type")?.startsWith("text/event-stream")) {
+    responseHeaders.set("cache-control", "no-store, no-transform");
+    responseHeaders.set("x-accel-buffering", "no");
+  }
+
   return new NextResponse(response.body, {
     status: response.status,
     headers: responseHeaders,

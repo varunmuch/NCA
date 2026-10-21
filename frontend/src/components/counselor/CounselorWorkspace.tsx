@@ -37,12 +37,6 @@ const EXAMPLES = [
   "Can you build a career plan based on my profile?",
 ];
 
-const THINKING_STEPS = [
-  "Reading what you've shared…",
-  "Thinking about options that fit you…",
-  "Putting it into words…",
-];
-
 function nowIso() {
   return new Date().toISOString().replace("Z", "");
 }
@@ -208,7 +202,7 @@ export function CounselorWorkspace({
   const [loadError, setLoadError] = useState("");
   const [sending, setSending] = useState(false);
   const [pendingLabel, setPendingLabel] = useState("");
-  const [thinkingStep, setThinkingStep] = useState(0);
+  const [modelAvailable, setModelAvailable] = useState(true);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyCollapsed, setHistoryCollapsed] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
@@ -274,21 +268,34 @@ export function CounselorWorkspace({
     }
   }, [start, ask, initialId, aspiration]);
 
+  // Check the model on load; while it's down, check again every 30 seconds.
   useEffect(() => {
-    if (!sending) {
-      return;
-    }
+    let cancelled = false;
+    let timer: number | undefined;
 
-    const timer = window.setInterval(
-      () => setThinkingStep((current) => Math.min(current + 1, THINKING_STEPS.length - 1)),
-      2600
-    );
+    const check = () =>
+      api
+        .modelHealth()
+        .then(({ available }) => {
+          if (cancelled) {
+            return;
+          }
+
+          setModelAvailable(available);
+
+          if (!available) {
+            timer = window.setTimeout(check, 30_000);
+          }
+        })
+        .catch(() => undefined);
+
+    void check();
 
     return () => {
-      window.clearInterval(timer);
-      setThinkingStep(0);
+      cancelled = true;
+      window.clearTimeout(timer);
     };
-  }, [sending]);
+  }, []);
 
   // Follow new messages only when the student is already at the bottom,
   // so scrolling back to reread is never interrupted.
@@ -351,14 +358,45 @@ export function CounselorWorkspace({
     setSending(true);
     setPendingLabel(action ? `Building your ${ACTION_META[action].label.toLowerCase()}…` : "");
 
-    try {
-      const result = await api.sendMessage({ conversation_id: conversationId, text, action: action ?? null });
+    const withoutDraft = (current: ChatMessage[]) => current.filter((message) => !message.metadata.streaming);
 
-      setMessages((current) => [...current.slice(0, -1), result.user_message, result.assistant_message]);
-      adoptConversation(result.conversation_id, result.conversation_title);
+    try {
+      const result = await api.streamMessage(
+        { conversation_id: conversationId, text, action: action ?? null },
+        (event) => {
+          if (event.event === "start") {
+            adoptConversation(event.conversation_id);
+            // Swap the optimistic message for the saved one and open an
+            // empty reply that fills in as text arrives.
+            setMessages((current) => [
+              ...current.slice(0, -1),
+              event.user_message,
+              { id: null, role: "assistant", content: "", metadata: { streaming: true }, created_at: null },
+            ]);
+          } else if (event.event === "delta") {
+            setMessages((current) => {
+              const last = current[current.length - 1];
+
+              if (!last?.metadata.streaming) {
+                return current;
+              }
+
+              return [...current.slice(0, -1), { ...last, content: last.content + event.text }];
+            });
+          }
+        }
+      );
+
+      setMessages((current) => [...withoutDraft(current), result.assistant_message]);
+
+      if (result.error) {
+        toast(result.error, "error");
+      } else {
+        adoptConversation(result.conversation_id, result.conversation_title);
+      }
     } catch (error) {
       setMessages((current) => [
-        ...current,
+        ...withoutDraft(current),
         { id: null, role: "assistant", content: "", metadata: { error: true }, created_at: null },
       ]);
       toast(error instanceof Error ? error.message : "The counselor couldn't answer just now.", "error");
@@ -578,12 +616,16 @@ export function CounselorWorkspace({
                 />
               ))}
 
-              {sending && (
+              {sending && !messages.some((message) => message.metadata.streaming && message.content) && (
                 <div className="flex items-center gap-3" aria-live="polite">
                   <CounselorAvatar />
-                  <div className="flex items-center gap-3 rounded-2xl bg-surface px-4 py-3 shadow-[var(--shadow-card)]">
+                  <div className="flex items-center gap-3 px-1 py-3">
                     <ThinkingDots />
-                    <span className="text-sm text-ink-muted">{pendingLabel || THINKING_STEPS[thinkingStep]}</span>
+                    {pendingLabel ? (
+                      <span className="text-sm text-ink-muted">{pendingLabel}</span>
+                    ) : (
+                      <span className="sr-only">Your counselor is writing</span>
+                    )}
                   </div>
                 </div>
               )}
@@ -606,7 +648,17 @@ export function CounselorWorkspace({
 
         <div className="shrink-0 bg-gradient-to-t from-canvas via-canvas to-canvas/0 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 sm:px-6">
           <div className="mx-auto w-full max-w-3xl">
-            <Composer ref={composerRef} onSend={(text) => void send(text)} onAttach={() => setUploadOpen(true)} disabled={sending} />
+            {!modelAvailable && (
+              <p role="status" className="mb-2 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink">
+                Your counselor is taking a short break. Try again in a few minutes. Everything else in Career Explorer still works.
+              </p>
+            )}
+            <Composer
+              ref={composerRef}
+              onSend={(text) => void send(text)}
+              onAttach={() => setUploadOpen(true)}
+              disabled={sending || !modelAvailable}
+            />
             <p className="mt-2 text-center text-[11px] leading-snug text-ink-soft">
               Your counselor is an AI and can make mistakes. Talk big decisions over with a school counselor or trusted adult.
             </p>

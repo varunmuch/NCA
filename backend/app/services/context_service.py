@@ -29,8 +29,8 @@ BUDGET_PROFILE = 1200
 BUDGET_DOCUMENTS = 2500
 BUDGET_PAST_CONVERSATIONS = 800
 BUDGET_PLAN_PROGRESS = 500
-BUDGET_CANDIDATES = 700
-BUDGET_RECENT_TURNS = 4500
+BUDGET_CANDIDATES = 400
+BUDGET_RECENT_TURNS = 2500
 BUDGET_SUMMARY = 700
 
 RECENT_MESSAGE_LIMIT = 16
@@ -425,6 +425,11 @@ async def build_context(
 def context_block(context: dict) -> str:
     """
     The student context section shared by counselor and plan prompts.
+
+    Ordered from most to least stable, so consecutive prompts share the
+    longest possible prefix in vLLM's cache: who the student is and their
+    plan change rarely; the conversation summary changes every few turns;
+    related conversations and document passages are retrieved per message.
     """
 
     sections = [
@@ -434,14 +439,14 @@ def context_block(context: dict) -> str:
     if context["plan_text"]:
         sections.append("## Plan, saved careers, and progress\n" + context["plan_text"])
 
-    if context["past_text"]:
-        sections.append(
-            "## Related earlier conversations (summaries)\n" + context["past_text"]
-        )
-
     if context["conversation_summary"]:
         sections.append(
             "## Earlier in this conversation (summary)\n" + context["conversation_summary"]
+        )
+
+    if context["past_text"]:
+        sections.append(
+            "## Related earlier conversations (summaries)\n" + context["past_text"]
         )
 
     sections.append(

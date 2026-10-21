@@ -77,6 +77,8 @@ export type MessageMetadata = {
   module?: { type: ModuleType; result: Record<string, unknown> };
   action?: CounselorAction;
   error?: boolean;
+  // Set only in the browser while a reply is still arriving.
+  streaming?: boolean;
 };
 
 export type ChatMessage = {
@@ -107,6 +109,13 @@ export type CounselorTurnResponse = {
   assistant_message: ChatMessage;
   error?: string;
 };
+
+// Server-sent events from POST /me/counselor/messages/stream.
+export type CounselorStreamEvent =
+  | { event: "start"; conversation_id: string; user_message: ChatMessage }
+  | { event: "delta"; text: string }
+  | ({ event: "done" } & CounselorTurnResponse)
+  | ({ event: "error" } & CounselorTurnResponse & { error: string });
 
 export type CareerSummary = {
   slug: string;
