@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 from app.services import counselor_service as cs
-from app.services import grounding
+from app.services import career_catalog, grounding
 from app.services.context_service import build_sources, grounding_corpus
 
 
@@ -169,3 +169,23 @@ def test_crisis_help_is_never_removed():
     assert "988" in grounding.ground_reply(risky, "")[0]
     # Real dates are still checked.
     assert [claim["text"] for claim in grounding.ungrounded_claims("Apply by 3/15.", "")] == ["3/15"]
+
+
+def test_a_named_careers_figure_is_checked_even_outside_the_turns_sources():
+    # The Phase 4 eval bug: Graphic Designers weren't in the turn's sources, and
+    # another career's median ($53,460) passed as theirs.
+    reply = "Graphic Designers earn a median of $53,460 a year."
+    corpus = "Some other career: median $53,460 a year."
+    text, removed = grounding.ground_reply(reply, corpus, list(career_catalog.career_scopes()))
+
+    assert [claim["text"] for claim in removed] == ["$53,460"]
+    real = career_catalog.load_career_data()["careers"]["graphic-designers"]["wages"]["national"]["annual_median"]
+    assert grounding.ground_reply(f"Graphic Designers earn a median of ${real:,.0f} a year.", corpus, list(career_catalog.career_scopes()))[1] == []
+
+
+def test_careers_the_student_names_come_first_in_sources():
+    from app.services.context_service import build_sources
+
+    named = career_catalog.named_careers("do graphic designers make good money?")
+    assert named == ["graphic-designers"]
+    assert build_sources([{"slug": slug} for slug in named] + [{"slug": "registered-nurses"}])[0]["slug"] == "graphic-designers"

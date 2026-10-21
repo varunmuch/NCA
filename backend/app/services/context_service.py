@@ -400,6 +400,29 @@ def sources_block(sources: list[dict]) -> str:
     return "\n".join(f"[{source['id']}] {source['text']}" for source in sources)
 
 
+def student_signals(profile: dict, facts: list[dict], student_texts: list[str]) -> int:
+    """
+    How many distinct things we know about what the student enjoys or is
+    good at: subjects and interest types found in their profile, confirmed
+    facts and everything they've written, plus the interest quiz. Below 2,
+    the counselor asks before naming careers.
+    """
+
+    enriched = dict(profile)
+
+    for fact in facts:
+        if fact.get("status") == "confirmed" and fact["category"] in {"interests", "hobbies", "favorite_subjects", "activities", "strengths"}:
+            enriched[fact["category"]] = list(enriched.get(fact["category"]) or []) + [fact["value"]]
+
+    signals = career_catalog.profile_signals(enriched, " ".join(student_texts))
+    count = len(signals["subjects"]) + len(signals["interests"])
+
+    if profile.get("interest_scores"):
+        count += 2
+
+    return count
+
+
 def grounding_corpus(context: dict, student_message: str) -> str:
     """
     Everything a reply's figures and names may come from: the sources, what
@@ -488,7 +511,19 @@ async def build_context(
         ),
         "candidates_text": candidates_text,
         "candidates": candidates,
-        "sources": (sources := build_sources(candidates)),
+        "signals": student_signals(
+            profile,
+            facts,
+            [turn["content"] for turn in turns if turn["role"] == "user"] + [query],
+        ),
+        # Careers the student just named come first, so "do nurses make good
+        # money?" is answered from the nurses' data.
+        "sources": (
+            sources := build_sources(
+                [{"slug": slug} for slug in career_catalog.named_careers(query)]
+                + [match for match in candidates if match["slug"] not in career_catalog.named_careers(query)]
+            )
+        ),
         "sources_text": _fit(sources_block(sources), BUDGET_SOURCES),
         "turns": turns,
     }

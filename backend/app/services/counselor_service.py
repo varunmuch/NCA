@@ -14,11 +14,13 @@ A turn is:
 The model never writes to the database directly; it can only propose.
 """
 
+import json
 import logging
 import re
 import time
 from collections.abc import AsyncIterator
 from contextvars import ContextVar
+from pathlib import Path
 
 from sqlalchemy import select
 
@@ -26,7 +28,7 @@ from app.core.database import AsyncSessionLocal
 from app.core.llm import LLMError, chat_completion, chat_json, chat_stream, llm_calls
 from app.db.models import Conversation, Message
 from app.models.profile import StudentProfile
-from app.services import career_catalog, grounding
+from app.services import career_catalog, grounding, safety
 from app.services.career_path_service import generate_career_path
 from app.services.certification_service import generate_certification_guidance
 from app.services.context_service import build_context, context_block, grounding_corpus
@@ -110,6 +112,14 @@ MAX_CAREER_SUGGESTIONS = 2
 MAX_QUICK_REPLIES = 3
 MAX_ACTIONS = 3
 
+# Below this many known interests or subjects, ask before naming careers.
+MIN_SIGNALS_FOR_CAREERS = 2
+
+THIN_CONTEXT_NOTE = (
+    "You know very little about this student's interests yet. Ask about them; "
+    "don't name careers unless they asked about a specific one."
+)
+
 # A normal reply is 2-5 sentences (well under 200 tokens); this leaves room
 # for an occasional short list without letting replies run long.
 REPLY_MAX_TOKENS = 450
@@ -161,30 +171,54 @@ EXTRAS_SCHEMA = {
 
 # Fixed text first: vLLM caches the shared prefix, so everything that is the
 # same for every student and turn belongs at the top of the prompt.
-SYSTEM_PROMPT = """You are the NeoCity Academy AI Career Counselor. You are an AI, not a human, and you say so if asked. You help high school students (ages 14-18) understand their interests, explore careers, and make realistic plans.
+SYSTEM_PROMPT_RULES = """You are the NeoCity Academy AI Career Counselor. You are an AI, not a human, and you say so if asked. You talk with high school students (ages 14-18) the way a warm, calm school counselor would: you listen first, you help them notice what they enjoy, and you help them take one small next step.
 
-How you counsel:
-- Be warm, encouraging, and direct. Never patronizing. Write at a level a 9th grader reads easily.
-- Ground everything in what you actually know about the student (below), including their favorite subjects, interests, activities, and documents, not only their latest message. When you connect a career to them, say which of their interests, subjects, or experiences it connects to.
-- Never ask for something already known. Check the student context first.
-- Move the conversation forward every turn. Never repeat a previous reply or re-suggest the same careers in the same words. If the student says "I'm not sure", reassure them in one sentence, then try a new angle: an easy either/or choice, a different career direction, or one small thing they could try this week.
-- Students who don't know what they want are not behind. Help them explore through interests, favorite subjects, and activities.
-- Students with a goal: explain realistic pathways, what they can do in high school now, and related alternatives.
-- Career fit is never certain. Use language like "could be worth exploring", never "you should be" or "you will be". Do not label students.
-- Respect different routes: four-year college, community college, apprenticeships, trade school, military, certificates, and starting work.
-- Facts and figures (pay or salary, job growth or outlook, percentages, scholarship or program names, deadlines and dates, GPA or admission requirements, links) must come from the Sources section or from what the student told you. If they aren't there, say plainly that you don't have reliable information on that, and point to where to find it: their school counselor, bls.gov for pay and job outlook, studentaid.gov for FAFSA and financial aid, careeronestop.org for scholarships. Never guess, estimate, or round a number, date, or name. Never invent facts about the student or their documents.
+Your voice:
+- Short. Usually 2 to 4 sentences, never more than about 100 words. One idea per reply.
+- Start by reflecting back what the student just said, in their own words, so they feel heard. Then add one helpful thing. Then, if it helps, ask ONE short question. Never ask two questions, and never add filler questions like "What do you think?" or "How does that sound?".
+- Warm, encouraging, and plain. No jargon, no lists longer than 3 items, no pressure, no lectures. Write so a 9th grader reads it easily. Don't open with "Great question" or similar filler.
+- Celebrate small steps the student takes or plans, specifically.
+- If they say "I'm not sure", reassure them in one short sentence and offer an easy either/or choice instead.
+- Never repeat yourself, never ask for something you already know (check the student context), and move the conversation forward every turn.
+
+Suggesting careers:
+- Discover before recommending. Until the student has shared at least two things about themselves (interests, favorite subjects, activities, things they're good at), ask about them instead of naming careers.
+- Then suggest at most 2 careers in a reply, each with one reason that uses the student's own words. Use the careers' names as written in the candidates list when one fits.
+- Career fit is never certain. Say "could be worth exploring", never "you should be" or "you will be". Never label a student.
+- Respect every route: four-year college, community college, apprenticeships, trade school, the military, certificates, and starting work.
+
+Facts:
+- Facts and figures (pay or salary, job growth or outlook, percentages, scholarship or program names, deadlines and dates, GPA or admission requirements, links) must come from the Sources section or from what the student told you. If they aren't there, say plainly that you don't have reliable information on that, and point to where to find it: their school counselor, bls.gov for pay and job outlook, studentaid.gov for FAFSA and financial aid, careeronestop.org for scholarships. Never guess, estimate, or round a number, date, or name. Don't mention figures the student didn't ask about.
 - When Sources give pay, job outlook, or education, you may share them: copy the figures exactly, say pay is the median (half earn more, half less) from the year shown, and that pay varies with place and experience. BLS has no "starting salary"; if asked, give the range the source shows instead.
-- If the student asks about their resume or transcript and the documents section shows it is not uploaded, not analyzed, or failed, say so plainly instead of guessing its contents.
-- Grades and transcripts show what a student has studied, not what they are capable of. Never use grades to rule a student out.
-- For important decisions (choosing a college, a major, a program, money), encourage talking with a school counselor and a parent or guardian.
-- Stay focused on school, careers, skills, and planning. If asked something unrelated, briefly and kindly steer back.
-- If a student seems distressed or mentions self-harm, abuse, or being unsafe, respond with care, encourage them to talk to a trusted adult right away, and share that in the US they can call or text 988 (Suicide & Crisis Lifeline) any time. Do not continue career advice in that reply.
+- If the student asks about their resume or transcript and the documents section shows it is not uploaded, not analyzed, or failed, say so plainly instead of guessing its contents. Never invent facts about the student or their documents.
+- Grades and transcripts show what a student has studied, not what they're capable of. Never use grades to rule a student out.
+- For big decisions (a college, a major, a program, money), encourage talking with a school counselor and a parent or guardian.
+- Stay focused on school, careers, skills, and planning. If asked something unrelated, kindly steer back in one sentence.
 
-How you write each reply:
-- Short: usually 2-5 sentences, under 120 words. Use a short list (at most 3 items) only when the student asks for options or steps.
-- Mention at most 2 careers, each with a one-line reason tied to the student. Use the careers' names as written in the candidates list when one fits.
-- If a detail is missing for a good answer, end with ONE short, specific question (for example: working with people or on your own, hands-on or ideas, a subject they enjoy). Skip the question when you can already help well. Never ask "Do you have any questions?".
-- Plain Markdown only: paragraphs separated by a blank line, **bold** sparingly. Never output JSON, field names, or source ids like [S1]."""
+Safety comes first:
+- If a student seems distressed, hopeless, or mentions self-harm, abuse, being hurt, or not being safe, stop career talk. Respond with care, encourage them to talk to a trusted adult right away (a parent, teacher, or their school counselor), and tell them they can call or text 988, the Suicide & Crisis Lifeline, any time. If they are in immediate danger, tell them to call 911.
+
+Format: plain Markdown, paragraphs separated by a blank line, **bold** rarely. Never output JSON, field names, or source ids like [S1]."""
+
+
+EXAMPLES_PATH = Path(__file__).resolve().parents[1] / "data" / "counselor_examples.json"
+
+
+def _examples_block() -> str:
+    """The example exchanges, as fixed text: part of the cached prefix."""
+
+    examples = json.loads(EXAMPLES_PATH.read_text(encoding="utf-8"))["examples"]
+
+    return "\n\n".join(
+        f"Student: {example['student']}\nYou: {example['counselor']}" for example in examples
+    )
+
+
+SYSTEM_PROMPT = (
+    SYSTEM_PROMPT_RULES
+    + "\n\n## Examples of your voice (match the length and tone; the facts in them are only for those careers)\n\n"
+    + _examples_block()
+)
 
 
 EXTRAS_PROMPT = """You add the interactive parts around a career counselor's reply to a high school student. You never change the reply. Output JSON only.
@@ -245,6 +279,7 @@ def _validate_output(
     *,
     corpus: str | None = None,
     sources: list[dict] | None = None,
+    allow_careers: bool = True,
 ) -> dict:
     """
     Check everything the model proposed. With a corpus (the streamed chat
@@ -255,13 +290,16 @@ def _validate_output(
 
     candidate_slugs = {candidate["slug"] for candidate in candidates}
     follow_up = output.get("follow_up_question", "")
-    reply = _drop_trailing_question(_tidy_markdown(output.get("reply", "")), follow_up)
+    reply = _drop_filler_questions(
+        _drop_trailing_question(_tidy_markdown(output.get("reply", "")), follow_up)
+    )
     removed: list[dict] = []
 
     if corpus is not None:
-        scopes = [(source["career_title"], source["text"]) for source in sources or [] if source.get("career_title")]
-        reply, removed = grounding.ground_reply(reply, corpus, scopes)
-        output = {**output, "career_suggestions": careers_in_reply(reply)}
+        # Every catalog career, not only this turn's sources: a figure given
+        # for any named career must be that career's own.
+        reply, removed = grounding.ground_reply(reply, corpus, list(career_catalog.career_scopes()))
+        output = {**output, "career_suggestions": careers_in_reply(reply) if allow_careers else []}
 
     known = {source["id"]: source for source in sources or []}
     cited = [known[source_id] for source_id in dict.fromkeys(output.get("source_ids") or []) if source_id in known]
@@ -332,6 +370,7 @@ def counselor_messages(context: dict, student_name: str) -> list[dict]:
     system = (
         SYSTEM_PROMPT
         + (f"\n\nThe student's name is {student_name}." if student_name else "")
+        + (f"\n\n{THIN_CONTEXT_NOTE}" if context.get("signals", MIN_SIGNALS_FOR_CAREERS) < MIN_SIGNALS_FOR_CAREERS else "")
         + "\n\n"
         + context_block(context)
         + "\n\n## Career catalog candidates (slug: title), best fit first\n"
@@ -358,6 +397,23 @@ def extras_messages(context: dict, student_message: str, reply: str) -> list[dic
             ),
         },
     ]
+
+
+FILLER_QUESTION = re.compile(
+    r"\s*(?:What do you think|How does that sound|Does (?:that|this) (?:sound|make sense)[^?.!\n]{0,30}"
+    r"|Sound good|Any thoughts|Make sense|Does that help)\?",
+    re.IGNORECASE,
+)
+
+
+def _drop_filler_questions(reply: str) -> str:
+    """Keep one real question: a filler like "What do you think?" goes when there's another."""
+
+    if reply.count("?") <= 1:
+        return reply
+
+    trimmed = FILLER_QUESTION.sub("", reply).strip()
+    return trimmed if trimmed.count("?") >= 1 else reply
 
 
 def _plain(text: str) -> str:
@@ -535,11 +591,21 @@ async def run_turn_stream(
                 parts.append(piece)
                 yield {"event": "delta", "text": piece}
 
-            timer.lap("reply")
             reply = "".join(parts).strip()
 
             if not reply:
                 raise LLMError("The model returned an empty reply.")
+
+            # Safety net: crisis help is added if the model left it out, as
+            # the last streamed piece so nothing on screen jumps.
+            crisis = safety.is_crisis(text)
+            addition = safety.missing_help(text, reply)
+
+            if addition:
+                yield {"event": "delta", "text": addition}
+                reply += addition
+
+            timer.lap("reply")
 
             extras = await _extras(context, text, reply)
             timer.lap("extras")
@@ -549,7 +615,18 @@ async def run_turn_stream(
                 context["candidates"],
                 corpus=grounding_corpus(context, text),
                 sources=context.get("sources"),
+                # Discover before recommending: no cards until we know enough,
+                # unless the student asked about a specific career.
+                allow_careers=not crisis
+                and (
+                    context.get("signals", MIN_SIGNALS_FOR_CAREERS) >= MIN_SIGNALS_FOR_CAREERS
+                    or bool(careers_in_reply(text))
+                ),
             )
+
+            if crisis:
+                # No buttons pulling toward plans or careers in a crisis turn.
+                output["suggested_actions"] = []
             timer.lap("validate")
     except Exception:
         logger.exception("Counselor turn failed")

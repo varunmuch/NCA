@@ -152,6 +152,36 @@ def facts_text(slug: str) -> str:
     return " ".join(lines)
 
 
+@lru_cache(maxsize=1)
+def career_scopes() -> tuple[tuple[str, str], ...]:
+    """
+    (title, that career's own facts) for every career, so a figure a reply
+    gives for a career is checked against that career's data even when it
+    wasn't among the turn's sources.
+    """
+
+    return tuple(
+        (career["title"], career["description"] + " " + facts_text(career["slug"]))
+        for career in load_catalog()["careers"]
+    )
+
+
+def named_careers(text: str) -> list[str]:
+    """Slugs of catalog careers named in text, in order ("graphic designer" counts)."""
+
+    lowered = text.lower()
+    found = []
+
+    for career in load_catalog()["careers"]:
+        title = career["title"].lower()
+        match = re.search(rf"\b{re.escape(title[:-1] if title.endswith('s') else title)}", lowered)
+
+        if match:
+            found.append((match.start(), career["slug"]))
+
+    return [slug for _, slug in sorted(found)]
+
+
 def get_career(slug: str) -> dict | None:
     return load_catalog()["by_slug"].get(slug)
 
