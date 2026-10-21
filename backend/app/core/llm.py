@@ -113,81 +113,111 @@ async def chat_completion(
     return choice["message"]["content"] or ""
 
 
+# How many times a reply that hit max_tokens is continued before giving up.
+MAX_CONTINUATIONS = 2
+
+
 async def chat_stream(
     messages: list[dict[str, Any]],
     *,
     max_tokens: int,
     temperature: float = 0.3,
     name: str = "stream",
+    outcome: dict | None = None,
 ) -> AsyncIterator[str]:
-    """Yield the reply's text as vLLM generates it (plain text, no schema)."""
+    """
+    Yield the reply's text as vLLM generates it (plain text, no schema).
 
-    payload: dict[str, Any] = {
-        "model": MODEL_NAME,
-        "messages": messages,
-        "max_tokens": max_tokens,
-        "temperature": temperature,
-        "stream": True,
-        "stream_options": {"include_usage": True},
-    }
+    A reply is never left cut off: if it hits max_tokens, the model
+    continues the same reply (vLLM's continue_final_message) up to
+    MAX_CONTINUATIONS times, streaming straight on. outcome, if given,
+    gets "finish" ("stop", or "length" if it was still cut after that).
+    """
 
-    started = time.monotonic()
-    first_token = None
-    usage: dict = {}
+    produced = ""
     finish = None
 
-    try:
-        async with httpx.AsyncClient(timeout=TIMEOUT_SECONDS) as client:
-            async with client.stream(
-                "POST", f"{VLLM_BASE_URL}/v1/chat/completions", json=payload
-            ) as response:
-                response.raise_for_status()
+    for round_number in range(MAX_CONTINUATIONS + 1):
+        payload: dict[str, Any] = {
+            "model": MODEL_NAME,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "stream": True,
+            "stream_options": {"include_usage": True},
+        }
 
-                async for line in response.aiter_lines():
-                    if not line.startswith("data: ") or line == "data: [DONE]":
-                        continue
+        if round_number:
+            # Pick up exactly where the reply stopped.
+            payload["messages"] = [*messages, {"role": "assistant", "content": produced}]
+            payload["continue_final_message"] = True
+            payload["add_generation_prompt"] = False
 
-                    chunk = json.loads(line[6:])
+        started = time.monotonic()
+        first_token = None
+        usage: dict = {}
+        finish = None
 
-                    if chunk.get("usage"):
-                        usage = chunk["usage"]
+        try:
+            async with httpx.AsyncClient(timeout=TIMEOUT_SECONDS) as client:
+                async with client.stream(
+                    "POST", f"{VLLM_BASE_URL}/v1/chat/completions", json=payload
+                ) as response:
+                    response.raise_for_status()
 
-                    for choice in chunk.get("choices") or []:
-                        finish = choice.get("finish_reason") or finish
-                        text = (choice.get("delta") or {}).get("content")
+                    async for line in response.aiter_lines():
+                        if not line.startswith("data: ") or line == "data: [DONE]":
+                            continue
 
-                        if text:
-                            if first_token is None:
-                                first_token = time.monotonic() - started
+                        chunk = json.loads(line[6:])
 
-                            yield text
-    except httpx.HTTPError as exc:
-        raise LLMError(f"Model request failed: {exc}") from exc
+                        if chunk.get("usage"):
+                            usage = chunk["usage"]
 
-    elapsed = time.monotonic() - started
+                        for choice in chunk.get("choices") or []:
+                            finish = choice.get("finish_reason") or finish
+                            text = (choice.get("delta") or {}).get("content")
 
-    logger.info(
-        "llm %s prompt=%s completion=%s finish=%s ttft=%.2fs %.1fs",
-        name,
-        usage.get("prompt_tokens"),
-        usage.get("completion_tokens"),
-        finish,
-        first_token or elapsed,
-        elapsed,
-    )
+                            if text:
+                                if first_token is None:
+                                    first_token = time.monotonic() - started
 
-    calls = llm_calls.get()
+                                produced += text
+                                yield text
+        except httpx.HTTPError as exc:
+            raise LLMError(f"Model request failed: {exc}") from exc
 
-    if calls is not None:
-        calls.append(
-            {
-                "name": name,
-                "prompt_tokens": usage.get("prompt_tokens") or 0,
-                "completion_tokens": usage.get("completion_tokens") or 0,
-                "seconds": round(elapsed, 3),
-                "ttft": round(first_token or elapsed, 3),
-            }
+        elapsed = time.monotonic() - started
+        label = name if not round_number else f"{name}+continue{round_number}"
+
+        logger.info(
+            "llm %s prompt=%s completion=%s finish=%s ttft=%.2fs %.1fs",
+            label,
+            usage.get("prompt_tokens"),
+            usage.get("completion_tokens"),
+            finish,
+            first_token or elapsed,
+            elapsed,
         )
+
+        calls = llm_calls.get()
+
+        if calls is not None:
+            calls.append(
+                {
+                    "name": label,
+                    "prompt_tokens": usage.get("prompt_tokens") or 0,
+                    "completion_tokens": usage.get("completion_tokens") or 0,
+                    "seconds": round(elapsed, 3),
+                    "ttft": round(first_token or elapsed, 3),
+                }
+            )
+
+        if finish != "length":
+            break
+
+    if outcome is not None:
+        outcome["finish"] = finish
 
 
 # Health is checked often (every chat page load), so the answer is cached.

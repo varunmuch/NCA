@@ -4,6 +4,7 @@ and failure handling. The database and model are replaced with fakes.
 """
 
 import asyncio
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -207,7 +208,9 @@ def test_reply_and_extras_limits_match_the_validator():
     assert "career_suggestions" not in schema
     assert cs.MAX_CAREER_SUGGESTIONS == 2
     assert schema["quick_replies"]["maxItems"] == cs.MAX_QUICK_REPLIES == 3
-    assert cs.REPLY_MAX_TOKENS <= 450
+    # Length comes from the prompt; the token limit is only a high guard,
+    # and replies that reach it are continued, never cut.
+    assert cs.REPLY_MAX_TOKENS >= 1000 and llm.MAX_CONTINUATIONS >= 1
 
 
 def test_model_health_is_false_when_vllm_is_unreachable_and_is_cached(monkeypatch):
@@ -243,3 +246,85 @@ def test_each_card_gets_the_sentence_that_names_it():
 
     assert cards["special-effects-artists-and-animators"].startswith("One option could be Special Effects")
     assert cards["graphic-designers"].startswith("Another could be Graphic Designers")
+
+
+class _FakeStream:
+    """Stands in for vLLM: each request gets the next scripted (text, finish)."""
+
+    def __init__(self, script):
+        self.script = list(script)
+        self.payloads = []
+
+    def client(self, *args, **kwargs):
+        outer = self
+
+        class Response:
+            def __init__(self, text, finish):
+                self.lines = [
+                    "data: " + json.dumps({"choices": [{"delta": {"content": text}, "finish_reason": None}]}),
+                    "data: " + json.dumps({"choices": [{"delta": {}, "finish_reason": finish}], "usage": {"completion_tokens": 5}}),
+                    "data: [DONE]",
+                ]
+
+            def raise_for_status(self):
+                return None
+
+            async def aiter_lines(self):
+                for line in self.lines:
+                    yield line
+
+        class Stream:
+            def __init__(self, payload):
+                self.payload = payload
+
+            async def __aenter__(self):
+                outer.payloads.append(self.payload)
+                return Response(*outer.script.pop(0))
+
+            async def __aexit__(self, *args):
+                return False
+
+        class Client:
+            async def __aenter__(self):
+                return self
+
+            async def __aexit__(self, *args):
+                return False
+
+            def stream(self, method, url, json=None):
+                return Stream(json)
+
+        return Client()
+
+
+def test_a_reply_cut_by_the_token_limit_is_continued(monkeypatch):
+    fake = _FakeStream([("Nursing could fit you. You would study bio", "length"), ("logy and chemistry.", "stop")])
+    monkeypatch.setattr(llm.httpx, "AsyncClient", fake.client)
+    outcome = {}
+
+    async def run():
+        return "".join([piece async for piece in llm.chat_stream([{"role": "user", "content": "hi"}], max_tokens=10, outcome=outcome)])
+
+    assert asyncio.run(run()) == "Nursing could fit you. You would study biology and chemistry."
+    assert outcome["finish"] == "stop"
+    # The continuation picks up the same reply where it stopped.
+    second = fake.payloads[1]
+    assert second["continue_final_message"] is True and second["add_generation_prompt"] is False
+    assert second["messages"][-1] == {"role": "assistant", "content": "Nursing could fit you. You would study bio"}
+
+
+def test_a_reply_still_cut_after_continuing_ends_on_a_whole_sentence(fake_turn, monkeypatch):
+    async def endless(messages, outcome=None, **kwargs):
+        yield "Nursing could fit you. You would study biology and"
+        outcome["finish"] = "length"
+
+    monkeypatch.setattr(cs, "chat_stream", endless)
+
+    async def extras(*args, **kwargs):
+        return {}
+
+    monkeypatch.setattr(cs, "chat_json", extras)
+    events = collect(text="hi")
+
+    assert events[-1]["event"] == "done"
+    assert fake_turn[-1]["content"] == "Nursing could fit you."

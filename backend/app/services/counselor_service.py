@@ -120,9 +120,10 @@ THIN_CONTEXT_NOTE = (
     "don't name careers unless they asked about a specific one."
 )
 
-# A normal reply is 2-5 sentences (well under 200 tokens); this leaves room
-# for an occasional short list without letting replies run long.
-REPLY_MAX_TOKENS = 450
+# Replies are kept short by the prompt, not by this limit: it only guards
+# against a runaway reply. A reply that reaches it is continued, never cut
+# (llm.chat_stream), and trimmed to a whole sentence as a last resort.
+REPLY_MAX_TOKENS = 1200
 EXTRAS_MAX_TOKENS = 250
 
 # The second, structured call: what the app shows around the reply.
@@ -417,6 +418,13 @@ def _drop_filler_questions(reply: str) -> str:
     return trimmed if trimmed.count("?") >= 1 else reply
 
 
+def whole_sentences(text: str) -> str:
+    """Text up to its last complete sentence, so nothing ends mid-thought."""
+
+    ends = [match.end() for match in re.finditer(r"[.!?](?:[\"')\]*_]*)(?=\s|$)", text)]
+    return text[: ends[-1]].strip() if ends else text.strip()
+
+
 def _plain(text: str) -> str:
     text = re.sub(r"[*_`#>]+", "", text)
     return re.sub(r"^\s*(?:[-•]|\d{1,2}[.)])\s+", "", text).strip()
@@ -581,12 +589,14 @@ async def run_turn_stream(
             timer.lap("model")
         else:
             parts: list[str] = []
+            generation: dict = {}
 
             async for piece in chat_stream(
                 counselor_messages(context, context["name"]),
                 max_tokens=REPLY_MAX_TOKENS,
                 temperature=0.5,
                 name="counselor_reply",
+                outcome=generation,
             ):
                 if not parts:
                     timer.lap("first_token")
@@ -595,6 +605,10 @@ async def run_turn_stream(
                 yield {"event": "delta", "text": piece}
 
             reply = "".join(parts).strip()
+
+            if generation.get("finish") == "length":
+                # Still cut after continuing: end on a whole sentence.
+                reply = whole_sentences(reply)
 
             if not reply:
                 raise LLMError("The model returned an empty reply.")
