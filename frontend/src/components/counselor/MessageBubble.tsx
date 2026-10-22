@@ -18,11 +18,13 @@ import {
   X,
 } from "lucide-react";
 
+import { SetGoalButton } from "@/components/careers/SetGoalButton";
+
 import { FamilyIcon } from "@/components/careers/CareerCard";
 import { Markdown } from "@/components/ui/Markdown";
 import { api } from "@/lib/api";
 import { formatTime } from "@/lib/format";
-import type { CareerSuggestion, ChatMessage, CounselorAction, StudentFact } from "@/types/cie";
+import type { CareerSuggestion, ChatMessage, CounselorAction, StudentFact, MessageMetadata } from "@/types/cie";
 
 import { ModuleResult } from "./ModuleResult";
 
@@ -45,6 +47,32 @@ export function CounselorAvatar({ size = "md" }: { size?: "sm" | "md" | "lg" }) 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img src="/brand/neocity-knight-mark.png" alt="" aria-hidden className={`dark:rounded-full dark:bg-[#f7f7f5] dark:p-0.5 ${box} shrink-0 object-contain`} />
+  );
+}
+
+/** The page the counselor opened for the career the student named. */
+function OpenCareer({ page }: { page: NonNullable<MessageMetadata["open_career"]> }) {
+  return (
+    <div className="mt-4 rounded-xl border border-line bg-surface p-4">
+      <p className="text-sm text-ink-muted">{page.created ? "New career page" : "Career page"}</p>
+      <p className="mt-0.5 text-lg font-semibold text-ink">{page.title}</p>
+      {page.note && <p className="mt-1 text-sm leading-relaxed text-ink-muted">{page.note}</p>}
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Link
+          href={`/explore/${page.slug}?build=roadmap#roadmap`}
+          className="inline-flex h-9 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
+        >
+          Build my roadmap
+        </Link>
+        <Link
+          href={`/explore/${page.slug}`}
+          className="inline-flex h-9 items-center rounded-full border border-line-strong px-4 text-sm font-semibold text-ink hover:bg-surface-2"
+        >
+          Open {page.title}
+        </Link>
+        <SetGoalButton title={page.title} size="sm" />
+      </div>
+    </div>
   );
 }
 
@@ -233,7 +261,11 @@ export function MessageBubble({
           </div>
         )}
 
-        {suggestions.length > 0 && <CareerSuggestions items={suggestions} />}
+        {!metadata.streaming && metadata.open_career && <OpenCareer page={metadata.open_career} />}
+
+        {suggestions.filter((item) => item.slug !== metadata.open_career?.slug).length > 0 && (
+          <CareerSuggestions items={suggestions.filter((item) => item.slug !== metadata.open_career?.slug)} />
+        )}
 
         {metadata.follow_up_question && (
           <div className="mt-4 rounded-2xl bg-primary-softer px-4 py-3">

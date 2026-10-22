@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "e2e": "playwright test smoke",
+    "e2e": "playwright test smoke field-quiz career-page goal-path",
     "screenshots": "playwright test screenshots"
   },
   "dependencies": {

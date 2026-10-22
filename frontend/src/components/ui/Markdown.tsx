@@ -6,7 +6,14 @@ import type { ReactNode } from "react";
  * rendered; text is passed to React as strings.
  */
 
-function inline(text: string, keyPrefix: string): ReactNode[] {
+/** Leftover markers that didn't pair up are dropped, never shown. */
+function stripStray(text: string): string {
+  return text.replace(/\*{2,}/g, "").replace(/(^|\s)\*(?=\s|$)/g, "$1");
+}
+
+function inline(source: string, keyPrefix: string): ReactNode[] {
+  // Models sometimes write "****word*****"; treat any run of 3+ as bold.
+  const text = source.replace(/\*{3,}/g, "**");
   const parts: ReactNode[] = [];
   const pattern = /(\*\*[^*]+\*\*|\*[^*\s][^*]*\*)/g;
   let last = 0;
@@ -16,7 +23,7 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
     const start = match.index ?? 0;
 
     if (start > last) {
-      parts.push(text.slice(last, start));
+      parts.push(stripStray(text.slice(last, start)));
     }
 
     const token = match[0];
@@ -36,7 +43,7 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
   }
 
   if (last < text.length) {
-    parts.push(text.slice(last));
+    parts.push(stripStray(text.slice(last)));
   }
 
   return parts;

@@ -24,6 +24,7 @@ from sqlalchemy import select
 
 from app.core.database import AsyncSessionLocal
 from app.core.llm import chat_json
+from app.services import pathways, text_clean
 from app.services import plan_stages
 from app.db.models import CareerRoadmap, ProgressTimeline
 from app.models.progress import ProgressTaskCreate, ProgressTimelineCreate
@@ -106,7 +107,16 @@ def _items(properties: dict, required: list[str], max_items: int) -> dict:
     }
 
 
-def _schema(resource_ids: list[str]) -> dict:
+def _picks(key: str, values: list[str], max_items: int, why_length: int = 220) -> dict:
+    """An array whose key must be one of the official choices (none: empty array)."""
+
+    if not values:
+        return {"type": "array", "maxItems": 0, "items": {"type": "object"}}
+
+    return _items({key: {"type": "string", "enum": values}, "why": _text(why_length)}, [key, "why"], max_items)
+
+
+def _schema(resource_ids: list[str], found: dict) -> dict:
     return {
         "type": "object",
         "properties": {
@@ -119,7 +129,7 @@ def _schema(resource_ids: list[str]) -> dict:
                         "type": "object",
                         "properties": {
                             "goal": _text(140),
-                            "steps": {"type": "array", "items": _text(170), "maxItems": 4},
+                            "steps": {"type": "array", "items": _text(240), "maxItems": 4},
                         },
                         "required": ["goal", "steps"],
                     }
@@ -132,21 +142,11 @@ def _schema(resource_ids: list[str]) -> dict:
                 ["topic", "why", "how"],
                 6,
             ),
-            "high_school_courses": _items(
-                {
-                    "course": _text(80),
-                    "kind": {"type": "string", "enum": COURSE_KINDS},
-                    "why": _text(180),
-                },
-                ["course", "kind", "why"],
-                7,
-            ),
-            "college_majors": _items(
-                {"major": _text(80), "why": _text(200)}, ["major", "why"], 4
-            ),
-            "certifications": _items(
-                {"name": _text(90), "why": _text(180)}, ["name", "why"], 3
-            ),
+            # Courses, majors, certifications and colleges come from official
+            # lists (pathways.py); the model only picks and explains.
+            "high_school_courses": _picks("course", found["courses"], 7),
+            "college_majors": _picks("cip", [major["cip"] for major in found["majors"]], 4),
+            "certifications": _picks("id", [cert["id"] for cert in found["certifications"]], 3),
             "online_learning": _items(
                 {
                     "topic": _text(80),
@@ -157,15 +157,7 @@ def _schema(resource_ids: list[str]) -> dict:
                 ["topic", "provider", "search", "why"],
                 5,
             ),
-            "college_options": _items(
-                {
-                    "name": _text(90),
-                    "kind": {"type": "string", "enum": COLLEGE_KINDS},
-                    "why": _text(220),
-                },
-                ["name", "kind", "why"],
-                6,
-            ),
+            "college_options": _picks("id", [college["id"] for college in found["colleges"]], 6),
             "picked_resources": _items(
                 {"id": {"type": "string", "enum": resource_ids}, "why": _text(180)},
                 ["id", "why"],
@@ -193,14 +185,15 @@ ROADMAP_PROMPT = """You build a step-by-step career roadmap for a high school st
 
 Rules:
 - Use the O*NET career facts for what the job requires. Connect steps to the student's real grade, interests, courses, activities, and goals from the context, and name the connection.
+- Plain text only in every field: no Markdown, no asterisks, no field names or underscores. Each step is one complete sentence.
 - If the grade is unknown, assume they could be in any grade and write steps that work for grades 9-12; say so in where_you_are.
 - ladder: fill every horizon, from next_2_weeks to five_years_out, with a goal and 2-4 steps. Early steps are small, specific, and doable this week (start with a verb). Later steps describe the education/training route and first jobs. Include more than one route (college, state/community college, apprenticeship, military, certificates) when realistic.
 - what_to_learn: the knowledge and skills this career needs that a teenager can start building now, and how.
-- high_school_courses: real course names a Florida high school offers (e.g. "AP Biology", "Algebra 2 Honors", "Dual enrollment: ENC 1101"). Florida students can take dual enrollment at a state college (Valencia College is local) and free courses on Florida Virtual School.
-- college_majors: majors or programs of study that lead to this career.
-- certifications: well-known industry certifications a high school student could actually earn (Florida CAPE industry certifications count). Leave empty if none fit. Never invent one.
+- high_school_courses, college_majors, certifications, college_options: pick ONLY from the official lists at the end, by exact name, cip, or id. The app adds official details itself.
+- high_school_courses: prefer the AP courses listed for this career and the math and science that lead to them; skip courses the transcript shows are done.
+- certifications: put first the ones marked as needing no degree or long work experience.
 - online_learning: free topics to study, with a short search phrase for that provider.
-- college_options: real, accredited institutions or route types worth researching. Include Florida options (state colleges, state universities) plus a few national ones known for this field. Label each correctly: Florida state colleges (Valencia College, Seminole State) are "State college / community college"; UCF, USF, UF, FSU, and FIU are "Public university"; Florida Tech, Embry-Riddle, and most well-known national schools are private. Mix nearby, realistic options with a couple of reach schools. Do not state rankings, admission rates, costs, or requirements.
+- college_options: 4 to 6 Florida colleges, including at least one state college (2-year) for the start-there-then-transfer route; favor schools near NeoCity when they fit. Begin each why with that college's name and talk only about it. Never call a school top, strong, competitive, excellent, or prestigious, and never state rankings, costs, or requirements.
 - picked_resources: choose the resources from the list below that best fit this student and career, and say why each fits them. Include at least two scholarships or fellowships when any fit. Only pick resources limited to a gender, ethnicity, or income level when the context clearly says the student qualifies.
 - headline: one short, motivating sentence in "you" form, without the student's name (e.g. "You can start building toward nursing this week.").
 - first_step: the single best thing to do today.
@@ -228,9 +221,96 @@ def _resource_list(resources: list[dict]) -> str:
     )
 
 
-def _clean(raw: dict, resources: list[dict]) -> dict:
+# Free-text fields inside roadmap list items (ids and enums are left alone).
+PROSE_FIELDS = ("topic", "why", "how", "course", "major", "name")
+
+
+COLLEGE_KIND_LABELS = {
+    ("Public", "4-year"): "Public university",
+    ("Public", "2-year"): "State college / community college",
+    ("Private nonprofit", "4-year"): "Private college or university",
+    ("Private nonprofit", "2-year"): "Private college or university",
+}
+
+
+def _official_picks(content: dict, found: dict) -> None:
+    """Replace the model's picks with official names and details."""
+
+    picks = pathways.attach(
+        {
+            "summary": "",
+            "courses": [{"course": item.get("course"), "grade": "", "why": item.get("why", "")} for item in content.get("high_school_courses") or []],
+            "majors": content.get("college_majors") or [],
+            "colleges": content.get("college_options") or [],
+            "certifications": content.get("certifications") or [],
+        },
+        found,
+        text_clean.clean_paragraph,
+    )
+
+    content["high_school_courses"] = [
+        {"course": item["course"], "kind": COURSE_KIND_LABELS.get(item["kind"], "Elective"), "why": item["why"]} for item in picks["courses"]
+    ]
+    content["college_majors"] = [{"major": item["title"], "why": item["why"]} for item in picks["majors"]]
+    content["certifications"] = [
+        {
+            "name": item["name"],
+            "organization": item["organization"],
+            "url": item["url"],
+            "beginner_friendly": item["beginner_friendly"],
+            "why": item["why"],
+        }
+        for item in picks["certifications"]
+    ]
+    content["college_options"] = [
+        {
+            "name": item["name"],
+            "kind": COLLEGE_KIND_LABELS.get((item["ownership"], item["kind"]), "Private college or university"),
+            "city": item["city"],
+            "url": item["url"],
+            "net_price": item["net_price"],
+            "graduation_rate": item["graduation_rate"],
+            "why": item["why"],
+        }
+        for item in picks["colleges"]
+    ]
+
+
+COURSE_KIND_LABELS = {
+    "AP": "AP",
+    "Dual enrollment": "Dual enrollment",
+    "Online": "Online (FLVS)",
+    "Career & technical": "Career & technical (CTE)",
+    "Core": "Core",
+}
+
+
+def _clean(raw: dict, resources: list[dict], found: dict | None = None) -> dict:
     content = dict(raw)
     by_id = {item["id"]: item for item in resources}
+
+    if found is not None:
+        _official_picks(content, found)
+
+    # Model-written text: remove Markdown markers and made-up field names.
+    for key in ("headline", "where_you_are", "first_step"):
+        content[key] = text_clean.clean_paragraph(content.get(key, ""))
+
+    for section in ("what_to_learn", "high_school_courses", "college_majors", "certifications", "online_learning", "college_options", "picked_resources"):
+        items = []
+
+        for item in content.get(section, []):
+            item = {
+                field: (text_clean.clean_paragraph(value) if field in PROSE_FIELDS else value)
+                for field, value in item.items()
+            }
+
+            if not any(item.get(field) for field in PROSE_FIELDS if field in item):
+                continue
+
+            items.append(item)
+
+        content[section] = items
 
     raw_ladder = content.get("ladder") or {}
     ladder = []
@@ -241,10 +321,11 @@ def _clean(raw: dict, resources: list[dict]) -> dict:
         if not rung:
             continue
 
-        steps = [step.strip() for step in rung.get("steps", []) if step.strip()]
+        steps = text_clean.clean_items(rung.get("steps", []), 4)
+        goal = text_clean.clean_paragraph(rung.get("goal", ""))
 
-        if rung.get("goal", "").strip() or steps:
-            ladder.append({"horizon": horizon, "goal": rung.get("goal", "").strip(), "steps": steps})
+        if goal or steps:
+            ladder.append({"horizon": horizon, "goal": goal, "steps": steps})
 
     content["ladder"] = ladder
 
@@ -317,6 +398,7 @@ async def generate_roadmap(student_id: str, slug: str) -> dict:
     career = _career_or_404(slug)
     resources = curated_resources(career["family"])
     context = await build_context(student_id, None, career["title"])
+    found = await pathways.candidates(slug)
 
     raw = await chat_json(
         [
@@ -330,17 +412,19 @@ async def generate_roadmap(student_id: str, slug: str) -> dict:
                     + context_block(context)
                     + "\n\n## Resources you may pick from (id: title)\n"
                     + _resource_list(resources)
+                    + "\n\n"
+                    + pathways.candidates_text(found)
                 ),
             },
             {"role": "user", "content": _career_facts(career)},
         ],
-        schema=_schema([item["id"] for item in resources]),
+        schema=_schema([item["id"] for item in resources], found),
         schema_name="career_roadmap",
         max_tokens=4500,
         temperature=0.4,
     )
 
-    content = _clean(raw, resources)
+    content = _clean(raw, resources, found)
 
     async with AsyncSessionLocal() as db:
         record = await _record(db, student_id, slug)

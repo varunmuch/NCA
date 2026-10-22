@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 
 from app.core.database import AsyncSessionLocal
 from app.db.models import Message, ProgressTask, SavedCareer
-from app.services import career_catalog
+from app.services import career_catalog, field_quiz
 from app.services.conversation_service import list_conversations
 from app.services.document_service import list_documents
 from app.services.plan_service import latest_plan
@@ -90,6 +90,21 @@ async def _careers_worth_exploring(student_id: str, profile: dict) -> list[dict]
                         "saved": False,
                     }
                 )
+
+    anchor = field_quiz.anchor_for(profile)
+
+    if anchor:
+        # With a goal, Home suggests the goal and careers in its field only.
+        field = field_quiz.goal_field_slugs(anchor)
+        goal = career_catalog.get_career(anchor)
+        in_field = [career for career in careers if career["slug"] in field and career["slug"] != anchor]
+        top = [{**career_catalog.summary(goal), "reason": "Your career goal", "saved": anchor in saved}] if goal else []
+        extra = [
+            {**career_catalog.summary(item), "reason": "Close to your goal", "saved": False}
+            for item in field_quiz.field_for(anchor)
+            if item["slug"] not in {career["slug"] for career in in_field} and item["slug"] != anchor
+        ]
+        return (top + in_field + extra)[:3]
 
     return careers[:3]
 

@@ -9,7 +9,15 @@ import { CardSkeleton, ErrorNotice } from "@/components/ui/Feedback";
 import { useToast } from "@/components/ui/Toast";
 import { api } from "@/lib/api";
 import { formatDate } from "@/lib/format";
-import type { CareerSummary, InterestQuiz as Quiz, InterestQuizAnswers, InterestQuizResult } from "@/types/cie";
+import type {
+  CareerSummary,
+  FieldQuiz as FieldQuizData,
+  InterestQuiz as Quiz,
+  InterestQuizAnswers,
+  InterestQuizResult,
+} from "@/types/cie";
+
+import { FieldQuiz } from "./FieldQuiz";
 
 // Holland's hexagon order: neighbors are similar, opposites are not.
 const HEXAGON = ["Realistic", "Investigative", "Artistic", "Social", "Enterprising", "Conventional"];
@@ -33,7 +41,7 @@ const PART_LABELS: Record<string, string> = {
   training: "Training",
 };
 
-function emptyAnswers(): InterestQuizAnswers {
+export function emptyAnswers(): InterestQuizAnswers {
   return { activities: {}, tradeoffs: {}, settings: [], subjects: [], training: "" };
 }
 
@@ -60,10 +68,15 @@ function Stepper({ part }: { part: Part }) {
   );
 }
 
-function PartHeader({ number, title, hint }: { number: number; title: string; hint: string }) {
+// The screens the focused quiz reuses only need these parts of a quiz.
+export type QuizCore = Pick<Quiz, "activities" | "tradeoffs" | "training">;
+
+type Step = { number: number; total: number };
+
+function PartHeader({ number, total = 5, title, hint }: { number: number; total?: number; title: string; hint: string }) {
   return (
     <div>
-      <p className="text-sm font-semibold text-ink-muted">Part {number} of 5</p>
+      <p className="text-sm font-semibold text-ink-muted">Part {number} of {total}</p>
       <h1 className="font-display mt-1 text-[1.75rem] font-semibold leading-tight text-ink sm:text-[2rem]">{title}</h1>
       <p className="mt-1.5 text-ink-muted">{hint}</p>
     </div>
@@ -125,7 +138,8 @@ function RatingRow({
   );
 }
 
-function ActivitiesPart({
+export function ActivitiesPart({
+  step,
   quiz,
   answers,
   setAnswers,
@@ -134,7 +148,8 @@ function ActivitiesPart({
   onDone,
   onExit,
 }: {
-  quiz: Quiz;
+  step?: Step;
+  quiz: QuizCore;
   answers: InterestQuizAnswers;
   setAnswers: (next: InterestQuizAnswers) => void;
   page: number;
@@ -150,7 +165,7 @@ function ActivitiesPart({
 
   return (
     <section className="space-y-5">
-      <PartHeader number={1} title="How would you feel doing these?" hint="Don't think about whether you're good at it or what it pays. Just: would you enjoy it?" />
+      <PartHeader number={step?.number ?? 1} total={step?.total} title="How would you feel doing these?" hint="Don't think about whether you're good at it or what it pays. Just: would you enjoy it?" />
 
       <div className="rounded-[var(--radius-card)] border border-line bg-surface px-5 sm:px-6">
         <div className="hidden justify-end gap-6 border-b border-line py-2.5 text-xs font-semibold text-ink-muted sm:flex">
@@ -198,14 +213,16 @@ function ActivitiesPart({
   );
 }
 
-function TradeoffsPart({
+export function TradeoffsPart({
+  step,
   quiz,
   answers,
   setAnswers,
   onDone,
   onBack,
 }: {
-  quiz: Quiz;
+  step?: Step;
+  quiz: QuizCore;
   answers: InterestQuizAnswers;
   setAnswers: (next: InterestQuizAnswers) => void;
   onDone: () => void;
@@ -243,7 +260,7 @@ function TradeoffsPart({
 
   return (
     <section className="space-y-5">
-      <PartHeader number={2} title="Which would you rather do?" hint="Both might sound good, or neither. Pick the one you'd choose if you had to." />
+      <PartHeader number={step?.number ?? 2} total={step?.total} title="Which would you rather do?" hint="Both might sound good, or neither. Pick the one you'd choose if you had to." />
 
       <div key={item.id} className="grid items-stretch gap-3 animate-[var(--animate-fade-in)] sm:grid-cols-[1fr_auto_1fr]">
         {(["a", "b"] as const).map((key, position) => (
@@ -366,7 +383,8 @@ function ChoicePart({
   );
 }
 
-function TrainingPart({
+export function TrainingPart({
+  step,
   quiz,
   value,
   onChange,
@@ -374,7 +392,8 @@ function TrainingPart({
   onSubmit,
   submitting,
 }: {
-  quiz: Quiz;
+  step?: Step;
+  quiz: QuizCore;
   value: string;
   onChange: (value: string) => void;
   onBack: () => void;
@@ -383,7 +402,7 @@ function TrainingPart({
 }) {
   return (
     <section className="space-y-5">
-      <PartHeader number={5} title="How long would you like to train after high school?" hint="This changes which careers rise to the top. It doesn't hide any." />
+      <PartHeader number={step?.number ?? 5} total={step?.total} title="How long would you like to train after high school?" hint="This changes which careers rise to the top. It doesn't hide any." />
 
       <div role="radiogroup" aria-label="Training after high school" className="space-y-2">
         {quiz.training.map((option) => {
@@ -518,7 +537,7 @@ function MatchRow({ career, rank }: { career: CareerSummary; rank: number }) {
           <Link href={`/explore/${career.slug}`} className="text-lg font-semibold text-ink hover:underline">
             {career.title}
           </Link>
-          <span className="text-lg font-bold tabular-nums text-ink sm:hidden">{career.match_score}%</span>
+          {career.match_score != null && <span className="text-lg font-bold tabular-nums text-ink sm:hidden">{career.match_score}%</span>}
         </div>
         <p className="mt-0.5 text-sm text-ink-muted">{career.family_label}</p>
         <ul className="mt-2.5 space-y-1">
@@ -531,10 +550,14 @@ function MatchRow({ career, rank }: { career: CareerSummary; rank: number }) {
         </ul>
       </div>
       <div>
-        <p className="hidden text-right text-2xl font-bold tabular-nums text-ink sm:block">
-          {career.match_score}
-          <span className="text-base font-semibold text-ink-muted">%</span>
-        </p>
+        {career.match_score != null ? (
+          <p className="hidden text-right text-2xl font-bold tabular-nums text-ink sm:block">
+            {career.match_score}
+            <span className="text-base font-semibold text-ink-muted">%</span>
+          </p>
+        ) : (
+          <p className="hidden text-right text-sm font-semibold text-accent-ink sm:block">Your goal</p>
+        )}
         <div className="mt-2 space-y-1.5">
           {parts.map(([name, value]) => (
             <FitBar key={name} label={PART_LABELS[name] ?? name} value={value ?? 0} />
@@ -637,10 +660,12 @@ function Results({ result, onRetake }: { result: InterestQuizResult; onRetake: (
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 id="matches-title" className="font-display text-2xl font-semibold">
-              Careers that fit
+              {result.goal ? `Careers in your field: ${result.goal.title}` : "Careers that fit"}
             </h2>
             <p className="mt-1 text-sm text-ink-muted">
-              Ranked by fit: interests count most, then work setting, subjects, and training.
+              {result.goal
+                ? "Your goal comes first, then the careers closest to it, ranked by how well they fit your answers."
+                : "Ranked by fit: interests count most, then work setting, subjects, and training."}
             </p>
           </div>
         </div>
@@ -662,6 +687,19 @@ function Results({ result, onRetake }: { result: InterestQuizResult; onRetake: (
           <Button variant="ghost" size="sm" className="mt-3" onClick={() => setShowAll(true)}>
             Show {result.careers.length - 6} more
           </Button>
+        )}
+
+        {result.goal && (result.other_careers?.length ?? 0) > 0 && (
+          <details className="group mt-6 rounded-[var(--radius-card)] border border-line bg-surface">
+            <summary className="cursor-pointer list-none px-5 py-4 text-sm font-semibold text-ink-muted hover:text-ink sm:px-6">
+              Outside your goal: other careers that match your interests ({result.other_careers!.length})
+            </summary>
+            <ol className="border-t border-line px-5 sm:px-6">
+              {result.other_careers!.map((career, index) => (
+                <MatchRow key={career.slug} career={career} rank={index + 1} />
+              ))}
+            </ol>
+          </details>
         )}
       </section>
 
@@ -725,9 +763,10 @@ function Intro({ onStart, hasResult, onCancel }: { onStart: () => void; hasResul
   );
 }
 
-export function InterestQuiz() {
+export function InterestQuiz({ mode }: { mode?: "general" }) {
   const toast = useToast();
   const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [field, setField] = useState<FieldQuizData | null>(null);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState<InterestQuizResult | null>(null);
@@ -740,24 +779,37 @@ export function InterestQuiz() {
     let cancelled = false;
 
     api
-      .interestQuiz()
+      .interestQuiz(mode)
       .then((loaded) => {
-        if (!cancelled) {
-          setQuiz(loaded);
-          setResult(loaded.result);
-          setPart(loaded.result ? "result" : "intro");
-          setError("");
+        if (cancelled) {
+          return;
         }
+
+        setError("");
+
+        // A student with a goal gets the quiz focused on that field.
+        if (loaded.mode === "field") {
+          setField(loaded);
+          return;
+        }
+
+        setQuiz(loaded);
+        setResult(loaded.result);
+        setPart(loaded.result ? "result" : "intro");
       })
       .catch((caught) => !cancelled && setError(caught instanceof Error ? caught.message : "Couldn't load the quiz."));
 
     return () => {
       cancelled = true;
     };
-  }, [attempt]);
+  }, [attempt, mode]);
 
   if (error) {
     return <ErrorNotice message={error} onRetry={() => setAttempt((value) => value + 1)} />;
+  }
+
+  if (field) {
+    return <FieldQuiz quiz={field} />;
   }
 
   if (!quiz) {
@@ -782,9 +834,20 @@ export function InterestQuiz() {
     }
   }
 
+  const goalNote = quiz.goal ? (
+    <p className="mb-6 rounded-[var(--radius-card)] border border-line bg-surface px-4 py-3 text-sm text-ink-muted">
+      This is the general quiz across all careers. Your goal is {quiz.goal}.{" "}
+      <Link href="/discover" className="font-semibold text-primary hover:underline">
+        Take the quiz focused on {quiz.goal}
+      </Link>
+    </p>
+  ) : null;
+
   if (part === "result" && result) {
     return (
-      <Results
+      <>
+        {goalNote}
+        <Results
         result={result}
         onRetake={() => {
           setAnswers(emptyAnswers());
@@ -792,11 +855,17 @@ export function InterestQuiz() {
           go("intro");
         }}
       />
+      </>
     );
   }
 
   if (part === "intro" || part === "result") {
-    return <Intro onStart={() => go("activities")} hasResult={Boolean(result)} onCancel={() => go("result")} />;
+    return (
+      <>
+        {goalNote}
+        <Intro onStart={() => go("activities")} hasResult={Boolean(result)} onCancel={() => go("result")} />
+      </>
+    );
   }
 
   return (

@@ -29,7 +29,8 @@ test("sign-in rejects a wrong password and accepts the right one", async ({ brow
 });
 
 test("interest quiz can be taken start to finish", async ({ page }) => {
-  await page.goto("/discover");
+  // The general quiz (a student with a goal gets the focused one by default).
+  await page.goto("/discover?mode=general");
 
   // Wait for the quiz to load: results (seeded account) or the intro.
   await expect(page.getByRole("button", { name: /^(Retake|Start)$/ })).toBeVisible();
@@ -67,7 +68,7 @@ test("interest quiz can be taken start to finish", async ({ page }) => {
   await page.getByRole("button", { name: "See my results" }).click();
 
   await expect(page.getByText("Your interest code")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Careers that fit" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^(Careers that fit|Careers in your field)/ })).toBeVisible();
 });
 
 test("chat streams a reply", async ({ page }) => {

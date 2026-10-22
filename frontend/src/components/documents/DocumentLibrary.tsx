@@ -25,6 +25,7 @@ import { api } from "@/lib/api";
 import { formatBytes, formatDate } from "@/lib/format";
 import type { DocumentDetail, StudentDocument } from "@/types/cie";
 
+import { DocumentSuggestions } from "./DocumentSuggestions";
 import { DocumentUploader } from "./DocumentUploader";
 
 function StatusBadge({ document }: { document: StudentDocument }) {
@@ -179,6 +180,7 @@ function DocumentDetailDialog({
 
           {detail.status === "processed" && detail.extraction ? (
             <>
+              <DocumentSuggestions documentId={detail.id} />
               <section>
                 <h3 className="font-bold">What we found</h3>
                 <div className="mt-3">

@@ -14,6 +14,7 @@ A turn is:
 The model never writes to the database directly; it can only propose.
 """
 
+import asyncio
 import json
 import logging
 import re
@@ -28,7 +29,7 @@ from app.core.database import AsyncSessionLocal
 from app.core.llm import LLMError, chat_completion, chat_json, chat_stream, llm_calls
 from app.db.models import Conversation, Message
 from app.models.profile import StudentProfile
-from app.services import career_catalog, grounding, safety
+from app.services import career_catalog, career_expansion, grounding, safety
 from app.services.career_path_service import generate_career_path
 from app.services.certification_service import generate_certification_guidance
 from app.services.context_service import build_context, context_block, grounding_corpus
@@ -154,6 +155,11 @@ EXTRAS_SCHEMA = {
             },
         },
         "conversation_title": {"type": "string", "maxLength": 60},
+        "careers_mentioned": {
+            "type": "array",
+            "items": {"type": "string", "maxLength": 60},
+            "maxItems": 3,
+        },
         "source_ids": {
             "type": "array",
             "items": {"type": "string", "maxLength": 4},
@@ -229,7 +235,8 @@ EXTRAS_PROMPT = """You add the interactive parts around a career counselor's rep
 - suggested_actions: up to 3 genuinely useful next steps from the allowed list. build_plan when they are ready for a plan; skill_check, project_ideas, certificates, interview_practice, or career_roadmap when they have a specific career in mind; upload_document when a resume or transcript would clearly help; explore_careers when browsing would help; update_profile rarely. [] when none fit.
 - facts_to_remember: only facts the student stated about themselves in their LATEST message (grade, subjects they like, interests, hobbies, skills, activities, careers they are curious about, goals, constraints). evidence must be an exact quote from that message. Never your own guesses. [] if none.
 - conversation_title: a 3-6 word title for this conversation.
-- source_ids: ids of the Sources (like "S1") whose facts the reply uses. [] if it uses none."""
+- source_ids: ids of the Sources (like "S1") whose facts the reply uses. [] if it uses none.
+- careers_mentioned: job titles the student named in their LATEST message as something they want to do or are curious about, in their words (like "software engineer", "marine biologist"). [] if none."""
 
 
 def _quote_in_message(evidence: str, message: str) -> bool:
@@ -246,6 +253,11 @@ def _tidy_markdown(text: str) -> str:
     Guided JSON decoding sometimes drops newlines. Put inline list items
     back on their own lines so Markdown renders them as lists.
     """
+
+    # Stray emphasis runs ("****word*****") and padded markers ("** word **")
+    # become plain **bold**, which the chat renders.
+    text = re.sub(r"\*{3,}", "**", text)
+    text = re.sub(r"\*\*\s+([^*\n]+?)\s+\*\*", r"**\1**", text)
 
     if "\n" in text:
         return text.strip()
@@ -357,6 +369,7 @@ def _validate_output(
         "suggested_actions": actions[:MAX_ACTIONS],
         "facts": facts,
         "title": output.get("conversation_title", "").strip(),
+        "careers_mentioned": [str(phrase).strip()[:60] for phrase in output.get("careers_mentioned") or [] if str(phrase).strip()][:3],
         "sources": [{"id": source["id"], "title": source["title"], "url": source["url"]} for source in cited],
         "grounding": {"removed": [{"kind": claim["kind"], "text": claim["text"]} for claim in removed]},
     }
@@ -379,9 +392,31 @@ def counselor_messages(context: dict, student_name: str) -> list[dict]:
         + context["candidates_text"]
         + "\n\n## Sources (career facts you may state; nothing else is verified)\n"
         + (context.get("sources_text") or "(none)")
+        + _career_page_note(context.get("career_page"))
     )
 
     return [{"role": "system", "content": system}, *context["turns"]]
+
+
+def _career_page_note(page: dict | None) -> str:
+    """Tell the model about the page the app opened for the career the student named."""
+
+    if not page:
+        return ""
+
+    if page.get("slug"):
+        return (
+            f"\n\n## A page for the career the student named\n"
+            f"The app has a page for {page['title']} with pay, classes to take, and a roadmap builder, "
+            f"and shows the student a button to open it. Say so in a few words and invite them to open it "
+            f"and build their roadmap there. Never say the career isn't listed."
+        )
+
+    return (
+        f"\n\n## A page for the career the student named\n"
+        f"The app is preparing a page for \"{page['phrase']}\" from official job data. "
+        f"Never say the career isn't listed."
+    )
 
 
 def extras_messages(context: dict, student_message: str, reply: str) -> list[dict]:
@@ -583,6 +618,26 @@ async def run_turn_stream(
     context = await build_context(student_id, conversation, text)
     timer.lap("context")
 
+    # Agentic step: a career the student says they want gets a page now
+    # (validated against official job titles), started before the reply.
+    page_task = None
+    goals = career_expansion.goal_phrases(text) if action not in MODULE_ACTIONS else []
+
+    if goals:
+        page_task = asyncio.create_task(career_expansion.ensure_career(goals[0]))
+
+        try:
+            # A page within an occupation we have is ready in milliseconds.
+            context["career_page"] = _page_info(await asyncio.wait_for(asyncio.shield(page_task), timeout=1.5))
+            _lead_sources_with(context, context["career_page"])
+        except asyncio.TimeoutError:
+            context["career_page"] = {"phrase": goals[0]}
+        except Exception:
+            logger.exception("Career page for %r failed", goals[0])
+            page_task = None
+
+        timer.lap("career_page")
+
     try:
         if action in MODULE_ACTIONS:
             output = await _module_reply(action, text, context)
@@ -626,6 +681,13 @@ async def run_turn_stream(
 
             extras = await _extras(context, text, reply)
             timer.lap("extras")
+
+            if page_task is not None and not (context.get("career_page") or {}).get("slug"):
+                # A brand-new occupation: give it the rest of the time it needs.
+                try:
+                    context["career_page"] = _page_info(await asyncio.wait_for(asyncio.shield(page_task), timeout=20))
+                except Exception:
+                    logger.warning("Career page for %r wasn't ready in time", goals[0])
             output = _validate_output(
                 {**extras, "reply": reply},
                 text,
@@ -644,6 +706,8 @@ async def run_turn_stream(
             if crisis:
                 # No buttons pulling toward plans or careers in a crisis turn.
                 output["suggested_actions"] = []
+            else:
+                _attach_career_page(output, context.get("career_page"))
             timer.lap("validate")
     except Exception:
         logger.exception("Counselor turn failed")
@@ -686,6 +750,9 @@ async def run_turn_stream(
         # Kept so evals and staff can see what was taken out, and why.
         metadata["grounding"] = output["grounding"]
 
+    if output.get("open_career"):
+        metadata["open_career"] = output["open_career"]
+
     if "module" in output:
         metadata["module"] = output["module"]
 
@@ -705,6 +772,11 @@ async def run_turn_stream(
 
     refreshed = await get_owned_conversation(student_id, conversation.id)
     timer.lap("save")
+
+    # Careers the student named that we don't have are looked up and added
+    # for everyone, after the reply (never slowing it).
+    if output.get("careers_mentioned"):
+        career_expansion.ensure_in_background(output["careers_mentioned"])
     timer.finish(kind, ok=True)
 
     yield {
@@ -714,6 +786,56 @@ async def run_turn_stream(
         "user_message": message_to_dict(user_message),
         "assistant_message": message_to_dict(assistant_message),
     }
+
+
+def _lead_sources_with(context: dict, page: dict | None) -> None:
+    """The named career's own facts become source S1 for this turn."""
+
+    if not page or not page.get("slug"):
+        return
+
+    from app.services.context_service import BUDGET_SOURCES, _fit, build_sources, sources_block
+
+    rest = [match for match in context.get("candidates", []) if match["slug"] != page["slug"]]
+    context["sources"] = build_sources([{"slug": page["slug"]}, *rest])
+    context["sources_text"] = _fit(sources_block(context["sources"]), BUDGET_SOURCES)
+
+
+def _page_info(outcome: dict | None) -> dict | None:
+    if not outcome or not outcome.get("slug"):
+        return None
+
+    career = career_catalog.get_career(outcome["slug"])
+
+    if career is None:
+        return None
+
+    return {
+        "slug": career["slug"],
+        "title": career["title"],
+        "created": outcome.get("result") == "added",
+        "note": career.get("official_note", ""),
+    }
+
+
+def _attach_career_page(output: dict, page: dict | None) -> None:
+    """The named career leads the cards, with buttons to open it and build a roadmap."""
+
+    if not page or not page.get("slug"):
+        return
+
+    output["open_career"] = page
+    cards = [card for card in output.get("career_suggestions", []) if card.get("slug") != page["slug"]]
+    career = career_catalog.get_career(page["slug"])
+    first = {
+        "slug": page["slug"],
+        "title": page["title"],
+        "family": career["family"],
+        "family_label": career_catalog.family_label(career["family"]),
+        "why": page.get("note") or career["description"][:200],
+        "in_candidates": False,
+    }
+    output["career_suggestions"] = [first, *cards][:MAX_CAREER_SUGGESTIONS]
 
 
 async def run_turn(

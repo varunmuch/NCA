@@ -104,6 +104,17 @@ def profile_text(profile: dict, facts: list[dict]) -> str:
         if quiz_details.get("training") and quiz_details["training"] != "unsure":
             lines.append(f"- Training wanted after high school: {quiz_details['training'].replace('_', ' ')}")
 
+    focused = profile.get("field_quiz") or {}
+
+    if focused.get("scores"):
+        best = sorted(focused["scores"].items(), key=lambda item: -item[1])[:3]
+        titles = [
+            f"{career['title']} {fit}"
+            for slug, fit in best
+            if (career := career_catalog.get_career(slug))
+        ]
+        lines.append(f"- Focused quiz within their goal ({focused.get('goal', '')}), best fits 0-100: " + ", ".join(titles))
+
     status = profile.get("career_status")
 
     if status == "have_goal":

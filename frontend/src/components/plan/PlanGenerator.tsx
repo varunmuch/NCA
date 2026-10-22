@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Map } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
@@ -9,59 +9,69 @@ import { Field, TextArea, TextInput } from "@/components/ui/Field";
 import { ErrorNotice } from "@/components/ui/Feedback";
 import { api } from "@/lib/api";
 
-const STEPS = [
-  "Gathering what you've shared",
-  "Matching careers to your interests",
-  "Mapping your high school years",
-  "Writing your next steps",
-];
-
-export function GeneratingPlan({ label = "Building your plan" }: { label?: string }) {
-  const [step, setStep] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setStep((current) => Math.min(current + 1, STEPS.length - 1)), 9000);
-    return () => window.clearInterval(timer);
-  }, []);
+/**
+ * While a plan is built, show what the counselor is actually doing, line by
+ * line, as the server reports it ("Found 14 Florida colleges..."), so the
+ * wait shows the work instead of a spinner.
+ */
+export function GeneratingPlan({ label = "Building your plan", lines = [] }: { label?: string; lines?: string[] }) {
+  const shown = lines.length ? lines : ["Reading your plan and what you asked for"];
 
   return (
-    <div role="status" aria-live="polite" className="rounded-[var(--radius-hero)] border border-line bg-surface p-8 text-center shadow-[var(--shadow-card)]">
-      <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary-soft text-primary">
-        <Map aria-hidden className="size-7 motion-safe:animate-pulse" />
-      </span>
-      <h2 className="font-display mt-4 text-2xl font-semibold">{label}…</h2>
-      <p className="mt-2 text-sm text-ink-muted">This usually takes under a minute. You can stay on this page.</p>
-      <ol className="mx-auto mt-6 max-w-xs space-y-2.5 text-left">
-        {STEPS.map((item, index) => (
-          <li key={item} className={`flex items-center gap-3 text-sm ${index <= step ? "text-ink" : "text-ink-soft"}`}>
-            <span
-              className={`flex size-6 shrink-0 items-center justify-center rounded-full ${
-                index < step ? "bg-accent text-on-accent" : index === step ? "bg-primary-soft text-primary" : "bg-surface-2"
-              }`}
-            >
-              {index < step ? <Check aria-hidden className="size-3.5" /> : <span className="size-1.5 rounded-full bg-current" />}
-            </span>
-            {item}
-          </li>
-        ))}
+    <div role="status" aria-live="polite" className="rounded-[var(--radius-hero)] border border-line bg-surface p-8 shadow-[var(--shadow-card)]">
+      <div className="text-center">
+        <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary-soft text-primary">
+          <Map aria-hidden className="size-7 motion-safe:animate-pulse" />
+        </span>
+        <h2 className="font-display mt-4 text-2xl font-semibold">{label}…</h2>
+        <p className="mt-2 text-sm text-ink-muted">Usually under a minute. Here&apos;s what your counselor is doing:</p>
+      </div>
+      <ol className="mx-auto mt-6 max-w-lg space-y-3 text-left">
+        {shown.map((item, index) => {
+          const current = index === shown.length - 1;
+
+          return (
+            <li key={`${item}-${index}`} className={`flex items-start gap-3 text-[15px] animate-[var(--animate-fade-up)] ${current ? "text-ink" : "text-ink-muted"}`}>
+              <span
+                className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full ${current ? "bg-primary-soft text-primary" : "bg-accent text-on-accent"}`}
+              >
+                {current ? <span className="size-2 rounded-full bg-current motion-safe:animate-pulse" /> : <Check aria-hidden className="size-3.5" />}
+              </span>
+              {item}
+            </li>
+          );
+        })}
       </ol>
     </div>
   );
 }
 
-export function PlanGenerator({ suggestedGoal = "", autoFocus = false }: { suggestedGoal?: string; autoFocus?: boolean }) {
+export function PlanGenerator({
+  suggestedGoal = "",
+  autoFocus = false,
+  autoStart = false,
+}: {
+  suggestedGoal?: string;
+  autoFocus?: boolean;
+  autoStart?: boolean;
+}) {
   const router = useRouter();
   const [goal, setGoal] = useState(suggestedGoal);
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [lines, setLines] = useState<string[]>([]);
+  const started = useRef(false);
 
   async function generate() {
     setBusy(true);
     setError("");
+    setLines([]);
 
     try {
-      const plan = await api.generatePlan({ career_goal: goal.trim(), instruction: note.trim() });
+      const plan = await api.streamPlan({ career_goal: goal.trim(), instruction: note.trim() }, (text) =>
+        setLines((current) => [...current, text])
+      );
       router.push(`/plan/${plan.id}`);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Your plan couldn't be created. Please try again.");
@@ -69,8 +79,17 @@ export function PlanGenerator({ suggestedGoal = "", autoFocus = false }: { sugge
     }
   }
 
+  // Coming from sign-up ("Build my full plan"): start right away.
+  useEffect(() => {
+    if (autoStart && !started.current) {
+      started.current = true;
+      void generate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart]);
+
   if (busy) {
-    return <GeneratingPlan />;
+    return <GeneratingPlan lines={lines} />;
   }
 
   return (

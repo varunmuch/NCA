@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Award,
   BookOpen,
@@ -188,7 +188,7 @@ function ReasonList<T>({
         <li key={title(item)} className="rounded-2xl border border-line bg-surface p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <p className="font-semibold text-ink">{title(item)}</p>
-            {badge && <Badge tone="accent">{badge(item)}</Badge>}
+            {badge && badge(item) && <Badge tone="accent">{badge(item)}</Badge>}
           </div>
           <div className="mt-1.5 text-sm leading-relaxed text-ink-muted">{body(item)}</div>
         </li>
@@ -197,7 +197,7 @@ function ReasonList<T>({
   );
 }
 
-export function CareerRoadmap({ slug, title }: { slug: string; title: string }) {
+export function CareerRoadmap({ slug, title, autoBuild = false }: { slug: string; title: string; autoBuild?: boolean }) {
   const [data, setData] = useState<Roadmap | null>(null);
   const [loadError, setLoadError] = useState("");
   const [building, setBuilding] = useState(false);
@@ -206,6 +206,8 @@ export function CareerRoadmap({ slug, title }: { slug: string; title: string }) 
   const [waitIndex, setWaitIndex] = useState(0);
 
   const [attempt, setAttempt] = useState(0);
+  // Opened from the counselor's "Build my roadmap": build once, without another click.
+  const autoStarted = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -216,6 +218,12 @@ export function CareerRoadmap({ slug, title }: { slug: string; title: string }) 
         if (!cancelled) {
           setData(loaded);
           setLoadError("");
+
+          if (autoBuild && !loaded.roadmap && !autoStarted.current) {
+            autoStarted.current = true;
+            document.getElementById("roadmap")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            void build();
+          }
         }
       })
       .catch((caught) => {
@@ -227,6 +235,9 @@ export function CareerRoadmap({ slug, title }: { slug: string; title: string }) 
     return () => {
       cancelled = true;
     };
+    // Reload only for a new career or a retry; autoBuild runs once (ref) and
+    // build reads the current slug.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, attempt]);
 
   function load() {
@@ -399,10 +410,25 @@ export function CareerRoadmap({ slug, title }: { slug: string; title: string }) 
                 />
                 {roadmap.certifications.length > 0 && (
                   <>
-                    <Heading note="Industry credentials some high school students earn. Ask your school which ones it offers.">
+                    <Heading note="From the U.S. Department of Labor's certification finder. Ask your school which ones it offers.">
                       Certifications to consider
                     </Heading>
-                    <ReasonList items={roadmap.certifications} title={(item) => item.name} body={(item) => item.why} />
+                    <ReasonList
+                      items={roadmap.certifications}
+                      title={(item) => item.name}
+                      badge={(item) => (item.beginner_friendly === undefined ? "" : item.beginner_friendly ? "No degree needed" : "Needs a degree or experience")}
+                      body={(item) => (
+                        <>
+                          {item.organization && <p className="text-xs">From {item.organization}</p>}
+                          {item.why && <p className="mt-1">{item.why}</p>}
+                          {item.url && (
+                            <a href={item.url} target="_blank" rel="noreferrer" className="mt-1 inline-block font-semibold text-primary hover:underline">
+                              Details
+                            </a>
+                          )}
+                        </>
+                      )}
+                    />
                   </>
                 )}
               </>
@@ -485,14 +511,29 @@ export function CareerRoadmap({ slug, title }: { slug: string; title: string }) 
             <>
               {roadmap && roadmap.college_options.length > 0 && (
                 <>
-                  <Heading note="Examples to research, not a ranked list. Visit, compare costs, and talk with your counselor.">
+                  <Heading note="Florida colleges with a matching program, from the U.S. Department of Education’s College Scorecard. Not a ranked list.">
                     Colleges and routes that fit your profile
                   </Heading>
                   <ReasonList
                     items={roadmap.college_options}
                     title={(item) => item.name}
                     badge={(item) => item.kind}
-                    body={(item) => item.why}
+                    body={(item) => (
+                      <>
+                        {(item.city || item.net_price || item.graduation_rate != null) && (
+                          <p className="text-xs">
+                            {[
+                              item.city,
+                              item.net_price ? `${item.net_price.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}/yr after aid` : "",
+                              item.graduation_rate != null ? `${item.graduation_rate}% graduate` : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </p>
+                        )}
+                        {item.why && <p className="mt-1">{item.why}</p>}
+                      </>
+                    )}
                   />
                 </>
               )}

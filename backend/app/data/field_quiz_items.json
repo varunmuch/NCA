@@ -1,0 +1,2181 @@
+{
+ "careers": {
+  "accountants-and-auditors": {
+   "items": [
+    {
+     "id": "accountants-and-auditors:0",
+     "text": "Check if financial reports are correct and follow the rules",
+     "task": "Prepare, examine, or analyze accounting records, financial statements, or other financial reports to assess accuracy, completeness, and conformance to reporting and procedural standards."
+    },
+    {
+     "id": "accountants-and-auditors:1",
+     "text": "Find and fix mistakes in the money records",
+     "task": "Review accounts for discrepancies and reconcile differences."
+    },
+    {
+     "id": "accountants-and-auditors:2",
+     "text": "Figure out how much taxes are owed and fill out tax forms",
+     "task": "Compute taxes owed and prepare tax returns, ensuring compliance with payment, reporting, or other tax requirements."
+    },
+    {
+     "id": "accountants-and-auditors:3",
+     "text": "Look at how a company keeps track of its money to see if it's doing it right",
+     "task": "Inspect account books and accounting systems for efficiency, effectiveness, and use of accepted accounting procedures to record transactions."
+    }
+   ],
+   "reviewed": false
+  },
+  "actuaries": {
+   "items": [
+    {
+     "id": "actuaries:0",
+     "text": "Figure out how much money is needed to pay for future benefits and set prices for services",
+     "task": "Analyze data to determine premium rates required and cash reserves and liabilities necessary to ensure payment of future benefits."
+    },
+    {
+     "id": "actuaries:1",
+     "text": "Use numbers to guess how often people might get sick, die, or have accidents",
+     "task": "Analyze statistical information to estimate mortality, accident, sickness, disability, and retirement rates."
+    },
+    {
+     "id": "actuaries:2",
+     "text": "Help create and check plans for saving money for retirement or insurance",
+     "task": "Design, review, and help administer insurance, annuity and pension plans, determining financial soundness and calculating premiums."
+    },
+    {
+     "id": "actuaries:3",
+     "text": "Work with others to come up with new ideas for how a company can do better",
+     "task": "Collaborate with programmers, underwriters, accounts, claims experts, and senior management to help companies develop plans for new lines of business or improvements to existing business."
+    }
+   ],
+   "reviewed": false
+  },
+  "aerospace-engineers": {
+   "items": [
+    {
+     "id": "aerospace-engineers:0",
+     "text": "Create ideas for new planes or space things that follow rules or what people want",
+     "task": "Formulate conceptual design of aeronautical or aerospace products or systems to meet customer requirements or conform to environmental regulations."
+    },
+    {
+     "id": "aerospace-engineers:1",
+     "text": "Check if designs for planes or space things are good and follow the rules",
+     "task": "Evaluate product data or design from inspections or reports for conformance to engineering principles, customer requirements, environmental regulations, or quality standards."
+    },
+    {
+     "id": "aerospace-engineers:2",
+     "text": "Tell other people what to do when making or testing planes or space things",
+     "task": "Direct or coordinate activities of engineering or technical personnel involved in designing, fabricating, modifying, or testing of aircraft or aerospace products."
+    },
+    {
+     "id": "aerospace-engineers:3",
+     "text": "Test models of planes or space things to see how they work in different situations",
+     "task": "Plan or conduct experimental, environmental, operational, or stress tests on models or prototypes of aircraft or aerospace systems or equipment."
+    }
+   ],
+   "reviewed": false
+  },
+  "aircraft-mechanics-and-service-technicians": {
+   "items": [
+    {
+     "id": "aircraft-mechanics-and-service-technicians:0",
+     "text": "Check if everything is fixed right and the plane is safe to fly",
+     "task": "Inspect completed work to certify that maintenance meets standards and that aircraft are ready for operation."
+    },
+    {
+     "id": "aircraft-mechanics-and-service-technicians:1",
+     "text": "Read instructions to figure out how to fix or replace broken parts",
+     "task": "Read and interpret maintenance manuals, service bulletins, and other specifications to determine the feasibility and method of repairing or replacing malfunctioning or damaged components."
+    },
+    {
+     "id": "aircraft-mechanics-and-service-technicians:2",
+     "text": "Write down all the work done to fix or check the plane",
+     "task": "Maintain repair logs, documenting all preventive and corrective aircraft maintenance."
+    },
+    {
+     "id": "aircraft-mechanics-and-service-technicians:3",
+     "text": "Look closely at parts like wheels and engines to find any problems",
+     "task": "Examine and inspect aircraft components, including landing gear, hydraulic systems, and deicers to locate cracks, breaks, leaks, or other problems."
+    }
+   ],
+   "reviewed": false
+  },
+  "airline-pilots-copilots-and-flight-engineers": {
+   "items": [
+    {
+     "id": "airline-pilots-copilots-and-flight-engineers:0",
+     "text": "Use instruments to fly when it's hard to see outside",
+     "task": "Use instrumentation to guide flights when visibility is poor."
+    },
+    {
+     "id": "airline-pilots-copilots-and-flight-engineers:1",
+     "text": "Fly a plane with passengers or cargo, following rules and plans",
+     "task": "Start engines, operate controls, and pilot airplanes to transport passengers, mail, or freight, adhering to flight plans, regulations, and procedures."
+    },
+    {
+     "id": "airline-pilots-copilots-and-flight-engineers:2",
+     "text": "Work with other crew members during takeoffs and landings",
+     "task": "Work as part of a flight team with other crew members, especially during takeoffs and landings."
+    },
+    {
+     "id": "airline-pilots-copilots-and-flight-engineers:3",
+     "text": "Handle and report problems that happen during flights",
+     "task": "Respond to and report in-flight emergencies and malfunctions."
+    }
+   ],
+   "reviewed": false
+  },
+  "architects-except-landscape-and-naval": {
+   "items": [
+    {
+     "id": "architects-except-landscape-and-naval:0",
+     "text": "Draw blueprints for buildings using computer programs or tools",
+     "task": "Prepare scale drawings or architectural designs, using computer-aided design or other tools."
+    },
+    {
+     "id": "architects-except-landscape-and-naval:1",
+     "text": "Design buildings like homes or offices that follow safety and environmental rules",
+     "task": "Plan or design structures such as residences, office buildings, theatres, factories, or other structural properties in accordance with environmental, safety, or other regulations."
+    },
+    {
+     "id": "architects-except-landscape-and-naval:2",
+     "text": "Meet with people to talk about building plans and make changes",
+     "task": "Meet with clients to review or discuss architectural drawings."
+    },
+    {
+     "id": "architects-except-landscape-and-naval:3",
+     "text": "Visit building sites to check if everything is going as planned",
+     "task": "Conduct periodic on-site observations of construction work to monitor compliance with plans."
+    }
+   ],
+   "reviewed": false
+  },
+  "astronomers": {
+   "items": [
+    {
+     "id": "astronomers:0",
+     "text": "Look at data on a computer to figure out what it means",
+     "task": "Analyze research data to determine its significance, using computers."
+    },
+    {
+     "id": "astronomers:1",
+     "text": "Use telescopes and tools to watch stars and planets",
+     "task": "Study celestial phenomena, using a variety of ground-based and space-borne telescopes and scientific instruments."
+    },
+    {
+     "id": "astronomers:2",
+     "text": "Work with other scientists to do research together",
+     "task": "Collaborate with other astronomers to carry out research projects."
+    },
+    {
+     "id": "astronomers:3",
+     "text": "Help students learn about stars and space",
+     "task": "Supervise students' research on celestial and astronomical phenomena."
+    }
+   ],
+   "reviewed": false
+  },
+  "athletic-trainers": {
+   "items": [
+    {
+     "id": "athletic-trainers:0",
+     "text": "Check an athlete's injury to decide if they need a doctor",
+     "task": "Conduct an initial assessment of an athlete's injury or illness to provide emergency or continued care and to determine whether they should be referred to physicians for definitive diagnosis and treatment."
+    },
+    {
+     "id": "athletic-trainers:1",
+     "text": "Tell coaches or doctors how an athlete is healing",
+     "task": "Assess and report the progress of recovering athletes to coaches or physicians."
+    },
+    {
+     "id": "athletic-trainers:2",
+     "text": "Help athletes heal using tools or medicine",
+     "task": "Care for athletic injuries, using physical therapy equipment, techniques, or medication."
+    },
+    {
+     "id": "athletic-trainers:3",
+     "text": "Decide if an athlete is ready to play and say yes or no",
+     "task": "Evaluate athletes' readiness to play and provide participation clearances when necessary and warranted."
+    }
+   ],
+   "reviewed": false
+  },
+  "atmospheric-and-space-scientists": {
+   "items": [
+    {
+     "id": "atmospheric-and-space-scientists:0",
+     "text": "Use math and computers to make weather forecasts",
+     "task": "Develop or use mathematical or computer models for weather forecasting."
+    },
+    {
+     "id": "atmospheric-and-space-scientists:1",
+     "text": "Look at maps and data to guess what the weather will be",
+     "task": "Interpret data, reports, maps, photographs, or charts to predict long- or short-range weather conditions, using computer models and knowledge of climate theory, physics, and mathematics."
+    },
+    {
+     "id": "atmospheric-and-space-scientists:2",
+     "text": "Study how the sky and weather work",
+     "task": "Conduct meteorological research into the processes or determinants of atmospheric phenomena, weather, or climate."
+    },
+    {
+     "id": "atmospheric-and-space-scientists:3",
+     "text": "Tell people about the weather on TV or online",
+     "task": "Broadcast weather conditions, forecasts, or severe weather warnings to the public via television, radio, or the Internet or provide this information to the news media."
+    }
+   ],
+   "reviewed": false
+  },
+  "automotive-service-technicians-and-mechanics": {
+   "items": [
+    {
+     "id": "automotive-service-technicians-and-mechanics:0",
+     "text": "Check all car parts like belts, hoses, and brakes to make sure everything works",
+     "task": "Follow checklists to ensure all important parts are examined, including belts, hoses, steering systems, spark plugs, brake and fuel systems, wheel bearings, and other potentially troublesome areas."
+    },
+    {
+     "id": "automotive-service-technicians-and-mechanics:1",
+     "text": "Test fixed parts to make sure they work as good as they should",
+     "task": "Test and adjust repaired systems to meet manufacturers' performance specifications."
+    },
+    {
+     "id": "automotive-service-technicians-and-mechanics:2",
+     "text": "Do regular car maintenance like changing oil and fixing small problems",
+     "task": "Perform routine and scheduled maintenance services, such as oil changes, lubrications, and tune-ups."
+    },
+    {
+     "id": "automotive-service-technicians-and-mechanics:3",
+     "text": "Look for any damage on a car and write down what needs fixing",
+     "task": "Inspect vehicles for damage and record findings so that necessary repairs can be made."
+    }
+   ],
+   "reviewed": false
+  },
+  "bioengineers-and-biomedical-engineers": {
+   "items": [
+    {
+     "id": "bioengineers-and-biomedical-engineers:0",
+     "text": "Check if medical machines work well and are safe to use",
+     "task": "Evaluate the safety, efficiency, and effectiveness of biomedical equipment."
+    },
+    {
+     "id": "bioengineers-and-biomedical-engineers:1",
+     "text": "Create new tools or methods to help doctors diagnose patients",
+     "task": "Design or develop medical diagnostic or clinical instrumentation, equipment, or procedures, using the principles of engineering and biobehavioral sciences."
+    },
+    {
+     "id": "bioengineers-and-biomedical-engineers:2",
+     "text": "Work with scientists to study how living things work",
+     "task": "Conduct research, along with life scientists, chemists, and medical scientists, on the engineering aspects of the biological systems of humans and animals."
+    },
+    {
+     "id": "bioengineers-and-biomedical-engineers:3",
+     "text": "Change computer programs to help with medical research",
+     "task": "Adapt or design computer hardware or software for medical science uses."
+    }
+   ],
+   "reviewed": false
+  },
+  "biologists": {
+   "items": [
+    {
+     "id": "biologists:0",
+     "text": "Use computers to organize and study information about living things",
+     "task": "Program and use computers to store, process, and analyze data."
+    },
+    {
+     "id": "biologists:1",
+     "text": "Write reports about nature and share them with others",
+     "task": "Prepare technical and research reports, such as environmental impact reports, and communicate the results to individuals in industry, government, or the general public."
+    },
+    {
+     "id": "biologists:2",
+     "text": "Learn about plants and animals and how they live",
+     "task": "Identify, classify, and study structure, behavior, ecology, physiology, nutrition, culture, and distribution of plant and animal species."
+    },
+    {
+     "id": "biologists:3",
+     "text": "Gather information about how living things interact with their world",
+     "task": "Collect and analyze biological data about relationships among and between organisms and their environment."
+    }
+   ],
+   "reviewed": false
+  },
+  "carpenters": {
+   "items": [
+    {
+     "id": "carpenters:0",
+     "text": "Draw lines on wood to show where to cut",
+     "task": "Measure and mark cutting lines on materials, using a ruler, pencil, chalk, and marking gauge."
+    },
+    {
+     "id": "carpenters:1",
+     "text": "Cut wood into the right size with tools",
+     "task": "Shape or cut materials to specified measurements, using hand tools, machines, or power saws."
+    },
+    {
+     "id": "carpenters:2",
+     "text": "Attach things like windows or trim to a building",
+     "task": "Install structures or fixtures, such as windows, frames, floorings, trim, or hardware, using carpenters' hand or power tools."
+    },
+    {
+     "id": "carpenters:3",
+     "text": "Check if walls or floors are straight and level",
+     "task": "Verify trueness of structure, using plumb bob and level."
+    }
+   ],
+   "reviewed": false
+  },
+  "chefs-and-head-cooks": {
+   "items": [
+    {
+     "id": "chefs-and-head-cooks:0",
+     "text": "Show workers how to make, cook, and present food the right way",
+     "task": "Instruct cooks or other workers in the preparation, cooking, garnishing, or presentation of food."
+    },
+    {
+     "id": "chefs-and-head-cooks:1",
+     "text": "Watch over and help workers who are making food",
+     "task": "Supervise or coordinate activities of cooks or workers engaged in food preparation."
+    },
+    {
+     "id": "chefs-and-head-cooks:2",
+     "text": "Get food and supplies so everything runs smoothly",
+     "task": "Order or requisition food or other supplies needed to ensure efficient operation."
+    },
+    {
+     "id": "chefs-and-head-cooks:3",
+     "text": "Look at supplies, equipment, and areas to make sure they're good",
+     "task": "Inspect supplies, equipment, or work areas to ensure conformance to established standards."
+    }
+   ],
+   "reviewed": false
+  },
+  "chemists": {
+   "items": [
+    {
+     "id": "chemists:0",
+     "text": "Mix chemicals to create or improve products or processes",
+     "task": "Develop, improve, or customize products, equipment, formulas, processes, or analytical methods."
+    },
+    {
+     "id": "chemists:1",
+     "text": "Use tools to study what chemicals are made of and how they work",
+     "task": "Analyze organic or inorganic compounds to determine chemical or physical properties, composition, structure, relationships, or reactions, using chromatography, spectroscopy, or spectrophotometry techniques."
+    },
+    {
+     "id": "chemists:2",
+     "text": "Change substances by heating, lighting, or adding chemicals",
+     "task": "Induce changes in composition of substances by introducing heat, light, energy, or chemical catalysts for quantitative or qualitative analysis."
+    },
+    {
+     "id": "chemists:3",
+     "text": "Check products to make sure they are good quality",
+     "task": "Conduct quality control tests."
+    }
+   ],
+   "reviewed": false
+  },
+  "child-family-and-school-social-workers": {
+   "items": [
+    {
+     "id": "child-family-and-school-social-workers:0",
+     "text": "Talk to people to figure out what help they need",
+     "task": "Interview clients individually, in families, or in groups, assessing their situations, capabilities, and problems to determine what services are required to meet their needs."
+    },
+    {
+     "id": "child-family-and-school-social-workers:1",
+     "text": "Help kids with problems by working with their families and schools",
+     "task": "Serve as liaisons between students, homes, schools, family services, child guidance clinics, courts, protective services, doctors, and other contacts to help children who face problems, such as disabilities, abuse, or poverty."
+    },
+    {
+     "id": "child-family-and-school-social-workers:2",
+     "text": "Work with people to plan how to help them and check if it works",
+     "task": "Develop and review service plans in consultation with clients and perform follow-ups assessing the quantity and quality of services provided."
+    },
+    {
+     "id": "child-family-and-school-social-workers:3",
+     "text": "Help in court cases about kids, like when there are problems at home",
+     "task": "Address legal issues, such as child abuse and discipline, assisting with hearings and providing testimony to inform custody arrangements."
+    }
+   ],
+   "reviewed": false
+  },
+  "civil-engineers": {
+   "items": [
+    {
+     "id": "civil-engineers:0",
+     "text": "Supervise workers building things to make sure everything gets done right",
+     "task": "Manage and direct the construction, operations, or maintenance activities at project site."
+    },
+    {
+     "id": "civil-engineers:1",
+     "text": "Check work sites to see if everything is going as planned and is safe",
+     "task": "Inspect project sites to monitor progress and ensure conformance to design specifications and safety or sanitation standards."
+    },
+    {
+     "id": "civil-engineers:2",
+     "text": "Figure out how much weight things can hold and how water flows to make safe designs",
+     "task": "Compute load and grade requirements, water flow rates, or material stress factors to determine design specifications."
+    },
+    {
+     "id": "civil-engineers:3",
+     "text": "Use computers to draw plans for roads, bridges, or other big projects",
+     "task": "Plan and design transportation or hydraulic systems or structures, using computer-assisted design or drawing tools."
+    }
+   ],
+   "reviewed": false
+  },
+  "clinical-and-counseling-psychologists": {
+   "items": [
+    {
+     "id": "clinical-and-counseling-psychologists:0",
+     "text": "Write down what happens in meetings with people who need help",
+     "task": "Document patient information including session notes, progress notes, recommendations, and treatment plans."
+    },
+    {
+     "id": "clinical-and-counseling-psychologists:1",
+     "text": "Figure out what's wrong with someone based on what they say and tests",
+     "task": "Identify psychological, emotional, or behavioral issues and diagnose disorders, using information obtained from interviews, tests, records, or reference materials."
+    },
+    {
+     "id": "clinical-and-counseling-psychologists:2",
+     "text": "Help people talk about their problems and make plans to feel better",
+     "task": "Counsel individuals, groups, or families to help them understand problems, deal with crisis situations, define goals, and develop realistic action plans."
+    },
+    {
+     "id": "clinical-and-counseling-psychologists:3",
+     "text": "Ask questions and watch people to learn about their lives",
+     "task": "Collect information about individuals or clients, using interviews, case histories, observational techniques, and other assessment methods."
+    }
+   ],
+   "reviewed": false
+  },
+  "coaches-and-scouts": {
+   "items": [
+    {
+     "id": "coaches-and-scouts:0",
+     "text": "Help players get better by teaching them skills and strategies during practice",
+     "task": "Plan, organize, and conduct practice sessions."
+    },
+    {
+     "id": "coaches-and-scouts:1",
+     "text": "Change how you teach based on what players are good at or need to work on",
+     "task": "Adjust coaching techniques, based on the strengths and weaknesses of athletes."
+    },
+    {
+     "id": "coaches-and-scouts:2",
+     "text": "Show players how to move their bodies to play better and win games",
+     "task": "Instruct individuals or groups in sports rules, game strategies, and performance principles, such as specific ways of moving the body, hands, or feet, to achieve desired results."
+    },
+    {
+     "id": "coaches-and-scouts:3",
+     "text": "Talk to players about school, sports, and their feelings to help them succeed",
+     "task": "Counsel student athletes on academic, athletic, and personal issues."
+    }
+   ],
+   "reviewed": false
+  },
+  "commercial-and-industrial-designers": {
+   "items": [
+    {
+     "id": "commercial-and-industrial-designers:0",
+     "text": "Draw pictures and plans for new products using tools or computers",
+     "task": "Prepare sketches of ideas, detailed drawings, illustrations, artwork, or blueprints, using drafting instruments, paints and brushes, or computer-aided design equipment."
+    },
+    {
+     "id": "commercial-and-industrial-designers:1",
+     "text": "Change designs to make them better or fit what customers want",
+     "task": "Modify and refine designs, using working models, to conform with customer specifications, production limitations, or changes in design trends."
+    },
+    {
+     "id": "commercial-and-industrial-designers:2",
+     "text": "Check if ideas will work by looking at how they look, cost, and if they can be made",
+     "task": "Evaluate feasibility of design ideas, based on factors such as appearance, safety, function, serviceability, budget, production costs/methods, and market characteristics."
+    },
+    {
+     "id": "commercial-and-industrial-designers:3",
+     "text": "Talk with teams or customers to figure out what they want in a product",
+     "task": "Confer with engineering, marketing, production, or sales departments, or with customers, to establish and evaluate design concepts for manufactured products."
+    }
+   ],
+   "reviewed": false
+  },
+  "computer-systems-analysts": {
+   "items": [
+    {
+     "id": "computer-systems-analysts:0",
+     "text": "Fix computer programs when they stop working or have errors",
+     "task": "Troubleshoot program and system malfunctions to restore normal functioning."
+    },
+    {
+     "id": "computer-systems-analysts:1",
+     "text": "Help people with problems using computers and software",
+     "task": "Provide staff and users with assistance solving computer-related problems, such as malfunctions and program problems."
+    },
+    {
+     "id": "computer-systems-analysts:2",
+     "text": "Check if computer systems are working correctly and make sure they stay that way",
+     "task": "Test, maintain, and monitor computer programs and systems, including coordinating the installation of computer programs and systems."
+    },
+    {
+     "id": "computer-systems-analysts:3",
+     "text": "Connect different computer systems so they can share information easily",
+     "task": "Coordinate and link the computer systems within an organization to increase compatibility so that information can be shared."
+    }
+   ],
+   "reviewed": false
+  },
+  "computer-user-support-specialists": {
+   "items": [
+    {
+     "id": "computer-user-support-specialists:0",
+     "text": "Check if computers and networks are working properly",
+     "task": "Oversee the daily performance of computer systems."
+    },
+    {
+     "id": "computer-user-support-specialists:1",
+     "text": "Help set up new computers and make sure they work right",
+     "task": "Set up equipment for employee use, performing or ensuring proper installation of cables, operating systems, or appropriate software."
+    },
+    {
+     "id": "computer-user-support-specialists:2",
+     "text": "Read instructions and talk to people to fix computer issues",
+     "task": "Read technical manuals, confer with users, or conduct computer diagnostics to investigate and resolve problems or to provide technical assistance and support."
+    },
+    {
+     "id": "computer-user-support-specialists:3",
+     "text": "Answer questions about how to use computers and software",
+     "task": "Answer user inquiries regarding computer software or hardware operation to resolve problems."
+    }
+   ],
+   "reviewed": false
+  },
+  "computer-and-information-research-scientists": {
+   "items": [
+    {
+     "id": "computer-and-information-research-scientists:0",
+     "text": "Figure out how to fix computer problems using hardware and software",
+     "task": "Analyze problems to develop solutions involving computer hardware and software."
+    },
+    {
+     "id": "computer-and-information-research-scientists:1",
+     "text": "Come up with new ways to use computers or create new tech",
+     "task": "Apply theoretical expertise and innovation to create or apply new technology, such as adapting principles for applying computers to new uses."
+    },
+    {
+     "id": "computer-and-information-research-scientists:2",
+     "text": "Talk to people like bosses and suppliers to solve problems",
+     "task": "Meet with managers, vendors, and others to solicit cooperation and resolve problems."
+    },
+    {
+     "id": "computer-and-information-research-scientists:3",
+     "text": "Use math to help computers solve tricky problems",
+     "task": "Conduct logical analyses of business, scientific, engineering, and other technical problems, formulating mathematical models of problems for solution by computers."
+    }
+   ],
+   "reviewed": false
+  },
+  "conservation-scientists": {
+   "items": [
+    {
+     "id": "conservation-scientists:0",
+     "text": "Help farmers decide how to plant crops to keep soil healthy",
+     "task": "Plan soil management or conservation practices, such as crop rotation, reforestation, permanent vegetation, contour plowing, or terracing, to maintain soil or conserve water."
+    },
+    {
+     "id": "conservation-scientists:1",
+     "text": "Talk to farmers about ways to protect the land they use",
+     "task": "Advise land users, such as farmers or ranchers, on plans, problems, or alternative conservation solutions."
+    },
+    {
+     "id": "conservation-scientists:2",
+     "text": "Show people how to stop dirt from washing away in storms",
+     "task": "Implement soil or water management techniques, such as nutrient management, erosion control, buffers, or filter strips, in accordance with conservation plans."
+    },
+    {
+     "id": "conservation-scientists:3",
+     "text": "Use computer maps to figure out the best way to use land",
+     "task": "Gather information from geographic information systems (GIS) databases or applications to formulate land use recommendations."
+    }
+   ],
+   "reviewed": false
+  },
+  "data-scientists": {
+   "items": [
+    {
+     "id": "data-scientists:0",
+     "text": "Find patterns in big data using computer programs",
+     "task": "Analyze, manipulate, or process large sets of data using statistical software."
+    },
+    {
+     "id": "data-scientists:1",
+     "text": "Make pictures and charts to show what data means",
+     "task": "Create graphs, charts, or other visualizations to convey the results of data analysis using specialized software."
+    },
+    {
+     "id": "data-scientists:2",
+     "text": "Check and fix math models to make sure they work well",
+     "task": "Test, validate, and reformulate models to ensure accurate prediction of outcomes of interest."
+    },
+    {
+     "id": "data-scientists:3",
+     "text": "Tell people about data findings in talks or reports",
+     "task": "Deliver oral or written presentations of the results of mathematical modeling and data analysis to management or other end users."
+    }
+   ],
+   "reviewed": false
+  },
+  "dental-assistants": {
+   "items": [
+    {
+     "id": "dental-assistants:0",
+     "text": "Help the dentist by getting everything ready for a patient's visit",
+     "task": "Prepare patient, sterilize or disinfect instruments, set up instrument trays, prepare materials, or assist dentist during dental procedures."
+    },
+    {
+     "id": "dental-assistants:1",
+     "text": "Write down what happens during a patient's appointment",
+     "task": "Record treatment information in patient records."
+    },
+    {
+     "id": "dental-assistants:2",
+     "text": "Help the dentist if someone gets hurt or sick during a visit",
+     "task": "Assist dentist in management of medical or dental emergencies."
+    },
+    {
+     "id": "dental-assistants:3",
+     "text": "Take x-ray pictures of teeth to help the dentist see what's going on",
+     "task": "Expose dental diagnostic x-rays."
+    }
+   ],
+   "reviewed": false
+  },
+  "dentists-general": {
+   "items": [
+    {
+     "id": "dentists-general:0",
+     "text": "Wear masks, gloves, and glasses to stay safe while working",
+     "task": "Use masks, gloves, and safety glasses to protect patients and self from infectious diseases."
+    },
+    {
+     "id": "dentists-general:1",
+     "text": "Give medicine to help patients not feel pain during work",
+     "task": "Administer anesthetics to limit the amount of pain experienced by patients during procedures."
+    },
+    {
+     "id": "dentists-general:2",
+     "text": "Check teeth and gums with tools to find problems",
+     "task": "Examine teeth, gums, and related tissues, using dental instruments, x-rays, or other diagnostic equipment, to evaluate dental health, diagnose diseases or abnormalities, and plan appropriate treatments."
+    },
+    {
+     "id": "dentists-general:3",
+     "text": "Tell patients how to keep their teeth healthy",
+     "task": "Advise or instruct patients regarding preventive dental care, the causes and treatment of dental problems, or oral health care services."
+    }
+   ],
+   "reviewed": false
+  },
+  "dietitians-and-nutritionists": {
+   "items": [
+    {
+     "id": "dietitians-and-nutritionists:0",
+     "text": "Help people figure out what foods they should eat to stay healthy",
+     "task": "Assess nutritional needs, diet restrictions, and current health plans to develop and implement dietary-care plans and provide nutritional counseling."
+    },
+    {
+     "id": "dietitians-and-nutritionists:1",
+     "text": "Teach people how to eat better to feel their best",
+     "task": "Counsel individuals and groups on basic rules of good nutrition, healthy eating habits, and nutrition monitoring to improve their quality of life."
+    },
+    {
+     "id": "dietitians-and-nutritionists:2",
+     "text": "Show patients how to pick and cook foods that are good for them",
+     "task": "Advise patients and their families on nutritional principles, dietary plans, diet modifications, and food selection and preparation."
+    },
+    {
+     "id": "dietitians-and-nutritionists:3",
+     "text": "Work with doctors to decide what foods are best for patients",
+     "task": "Consult with physicians and health care personnel to determine nutritional needs and diet restrictions of patient or client."
+    }
+   ],
+   "reviewed": false
+  },
+  "economists": {
+   "items": [
+    {
+     "id": "economists:0",
+     "text": "Look at numbers and info to learn about how money works in certain areas",
+     "task": "Study economic and statistical data in area of specialization, such as finance, labor, or agriculture."
+    },
+    {
+     "id": "economists:1",
+     "text": "Put together, check, and share info to guess what will happen with money and markets",
+     "task": "Compile, analyze, and report data to explain economic phenomena and forecast market trends, applying mathematical models and statistical techniques."
+    },
+    {
+     "id": "economists:2",
+     "text": "Learn how new rules or taxes might affect people and their money",
+     "task": "Study the socioeconomic impacts of new public policies, such as proposed legislation, taxes, services, and regulations."
+    },
+    {
+     "id": "economists:3",
+     "text": "Help businesses and groups understand how money and markets work",
+     "task": "Provide advice and consultation on economic relationships to businesses, public and private agencies, and other employers."
+    }
+   ],
+   "reviewed": false
+  },
+  "educational-guidance-and-career-counselors-and-advisors": {
+   "items": [
+    {
+     "id": "educational-guidance-and-career-counselors-and-advisors:0",
+     "text": "Help students choose classes and talk about their future plans",
+     "task": "Counsel students regarding educational issues, such as course and program selection, class scheduling and registration, school adjustment, truancy, study habits, and career planning."
+    },
+    {
+     "id": "educational-guidance-and-career-counselors-and-advisors:1",
+     "text": "Support students during tough times at school",
+     "task": "Provide crisis intervention to students when difficult situations occur at schools."
+    },
+    {
+     "id": "educational-guidance-and-career-counselors-and-advisors:2",
+     "text": "Talk to people about problems that affect their school or work life",
+     "task": "Counsel individuals or groups to help them understand and overcome personal, social, or behavioral problems affecting their educational or vocational situations."
+    },
+    {
+     "id": "educational-guidance-and-career-counselors-and-advisors:3",
+     "text": "Check students' grades to make sure they can graduate or go to college",
+     "task": "Review transcripts to ensure that students meet graduation or college entrance requirements, and write letters of recommendation."
+    }
+   ],
+   "reviewed": false
+  },
+  "electrical-engineers": {
+   "items": [
+    {
+     "id": "electrical-engineers:0",
+     "text": "Plan and build things like lights, motors, or power systems to make them work better",
+     "task": "Design, implement, maintain, or improve electrical instruments, equipment, facilities, components, products, or systems for commercial, industrial, or domestic purposes."
+    },
+    {
+     "id": "electrical-engineers:1",
+     "text": "Make sure big projects get done on time and don't cost too much money",
+     "task": "Oversee project production efforts to assure projects are completed on time and within budget."
+    },
+    {
+     "id": "electrical-engineers:2",
+     "text": "Check that everything is built right and follows the rules or what people want",
+     "task": "Direct or coordinate manufacturing, construction, installation, maintenance, support, documentation, or testing activities to ensure compliance with specifications, codes, or customer requirements."
+    },
+    {
+     "id": "electrical-engineers:3",
+     "text": "Talk to other people about ideas for new projects or products",
+     "task": "Confer with engineers, customers, or others to discuss existing or potential engineering projects or products."
+    }
+   ],
+   "reviewed": false
+  },
+  "electricians": {
+   "items": [
+    {
+     "id": "electricians:0",
+     "text": "Read plans to figure out where to put wires and make sure everything is safe",
+     "task": "Prepare sketches or follow blueprints to determine the location of wiring or equipment and to ensure conformance to building and safety codes."
+    },
+    {
+     "id": "electricians:1",
+     "text": "Put pipes in walls and pull wires through them to connect things",
+     "task": "Place conduit, pipes, or tubing, inside designated partitions, walls, or other concealed areas, and pull insulated wires or cables through the conduit to complete circuits between boxes."
+    },
+    {
+     "id": "electricians:2",
+     "text": "Use ladders or roofs to fix or set up electrical stuff",
+     "task": "Work from ladders, scaffolds, or roofs to install, maintain, or repair electrical wiring, equipment, or fixtures."
+    },
+    {
+     "id": "electricians:3",
+     "text": "Use tools like meters and lights to check if things work",
+     "task": "Use a variety of tools or equipment, such as power construction equipment, measuring devices, power tools, and testing equipment, such as oscilloscopes, ammeters, or test lamps."
+    }
+   ],
+   "reviewed": false
+  },
+  "elementary-school-teachers-except-special-education": {
+   "items": [
+    {
+     "id": "elementary-school-teachers-except-special-education:0",
+     "text": "Teach kids in class, using talks, group chats, and showing how things work",
+     "task": "Instruct students individually and in groups, using teaching methods such as lectures, discussions, and demonstrations."
+    },
+    {
+     "id": "elementary-school-teachers-except-special-education:1",
+     "text": "Make and follow rules to keep the classroom calm and orderly",
+     "task": "Establish and enforce rules for behavior and procedures for maintaining order among the students."
+    },
+    {
+     "id": "elementary-school-teachers-except-special-education:2",
+     "text": "Help students with problems or special interests, like behavior or learning",
+     "task": "Guide and counsel students with adjustment or academic problems or with special academic interests."
+    },
+    {
+     "id": "elementary-school-teachers-except-special-education:3",
+     "text": "Plan fun activities that let kids learn, ask questions, and explore ideas",
+     "task": "Plan and conduct activities for a balanced program of instruction, demonstration, and work time that provides students with opportunities to observe, question, and investigate."
+    }
+   ],
+   "reviewed": false
+  },
+  "emergency-medical-technicians": {
+   "items": [
+    {
+     "id": "emergency-medical-technicians:0",
+     "text": "Help people who are hurt or sick by giving them medical care",
+     "task": "Administer first aid treatment or life support care to sick or injured persons in prehospital settings."
+    },
+    {
+     "id": "emergency-medical-technicians:1",
+     "text": "Figure out what's wrong with someone and decide what to do first",
+     "task": "Assess nature and extent of illness or injury to establish and prioritize medical procedures."
+    },
+    {
+     "id": "emergency-medical-technicians:2",
+     "text": "Talk to people who are scared to make them feel better",
+     "task": "Comfort and reassure patients."
+    },
+    {
+     "id": "emergency-medical-technicians:3",
+     "text": "Talk to people on the radio to tell them about emergencies",
+     "task": "Communicate with dispatchers or treatment center personnel to provide information about situation, to arrange reception of survivors, or to receive instructions for further treatment."
+    }
+   ],
+   "reviewed": false
+  },
+  "environmental-engineers": {
+   "items": [
+    {
+     "id": "environmental-engineers:0",
+     "text": "Plan ways to clean up water, air, or soil using special tools or systems",
+     "task": "Design, or supervise the design of, systems, processes, or equipment for control, management, or remediation of water, air, or soil quality."
+    },
+    {
+     "id": "environmental-engineers:1",
+     "text": "Check how building new things might hurt the air, water, or land",
+     "task": "Assess the existing or potential environmental impact of land use projects on air, water, or land."
+    },
+    {
+     "id": "environmental-engineers:2",
+     "text": "Work with other experts to solve problems that harm the environment",
+     "task": "Collaborate with environmental scientists, planners, hazardous waste technicians, engineers, experts in law or business, or other specialists to address environmental problems."
+    },
+    {
+     "id": "environmental-engineers:3",
+     "text": "Tell companies or governments how to clean up places that are dirty",
+     "task": "Advise corporations or government agencies of procedures to follow in cleaning up contaminated sites to protect people and the environment."
+    }
+   ],
+   "reviewed": false
+  },
+  "environmental-scientists-and-specialists-including-health": {
+   "items": [
+    {
+     "id": "environmental-scientists-and-specialists-including-health:0",
+     "text": "Explain how pollution affects the environment to people in simple words",
+     "task": "Communicate scientific or technical information to the public, organizations, or internal audiences through oral briefings, written documents, workshops, conferences, training sessions, or public hearings."
+    },
+    {
+     "id": "environmental-scientists-and-specialists-including-health:1",
+     "text": "Check if the water or air is getting dirty and suggest ways to clean it up",
+     "task": "Monitor effects of pollution or land degradation and recommend means of prevention or control."
+    },
+    {
+     "id": "environmental-scientists-and-specialists-including-health:2",
+     "text": "Look at samples of soil, water, or air to see if there's pollution and write a report",
+     "task": "Collect, synthesize, analyze, manage, and report environmental data, such as pollution emission measurements, atmospheric monitoring measurements, meteorological or mineralogical information, or soil or water samples."
+    },
+    {
+     "id": "environmental-scientists-and-specialists-including-health:3",
+     "text": "Help cities or companies figure out how to protect the environment",
+     "task": "Provide scientific or technical guidance, support, coordination, or oversight to governmental agencies, environmental programs, industry, or the public."
+    }
+   ],
+   "reviewed": false
+  },
+  "exercise-trainers-and-group-fitness-instructors": {
+   "items": [
+    {
+     "id": "exercise-trainers-and-group-fitness-instructors:0",
+     "text": "Watch how people move and tell them how to do it better",
+     "task": "Observe participants and inform them of corrective measures necessary for skill improvement."
+    },
+    {
+     "id": "exercise-trainers-and-group-fitness-instructors:1",
+     "text": "Show different ways to do exercises so everyone can join in",
+     "task": "Offer alternatives during classes to accommodate different levels of fitness."
+    },
+    {
+     "id": "exercise-trainers-and-group-fitness-instructors:2",
+     "text": "Check how people are doing and change the plan if needed",
+     "task": "Monitor participants' progress and adapt programs as needed."
+    },
+    {
+     "id": "exercise-trainers-and-group-fitness-instructors:3",
+     "text": "Help people keep going so they get the most out of their workout",
+     "task": "Instruct participants in maintaining exertion levels to maximize benefits from exercise routines."
+    }
+   ],
+   "reviewed": false
+  },
+  "family-medicine-physicians": {
+   "items": [
+    {
+     "id": "family-medicine-physicians:0",
+     "text": "Check test results and patient info to figure out what's wrong with them",
+     "task": "Order, perform, and interpret tests and analyze records, reports, and examination information to diagnose patients' condition."
+    },
+    {
+     "id": "family-medicine-physicians:1",
+     "text": "Write down patient details like their health history and test results",
+     "task": "Collect, record, and maintain patient information, such as medical history, reports, or examination results."
+    },
+    {
+     "id": "family-medicine-physicians:2",
+     "text": "Watch how patients are doing and change their treatment if needed",
+     "task": "Monitor patients' conditions and progress and reevaluate treatments as necessary."
+    },
+    {
+     "id": "family-medicine-physicians:3",
+     "text": "Tell patients about their tests and what treatments they need",
+     "task": "Explain procedures and discuss test results or prescribed treatments with patients."
+    }
+   ],
+   "reviewed": false
+  },
+  "farmers-ranchers-and-other-agricultural-managers": {
+   "items": [
+    {
+     "id": "farmers-ranchers-and-other-agricultural-managers:0",
+     "text": "Check and write down how plants or animals are doing",
+     "task": "Collect and record growth, production, and environmental data."
+    },
+    {
+     "id": "farmers-ranchers-and-other-agricultural-managers:1",
+     "text": "Figure out how to fix problems like bugs, no rain, or fires",
+     "task": "Determine how to allocate resources and to respond to unanticipated problems, such as insect infestation, drought, and fire."
+    },
+    {
+     "id": "farmers-ranchers-and-other-agricultural-managers:2",
+     "text": "Plan where and how to grow plants, like in a greenhouse",
+     "task": "Determine plant growing conditions, such as greenhouses, hydroponics, or natural settings, and set planting and care schedules."
+    },
+    {
+     "id": "farmers-ranchers-and-other-agricultural-managers:3",
+     "text": "Help fish grow healthy and stay safe from sickness",
+     "task": "Devise and participate in activities to improve fish hatching and growth rates, and to prevent disease in hatcheries."
+    }
+   ],
+   "reviewed": false
+  },
+  "fashion-designers": {
+   "items": [
+    {
+     "id": "fashion-designers:0",
+     "text": "Draw clothes and accessories, then write down how they should look and be made",
+     "task": "Sketch rough and detailed drawings of apparel or accessories, and write specifications such as color schemes, construction, material types, and accessory requirements."
+    },
+    {
+     "id": "fashion-designers:1",
+     "text": "Try on clothes to see how they fit, then change them to make them better",
+     "task": "Examine sample garments on and off models, modifying designs to achieve desired effects."
+    },
+    {
+     "id": "fashion-designers:2",
+     "text": "Talk to bosses or customers about ideas for new clothes",
+     "task": "Confer with sales and management executives or with clients to discuss design ideas."
+    },
+    {
+     "id": "fashion-designers:3",
+     "text": "Show off new clothes to people who sell them at events or meetings",
+     "task": "Provide sample garments to agents and sales representatives, and arrange for showings of sample garments at sales meetings or fashion shows."
+    }
+   ],
+   "reviewed": false
+  },
+  "film-and-video-editors": {
+   "items": [
+    {
+     "id": "film-and-video-editors:0",
+     "text": "Put together video clips to make a story flow smoothly",
+     "task": "Organize and string together raw footage into a continuous whole according to scripts or the instructions of directors and producers."
+    },
+    {
+     "id": "film-and-video-editors:1",
+     "text": "Choose the best parts of each scene to make the story clear",
+     "task": "Select and combine the most effective shots of each scene to form a logical and smoothly running story."
+    },
+    {
+     "id": "film-and-video-editors:2",
+     "text": "Watch video clips one by one to understand what's there",
+     "task": "Review footage sequence by sequence to become familiar with it before assembling it into a final product."
+    },
+    {
+     "id": "film-and-video-editors:3",
+     "text": "Shorten video clips and put them in order to make the story better",
+     "task": "Trim film segments to specified lengths and reassemble segments in sequences that present stories with maximum effect."
+    }
+   ],
+   "reviewed": false
+  },
+  "financial-and-investment-analysts": {
+   "items": [
+    {
+     "id": "financial-and-investment-analysts:0",
+     "text": "Help people decide how much money to borrow and when to borrow it",
+     "task": "Advise clients on aspects of capitalization, such as amounts, sources, or timing."
+    },
+    {
+     "id": "financial-and-investment-analysts:1",
+     "text": "Look at companies that are having money problems and figure out how to fix them",
+     "task": "Analyze financial or operational performance of companies facing financial difficulties to identify or recommend remedies."
+    },
+    {
+     "id": "financial-and-investment-analysts:2",
+     "text": "Work with lawyers, accountants, and PR experts on big projects",
+     "task": "Collaborate on projects with other professionals, such as lawyers, accountants, or public relations experts."
+    },
+    {
+     "id": "financial-and-investment-analysts:3",
+     "text": "Talk to clients about changing their debt to make it easier to manage",
+     "task": "Confer with clients to restructure debt, refinance debt, or raise new debt."
+    }
+   ],
+   "reviewed": false
+  },
+  "firefighters": {
+   "items": [
+    {
+     "id": "firefighters:0",
+     "text": "Help people escape from dangerous places like fires or accidents",
+     "task": "Rescue survivors from burning buildings, accident sites, and water hazards."
+    },
+    {
+     "id": "firefighters:1",
+     "text": "Give first aid and help people who are hurt or not breathing",
+     "task": "Administer first aid and cardiopulmonary resuscitation to injured persons or provide emergency medical care such as basic or advanced life support."
+    },
+    {
+     "id": "firefighters:2",
+     "text": "Put on special clothes and breathing gear to stay safe",
+     "task": "Dress with equipment such as fire-resistant clothing and breathing apparatus."
+    },
+    {
+     "id": "firefighters:3",
+     "text": "Look for people who might be trapped or hurt",
+     "task": "Search to locate fire survivors."
+    }
+   ],
+   "reviewed": false
+  },
+  "forensic-science-technicians": {
+   "items": [
+    {
+     "id": "forensic-science-technicians:0",
+     "text": "Gather clues from crime scenes and keep them safe",
+     "task": "Collect evidence from crime scenes, storing it in conditions that preserve its integrity."
+    },
+    {
+     "id": "forensic-science-technicians:1",
+     "text": "Take pictures or videos of evidence to show what happened",
+     "task": "Use photographic or video equipment to document evidence or crime scenes."
+    },
+    {
+     "id": "forensic-science-technicians:2",
+     "text": "Find fingerprints using special tools and check them against databases",
+     "task": "Use chemicals or other substances to examine latent fingerprint evidence and compare developed prints to those of known persons in databases."
+    },
+    {
+     "id": "forensic-science-technicians:3",
+     "text": "Draw maps of crime scenes to show where things were",
+     "task": "Measure and sketch crime scenes to document evidence."
+    }
+   ],
+   "reviewed": false
+  },
+  "foresters": {
+   "items": [
+    {
+     "id": "foresters:0",
+     "text": "Plan how to take care of trees and land over time",
+     "task": "Establish short- and long-term plans for management of forest lands and forest resources."
+    },
+    {
+     "id": "foresters:1",
+     "text": "Figure out how to cut down trees with less waste and harm",
+     "task": "Determine methods of cutting and removing timber with minimum waste and environmental damage."
+    },
+    {
+     "id": "foresters:2",
+     "text": "Work out deals for cutting and renting land with others",
+     "task": "Negotiate terms and conditions of agreements and contracts for forest harvesting, forest management and leasing of forest lands."
+    },
+    {
+     "id": "foresters:3",
+     "text": "Check that tree work follows the rules",
+     "task": "Monitor contract compliance and results of forestry activities to assure adherence to government regulations."
+    }
+   ],
+   "reviewed": false
+  },
+  "general-and-operations-managers": {
+   "items": [
+    {
+     "id": "general-and-operations-managers:0",
+     "text": "Look at reports to see how well things are going and find ways to make them better",
+     "task": "Review financial statements, sales or activity reports, or other performance data to measure productivity or goal achievement or to identify areas needing cost reduction or program improvement."
+    },
+    {
+     "id": "general-and-operations-managers:1",
+     "text": "Tell people what to do to make and sell products or services",
+     "task": "Direct and coordinate activities of businesses or departments concerned with the production, pricing, sales, or distribution of products."
+    },
+    {
+     "id": "general-and-operations-managers:2",
+     "text": "Make a schedule for when people work and what they need to do",
+     "task": "Prepare staff work schedules and assign specific duties."
+    },
+    {
+     "id": "general-and-operations-managers:3",
+     "text": "Plan events or projects that need help from other groups",
+     "task": "Plan or direct activities, such as sales promotions, that require coordination with other department managers."
+    }
+   ],
+   "reviewed": false
+  },
+  "graphic-designers": {
+   "items": [
+    {
+     "id": "graphic-designers:0",
+     "text": "Put ideas into a computer to make a design layout for someone",
+     "task": "Key information into computer equipment to create layouts for client or supervisor."
+    },
+    {
+     "id": "graphic-designers:1",
+     "text": "Look at finished designs and think of ways to make them better",
+     "task": "Review final layouts and suggest improvements, as needed."
+    },
+    {
+     "id": "graphic-designers:2",
+     "text": "Make pictures and layouts for things like logos and websites",
+     "task": "Develop graphics and layouts for product illustrations, company logos, and Web sites."
+    },
+    {
+     "id": "graphic-designers:3",
+     "text": "Use computer programs to make new pictures",
+     "task": "Use computer software to generate new images."
+    }
+   ],
+   "reviewed": false
+  },
+  "heating-air-conditioning-and-refrigeration-mechanics-and-installers": {
+   "items": [
+    {
+     "id": "heating-air-conditioning-and-refrigeration-mechanics-and-installers:0",
+     "text": "Talk to people about their broken heating or cooling systems to figure out what's wrong",
+     "task": "Discuss heating or cooling system malfunctions with users to isolate problems or to verify that repairs corrected malfunctions."
+    },
+    {
+     "id": "heating-air-conditioning-and-refrigeration-mechanics-and-installers:1",
+     "text": "Use tools to check if electrical parts are working properly",
+     "task": "Test electrical circuits or components for continuity, using electrical test equipment."
+    },
+    {
+     "id": "heating-air-conditioning-and-refrigeration-mechanics-and-installers:2",
+     "text": "Fix or swap out broken parts or wires in equipment",
+     "task": "Repair or replace defective equipment, components, or wiring."
+    },
+    {
+     "id": "heating-air-conditioning-and-refrigeration-mechanics-and-installers:3",
+     "text": "Put in or adjust controls like thermostats or timers on heating and cooling systems",
+     "task": "Install, connect, or adjust thermostats, humidistats, or timers."
+    }
+   ],
+   "reviewed": false
+  },
+  "human-resources-specialists": {
+   "items": [
+    {
+     "id": "human-resources-specialists:0",
+     "text": "Help people find jobs and fill out paperwork for new hires",
+     "task": "Hire employees and process hiring-related paperwork."
+    },
+    {
+     "id": "human-resources-specialists:1",
+     "text": "Keep track of employee records using computer programs",
+     "task": "Prepare or maintain employment records related to events, such as hiring, termination, leaves, transfers, or promotions, using human resources management system software."
+    },
+    {
+     "id": "human-resources-specialists:2",
+     "text": "Listen to and solve problems employees have at work",
+     "task": "Address employee relations issues, such as harassment allegations, work complaints, or other employee concerns."
+    },
+    {
+     "id": "human-resources-specialists:3",
+     "text": "Look at job applications to find the best fit for a job",
+     "task": "Review employment applications and job orders to match applicants with job requirements."
+    }
+   ],
+   "reviewed": false
+  },
+  "information-security-analysts": {
+   "items": [
+    {
+     "id": "information-security-analysts:0",
+     "text": "Plan ways to protect computer files from being changed, deleted, or seen by the wrong eyes",
+     "task": "Develop plans to safeguard computer files against accidental or unauthorized modification, destruction, or disclosure and to meet emergency data processing needs."
+    },
+    {
+     "id": "information-security-analysts:1",
+     "text": "Check for new computer viruses to keep the virus protection up to date",
+     "task": "Monitor current reports of computer viruses to determine when to update virus protection systems."
+    },
+    {
+     "id": "information-security-analysts:2",
+     "text": "Test computer systems to make sure they work safely and securely",
+     "task": "Perform risk assessments and execute tests of data processing system to ensure functioning of data processing activities and security measures."
+    },
+    {
+     "id": "information-security-analysts:3",
+     "text": "Talk to people who break computer security rules to help them understand what not to do",
+     "task": "Review violations of computer security procedures and discuss procedures with violators to ensure violations are not repeated."
+    }
+   ],
+   "reviewed": false
+  },
+  "interior-designers": {
+   "items": [
+    {
+     "id": "interior-designers:0",
+     "text": "Check that designs follow safety rules and help people with disabilities",
+     "task": "Design plans to be safe and to be compliant with the American Disabilities Act (ADA)."
+    },
+    {
+     "id": "interior-designers:1",
+     "text": "Use computer tools to draw plans for building projects",
+     "task": "Use computer-aided drafting (CAD) and related software to produce construction documents."
+    },
+    {
+     "id": "interior-designers:2",
+     "text": "Talk to clients about what they want in their space",
+     "task": "Confer with client to determine factors affecting planning of interior environments, such as budget, architectural preferences, purpose, and function."
+    },
+    {
+     "id": "interior-designers:3",
+     "text": "Help clients pick colors, furniture, and room layouts",
+     "task": "Advise client on interior design factors, such as space planning, layout and use of furnishings or equipment, and color coordination."
+    }
+   ],
+   "reviewed": false
+  },
+  "lawyers": {
+   "items": [
+    {
+     "id": "lawyers:0",
+     "text": "Figure out what laws mean for people and companies",
+     "task": "Interpret laws, rulings and regulations for individuals and businesses."
+    },
+    {
+     "id": "lawyers:1",
+     "text": "Ask people questions to find out what really happened",
+     "task": "Gather evidence to formulate defense or to initiate legal actions by such means as interviewing clients and witnesses to ascertain the facts of a case."
+    },
+    {
+     "id": "lawyers:2",
+     "text": "Speak for clients in court or in front of government offices",
+     "task": "Represent clients in court or before government agencies."
+    },
+    {
+     "id": "lawyers:3",
+     "text": "Tell clients what they should do about legal problems",
+     "task": "Advise clients concerning business transactions, claim liability, advisability of prosecuting or defending lawsuits, or legal rights and obligations."
+    }
+   ],
+   "reviewed": false
+  },
+  "librarians-and-media-collections-specialists": {
+   "items": [
+    {
+     "id": "librarians-and-media-collections-specialists:0",
+     "text": "Help people find answers by looking up info online and in books",
+     "task": "Search standard reference materials, including online sources and the Internet, to answer patrons' reference questions."
+    },
+    {
+     "id": "librarians-and-media-collections-specialists:1",
+     "text": "Figure out what people need and show them where to find it",
+     "task": "Analyze patrons' requests to determine needed information and assist in furnishing or locating that information."
+    },
+    {
+     "id": "librarians-and-media-collections-specialists:2",
+     "text": "Organize books and other stuff so they're easy to find",
+     "task": "Code, classify, and catalog books, publications, films, audio-visual aids, and other library materials, based on subject matter or standard library classification systems."
+    },
+    {
+     "id": "librarians-and-media-collections-specialists:3",
+     "text": "Choose new books and materials for the library based on what's needed",
+     "task": "Review and evaluate materials, using book reviews, catalogs, faculty recommendations, and current holdings to select and order print, audio-visual, and electronic resources."
+    }
+   ],
+   "reviewed": false
+  },
+  "market-research-analysts-and-marketing-specialists": {
+   "items": [
+    {
+     "id": "market-research-analysts-and-marketing-specialists:0",
+     "text": "Write reports that show data in charts and explain what it means",
+     "task": "Prepare reports of findings, illustrating data graphically and translating complex findings into written text."
+    },
+    {
+     "id": "market-research-analysts-and-marketing-specialists:1",
+     "text": "Look at who buys things and why to find new groups of people to sell to",
+     "task": "Collect and analyze data on customer demographics, preferences, needs, and buying habits to identify potential markets and factors affecting product demand."
+    },
+    {
+     "id": "market-research-analysts-and-marketing-specialists:2",
+     "text": "Plan ways to ask people questions to learn about what they like",
+     "task": "Devise and evaluate methods and procedures for collecting data, such as surveys, opinion polls, or questionnaires, or arrange to obtain existing data."
+    },
+    {
+     "id": "market-research-analysts-and-marketing-specialists:3",
+     "text": "Find out what other companies are doing and how they sell their stuff",
+     "task": "Gather data on competitors and analyze their prices, sales, and method of marketing and distribution."
+    }
+   ],
+   "reviewed": false
+  },
+  "marketing-managers": {
+   "items": [
+    {
+     "id": "marketing-managers:0",
+     "text": "Plan and organize ways to tell people about new products or services",
+     "task": "Formulate, direct, or coordinate marketing activities or policies to promote products or services, working with advertising or promotion managers."
+    },
+    {
+     "id": "marketing-managers:1",
+     "text": "Look at how many things we can sell and how much money we can make",
+     "task": "Use sales forecasting or strategic planning to ensure the sale and profitability of products, lines, or services, analyzing business developments and monitoring market trends."
+    },
+    {
+     "id": "marketing-managers:2",
+     "text": "Think of the best way to sell things based on what people want and how much it costs",
+     "task": "Identify, develop, or evaluate marketing strategy, based on knowledge of establishment objectives, market characteristics, and cost and markup factors."
+    },
+    {
+     "id": "marketing-managers:3",
+     "text": "Help choose, teach, and check on the people who sell things",
+     "task": "Direct the hiring, training, or performance evaluations of marketing or sales staff and oversee their daily activities."
+    }
+   ],
+   "reviewed": false
+  },
+  "mechanical-drafters": {
+   "items": [
+    {
+     "id": "mechanical-drafters:0",
+     "text": "Build 3D models of objects using computer programs",
+     "task": "Produce three-dimensional models, using computer-aided design (CAD) software."
+    },
+    {
+     "id": "mechanical-drafters:1",
+     "text": "Draw detailed plans for machines and tools on a computer",
+     "task": "Develop detailed design drawings and specifications for mechanical equipment, dies, tools, and controls, using computer-assisted drafting (CAD) equipment."
+    },
+    {
+     "id": "mechanical-drafters:2",
+     "text": "Measure materials and label them with numbers",
+     "task": "Check dimensions of materials to be used and assign numbers to the materials."
+    },
+    {
+     "id": "mechanical-drafters:3",
+     "text": "Sketch different views of how parts fit together",
+     "task": "Lay out and draw schematic, orthographic, or angle views to depict functional relationships of components, assemblies, systems, and machines."
+    }
+   ],
+   "reviewed": false
+  },
+  "mechanical-engineers": {
+   "items": [
+    {
+     "id": "mechanical-engineers:0",
+     "text": "Look at detailed drawings to understand how machines or parts should work",
+     "task": "Read and interpret blueprints, technical drawings, schematics, or computer-generated reports."
+    },
+    {
+     "id": "mechanical-engineers:1",
+     "text": "Talk with other experts to fix problems or explain how things work",
+     "task": "Confer with engineers or other personnel to implement operating procedures, resolve system malfunctions, or provide technical information."
+    },
+    {
+     "id": "mechanical-engineers:2",
+     "text": "Find out why a machine isn’t working right and figure out how to fix it",
+     "task": "Investigate equipment failures or difficulties to diagnose faulty operation and recommend remedial actions."
+    },
+    {
+     "id": "mechanical-engineers:3",
+     "text": "Suggest changes to a machine or system to make it work better",
+     "task": "Recommend design modifications to eliminate machine or system malfunctions."
+    }
+   ],
+   "reviewed": false
+  },
+  "medical-scientists-except-epidemiologists": {
+   "items": [
+    {
+     "id": "medical-scientists-except-epidemiologists:0",
+     "text": "Carefully handle dangerous chemicals to keep everything clean and safe",
+     "task": "Follow strict safety procedures when handling toxic materials to avoid contamination."
+    },
+    {
+     "id": "medical-scientists-except-epidemiologists:1",
+     "text": "Study how different things like drugs and germs affect living things",
+     "task": "Evaluate effects of drugs, gases, pesticides, parasites, and microorganisms at various levels."
+    },
+    {
+     "id": "medical-scientists-except-epidemiologists:2",
+     "text": "Design experiments to learn about diseases and how to stop or treat them",
+     "task": "Plan and direct studies to investigate human or animal disease, preventive methods, and treatments for disease."
+    },
+    {
+     "id": "medical-scientists-except-epidemiologists:3",
+     "text": "Look at tiny pieces of organs or tissues to find out what's causing problems",
+     "task": "Prepare and analyze organ, tissue, and cell samples to identify toxicity, bacteria, or microorganisms or to study cell structure."
+    }
+   ],
+   "reviewed": false
+  },
+  "meeting-convention-and-event-planners": {
+   "items": [
+    {
+     "id": "meeting-convention-and-event-planners:0",
+     "text": "Talk to people to find out what they want for their big event",
+     "task": "Consult with customers to determine objectives and requirements for events, such as meetings, conferences, and conventions."
+    },
+    {
+     "id": "meeting-convention-and-event-planners:1",
+     "text": "Check the bills for events and say if they're right",
+     "task": "Review event bills for accuracy and approve payment."
+    },
+    {
+     "id": "meeting-convention-and-event-planners:2",
+     "text": "Set up things like hotels, food, signs, and security for events",
+     "task": "Coordinate services for events, such as accommodation and transportation for participants, facilities, catering, signage, displays, special needs requirements, printing and event security."
+    },
+    {
+     "id": "meeting-convention-and-event-planners:3",
+     "text": "Work with the people at the event place to make sure everything is ready",
+     "task": "Confer with staff at a chosen event site to coordinate details."
+    }
+   ],
+   "reviewed": false
+  },
+  "musicians-and-singers": {
+   "items": [
+    {
+     "id": "musicians-and-singers:0",
+     "text": "Play music for people watching at concerts or events",
+     "task": "Perform before live audiences in concerts, recitals, educational presentations, and other social gatherings."
+    },
+    {
+     "id": "musicians-and-singers:1",
+     "text": "Practice songs or instrument skills alone or with a group",
+     "task": "Practice performances, individually or in rehearsal with other musicians, to master individual pieces of music or to maintain and improve skills."
+    },
+    {
+     "id": "musicians-and-singers:2",
+     "text": "Perform music as part of a band or on your own",
+     "task": "Play musical instruments as soloists, or as members or guest artists of musical groups such as orchestras, ensembles, or bands."
+    },
+    {
+     "id": "musicians-and-singers:3",
+     "text": "Learn and play music without looking at the notes",
+     "task": "Play from memory or by following scores."
+    }
+   ],
+   "reviewed": false
+  },
+  "network-and-computer-systems-administrators": {
+   "items": [
+    {
+     "id": "network-and-computer-systems-administrators:0",
+     "text": "Set up rules to keep computers and data safe from bad people",
+     "task": "Plan, coordinate, and implement network security measures to protect data, software, and hardware."
+    },
+    {
+     "id": "network-and-computer-systems-administrators:1",
+     "text": "Find and fix problems with computers and networks",
+     "task": "Diagnose, troubleshoot, and resolve hardware, software, or other network and system problems, and replace defective components when necessary."
+    },
+    {
+     "id": "network-and-computer-systems-administrators:2",
+     "text": "Take care of all the parts that make computers and networks work",
+     "task": "Maintain and administer computer networks and related computing environments, including computer hardware, systems software, applications software, and all configurations."
+    },
+    {
+     "id": "network-and-computer-systems-administrators:3",
+     "text": "Talk to people to help them solve their computer problems",
+     "task": "Confer with network users about solutions to existing system problems."
+    }
+   ],
+   "reviewed": false
+  },
+  "news-analysts-reporters-and-journalists": {
+   "items": [
+    {
+     "id": "news-analysts-reporters-and-journalists:0",
+     "text": "Write stories about what's happening in the world to share with others",
+     "task": "Report news stories for publication or broadcast, describing the background and details of events."
+    },
+    {
+     "id": "news-analysts-reporters-and-journalists:1",
+     "text": "Find out more about a topic by talking to people and looking up facts",
+     "task": "Gather information and develop perspectives about news subjects through research, interviews, observation, and experience."
+    },
+    {
+     "id": "news-analysts-reporters-and-journalists:2",
+     "text": "Set up talks with people who know about the story you're working on",
+     "task": "Arrange interviews with people who can provide information about a story."
+    },
+    {
+     "id": "news-analysts-reporters-and-journalists:3",
+     "text": "Look into big events like accidents, crimes, or interesting human stories",
+     "task": "Investigate breaking news developments, such as disasters, crimes, or human-interest stories."
+    }
+   ],
+   "reviewed": false
+  },
+  "occupational-therapists": {
+   "items": [
+    {
+     "id": "occupational-therapists:0",
+     "text": "Check how well people can move and think to figure out what they can do",
+     "task": "Test and evaluate patients' physical and mental abilities and analyze medical data to determine realistic rehabilitation goals for patients."
+    },
+    {
+     "id": "occupational-therapists:1",
+     "text": "Help people with disabilities learn to do things again",
+     "task": "Plan, organize, and conduct occupational therapy programs in hospital, institutional, or community settings to help rehabilitate persons with disabilities because of illness, injury or psychological or developmental problems."
+    },
+    {
+     "id": "occupational-therapists:2",
+     "text": "Plan fun things for patients to learn new skills",
+     "task": "Plan and implement programs and social activities to help patients learn work or school skills and adjust to handicaps."
+    },
+    {
+     "id": "occupational-therapists:3",
+     "text": "Write down how well patients are doing",
+     "task": "Evaluate patients' progress and prepare reports that detail progress."
+    }
+   ],
+   "reviewed": false
+  },
+  "paralegals-and-legal-assistants": {
+   "items": [
+    {
+     "id": "paralegals-and-legal-assistants:0",
+     "text": "Organize papers and files, and help write legal letters",
+     "task": "Prepare affidavits or other documents, such as legal correspondence, and organize and maintain documents in paper or electronic filing system."
+    },
+    {
+     "id": "paralegals-and-legal-assistants:1",
+     "text": "Read and check important legal papers like contracts and wills",
+     "task": "Prepare, edit, or review legal documents, including legislation, briefs, pleadings, appeals, wills, contracts, and real estate closing statements."
+    },
+    {
+     "id": "paralegals-and-legal-assistants:2",
+     "text": "Find out facts about cases by looking at public records and online",
+     "task": "Investigate facts and law of cases and search pertinent sources, such as public records and internet sources, to determine causes of action and to prepare cases."
+    },
+    {
+     "id": "paralegals-and-legal-assistants:3",
+     "text": "Talk to people about their legal problems",
+     "task": "Meet with clients and other professionals to discuss details of cases."
+    }
+   ],
+   "reviewed": false
+  },
+  "pharmacists": {
+   "items": [
+    {
+     "id": "pharmacists:0",
+     "text": "Check prescriptions to make sure they're correct and safe for patients",
+     "task": "Review prescriptions to assure accuracy, to ascertain the needed ingredients, and to evaluate their suitability."
+    },
+    {
+     "id": "pharmacists:1",
+     "text": "Tell people about how to take medicine, side effects, and how to store it",
+     "task": "Provide information and advice regarding drug interactions, side effects, dosage, and proper medication storage."
+    },
+    {
+     "id": "pharmacists:2",
+     "text": "Help patients with conditions like diabetes or asthma manage their health",
+     "task": "Provide specialized services to help patients manage conditions, such as diabetes, asthma, smoking cessation, or high blood pressure."
+    },
+    {
+     "id": "pharmacists:3",
+     "text": "Keep track of medicine supplies and important records for the pharmacy",
+     "task": "Maintain records, such as pharmacy files, patient profiles, charge system files, inventories, control records for radioactive nuclei, or registries of poisons, narcotics, or controlled drugs."
+    }
+   ],
+   "reviewed": false
+  },
+  "photographers": {
+   "items": [
+    {
+     "id": "photographers:0",
+     "text": "Set up camera settings to get the best picture quality",
+     "task": "Adjust apertures, shutter speeds, and camera focus according to a combination of factors, such as lighting, field depth, subject motion, film type, and film speed."
+    },
+    {
+     "id": "photographers:1",
+     "text": "Use lights and reflectors to make pictures brighter",
+     "task": "Create artificial light, using flashes and reflectors."
+    },
+    {
+     "id": "photographers:2",
+     "text": "Plan what to shoot and how to make it look good",
+     "task": "Determine desired images and picture composition, selecting and adjusting subjects, equipment, and lighting to achieve desired effects."
+    },
+    {
+     "id": "photographers:3",
+     "text": "Take photos of people in different places",
+     "task": "Take pictures of individuals, families, and small groups, either in studio or on location."
+    }
+   ],
+   "reviewed": false
+  },
+  "physical-therapists": {
+   "items": [
+    {
+     "id": "physical-therapists:0",
+     "text": "Help people move better by making a special exercise plan for them",
+     "task": "Plan, prepare, or carry out individually designed programs of physical treatment to maintain, improve, or restore physical functioning, alleviate pain, or prevent physical dysfunction in patients."
+    },
+    {
+     "id": "physical-therapists:1",
+     "text": "Check how a person is doing and figure out what’s wrong with them",
+     "task": "Perform and document an initial exam, evaluating data to identify problems and determine a diagnosis prior to intervention."
+    },
+    {
+     "id": "physical-therapists:2",
+     "text": "Write down how a person is doing in their health record",
+     "task": "Record prognosis, treatment, response, and progress in patient's chart or enter information into computer."
+    },
+    {
+     "id": "physical-therapists:3",
+     "text": "Teach people how to do exercises at home to get better",
+     "task": "Instruct patient and family in treatment procedures to be continued at home."
+    }
+   ],
+   "reviewed": false
+  },
+  "physician-assistants": {
+   "items": [
+    {
+     "id": "physician-assistants:0",
+     "text": "Figure out what might be wrong with a patient and suggest treatments",
+     "task": "Make tentative diagnoses and decisions about management and treatment of patients."
+    },
+    {
+     "id": "physician-assistants:1",
+     "text": "Look at test results to see if they're normal or not",
+     "task": "Interpret diagnostic test results for deviations from normal."
+    },
+    {
+     "id": "physician-assistants:2",
+     "text": "Check patients to see how their body is doing",
+     "task": "Examine patients to obtain information about their physical condition."
+    },
+    {
+     "id": "physician-assistants:3",
+     "text": "Order tests like x-rays or blood tests to learn more about a patient",
+     "task": "Administer or order diagnostic tests, such as x-ray, electrocardiogram, and laboratory tests."
+    }
+   ],
+   "reviewed": false
+  },
+  "plumbers-pipefitters-and-steamfitters": {
+   "items": [
+    {
+     "id": "plumbers-pipefitters-and-steamfitters:0",
+     "text": "Turn off water or gas in pipes using tools like wrenches or valve keys",
+     "task": "Shut off steam, water, or other gases or liquids from pipe sections, using valve keys or wrenches."
+    },
+    {
+     "id": "plumbers-pipefitters-and-steamfitters:1",
+     "text": "Connect pipes together using glue, screws, or special equipment",
+     "task": "Assemble pipe sections, tubing, or fittings, using couplings, clamps, screws, bolts, cement, plastic solvent, caulking, or soldering, brazing, or welding equipment."
+    },
+    {
+     "id": "plumbers-pipefitters-and-steamfitters:2",
+     "text": "Measure and mark where pipes need to go using rulers or tools",
+     "task": "Locate and mark the position of pipe installations, connections, passage holes, or fixtures in structures, using measuring instruments such as rulers or levels."
+    },
+    {
+     "id": "plumbers-pipefitters-and-steamfitters:3",
+     "text": "Cut or bend pipes to the right size using special tools",
+     "task": "Cut, thread, or hammer pipes to specifications, using tools such as saws, cutting torches, pipe threaders, or pipe benders."
+    }
+   ],
+   "reviewed": false
+  },
+  "police-and-sheriff-s-patrol-officers": {
+   "items": [
+    {
+     "id": "police-and-sheriff-s-patrol-officers:0",
+     "text": "Keep people safe by stopping fights, helping during emergencies, and making sure everyone遵",
+     "task": "Provide for public safety by maintaining order, responding to emergencies, protecting people and property, enforcing motor vehicle and criminal laws, and promoting good community relations."
+    },
+    {
+     "id": "police-and-sheriff-s-patrol-officers:1",
+     "text": "Find and catch people who break the law or hurt others",
+     "task": "Identify, pursue, and arrest suspects and perpetrators of criminal acts."
+    },
+    {
+     "id": "police-and-sheriff-s-patrol-officers:2",
+     "text": "Help people who are hurt in accidents or need medical help",
+     "task": "Render aid to accident survivors and other persons requiring first aid for physical injuries."
+    },
+    {
+     "id": "police-and-sheriff-s-patrol-officers:3",
+     "text": "Write down what happens so everyone knows what went on",
+     "task": "Record facts to prepare reports that document incidents and activities."
+    }
+   ],
+   "reviewed": false
+  },
+  "political-scientists": {
+   "items": [
+    {
+     "id": "political-scientists:0",
+     "text": "Read news and reports to stay updated on government decisions",
+     "task": "Maintain current knowledge of government policy decisions."
+    },
+    {
+     "id": "political-scientists:1",
+     "text": "Study interviews, articles, and data to create and test ideas",
+     "task": "Develop and test theories, using information from interviews, newspapers, periodicals, case law, historical papers, polls, or statistical sources."
+    },
+    {
+     "id": "political-scientists:2",
+     "text": "Write papers or give talks about research findings",
+     "task": "Disseminate research results through academic publications, written reports, or public presentations."
+    },
+    {
+     "id": "political-scientists:3",
+     "text": "Look at election results and surveys to understand public views",
+     "task": "Collect, analyze, and interpret data, such as election results and public opinion surveys, reporting on findings, recommendations, and conclusions."
+    }
+   ],
+   "reviewed": false
+  },
+  "radiologic-technologists-and-technicians": {
+   "items": [
+    {
+     "id": "radiologic-technologists-and-technicians:0",
+     "text": "Help patients understand what happens during a scan and make sure they feel safe",
+     "task": "Explain procedures and observe patients to ensure safety and comfort during scan."
+    },
+    {
+     "id": "radiologic-technologists-and-technicians:1",
+     "text": "Turn X-ray pictures into usable images using special machines or computers",
+     "task": "Process exposed radiographs using film processors or computer generated methods."
+    },
+    {
+     "id": "radiologic-technologists-and-technicians:2",
+     "text": "Keep track of patient information, create reports, and make sure records are correct",
+     "task": "Record, process, and maintain patient data or treatment records and prepare reports."
+    },
+    {
+     "id": "radiologic-technologists-and-technicians:3",
+     "text": "Get patients ready for scans by adjusting machines and making sure they're in the right位置",
+     "task": "Position patient on examining table and set up and adjust equipment to obtain optimum view of specific body area as requested by physician."
+    }
+   ],
+   "reviewed": false
+  },
+  "registered-nurses": {
+   "items": [
+    {
+     "id": "registered-nurses:0",
+     "text": "Write down important health details about patients, like their temperature and heart rate",
+     "task": "Record patients' medical information and vital signs."
+    },
+    {
+     "id": "registered-nurses:1",
+     "text": "Give medicine to patients and watch to see if they have any bad reactions",
+     "task": "Administer medications to patients and monitor patients for reactions or side effects."
+    },
+    {
+     "id": "registered-nurses:2",
+     "text": "Keep track of how patients are feeling and tell doctors if anything changes",
+     "task": "Monitor, record, and report symptoms or changes in patients' conditions."
+    },
+    {
+     "id": "registered-nurses:3",
+     "text": "Work with doctors and other nurses to plan the best care for patients",
+     "task": "Consult and coordinate with healthcare team members to assess, plan, implement, or evaluate patient care plans."
+    }
+   ],
+   "reviewed": false
+  },
+  "robotics-engineers": {
+   "items": [
+    {
+     "id": "robotics-engineers:0",
+     "text": "Look at data from robot sensors to figure out what's happening",
+     "task": "Process or interpret signals or sensor data."
+    },
+    {
+     "id": "robotics-engineers:1",
+     "text": "Find and fix problems in robot programs",
+     "task": "Debug robotics programs."
+    },
+    {
+     "id": "robotics-engineers:2",
+     "text": "Put robots together and see if they work right",
+     "task": "Build, configure, or test robots or robotic applications."
+    },
+    {
+     "id": "robotics-engineers:3",
+     "text": "Help people with problems about robots",
+     "task": "Provide technical support for robotic systems."
+    }
+   ],
+   "reviewed": false
+  },
+  "secondary-school-teachers-except-special-and-career-technical-education": {
+   "items": [
+    {
+     "id": "secondary-school-teachers-except-special-and-career-technical-education:0",
+     "text": "Teach subjects like math or history using talks, discussions, and examples",
+     "task": "Instruct through lectures, discussions, and demonstrations in one or more subjects, such as English, mathematics, or social studies."
+    },
+    {
+     "id": "secondary-school-teachers-except-special-and-career-technical-education:1",
+     "text": "Set rules and keep order in the classroom",
+     "task": "Establish and enforce rules for behavior and procedures for maintaining order among students."
+    },
+    {
+     "id": "secondary-school-teachers-except-special-and-career-technical-education:2",
+     "text": "Get the classroom ready for lessons and activities",
+     "task": "Prepare materials and classrooms for class activities."
+    },
+    {
+     "id": "secondary-school-teachers-except-special-and-career-technical-education:3",
+     "text": "Change how you teach to fit different students' needs",
+     "task": "Adapt teaching methods and instructional materials to meet students' varying needs and interests."
+    }
+   ],
+   "reviewed": false
+  },
+  "software-developers": {
+   "items": [
+    {
+     "id": "software-developers:0",
+     "text": "Figure out if a software idea can be made in time and without too much money",
+     "task": "Analyze user needs and software requirements to determine feasibility of design within time and cost constraints."
+    },
+    {
+     "id": "software-developers:1",
+     "text": "Write or check the steps to test if software works correctly",
+     "task": "Develop or direct software system testing or validation procedures, programming, or documentation."
+    },
+    {
+     "id": "software-developers:2",
+     "text": "Talk with other experts to plan how a software system should work",
+     "task": "Confer with systems analysts, engineers, programmers and others to design systems and to obtain information on project limitations and capabilities, performance requirements and interfaces."
+    },
+    {
+     "id": "software-developers:3",
+     "text": "Fix problems in software or make it work better with new things",
+     "task": "Modify existing software to correct errors, adapt it to new hardware, or upgrade interfaces and improve performance."
+    }
+   ],
+   "reviewed": false
+  },
+  "soil-and-plant-scientists": {
+   "items": [
+    {
+     "id": "soil-and-plant-scientists:0",
+     "text": "Help farmers and companies find ways to take care of soil",
+     "task": "Develop methods of conserving or managing soil that can be applied by farmers or forestry companies."
+    },
+    {
+     "id": "soil-and-plant-scientists:1",
+     "text": "Advise landowners on how to use their land better",
+     "task": "Provide information or recommendations to farmers or other landowners regarding ways in which they can best use land, promote plant growth, or avoid or correct problems such as erosion."
+    },
+    {
+     "id": "soil-and-plant-scientists:2",
+     "text": "Test new plants to make them better for growing",
+     "task": "Conduct experiments to develop new or improved varieties of field crops, focusing on characteristics such as yield, quality, disease resistance, nutritional value, or adaptation to specific soils or climates."
+    },
+    {
+     "id": "soil-and-plant-scientists:3",
+     "text": "Find out why soil or water might be having problems",
+     "task": "Investigate soil problems or poor water quality to determine sources and effects."
+    }
+   ],
+   "reviewed": false
+  },
+  "solar-photovoltaic-installers": {
+   "items": [
+    {
+     "id": "solar-photovoltaic-installers:0",
+     "text": "Put together solar panels on roofs or other places using plans and rules",
+     "task": "Install photovoltaic (PV) systems in accordance with codes and standards, using drawings, schematics, and instructions."
+    },
+    {
+     "id": "solar-photovoltaic-installers:1",
+     "text": "Check that all the wires and connections are safe and correct",
+     "task": "Check electrical installation for proper wiring, polarity, grounding, or integrity of terminations."
+    },
+    {
+     "id": "solar-photovoltaic-installers:2",
+     "text": "Find the best spots for putting up solar panels",
+     "task": "Identify installation locations with proper orientation, area, solar access, or structural integrity for photovoltaic (PV) arrays."
+    },
+    {
+     "id": "solar-photovoltaic-installers:3",
+     "text": "Build the parts that hold up the solar panels",
+     "task": "Assemble solar modules, panels, or support structures, as specified."
+    }
+   ],
+   "reviewed": false
+  },
+  "special-effects-artists-and-animators": {
+   "items": [
+    {
+     "id": "special-effects-artists-and-animators:0",
+     "text": "Use computers to make cool animations and graphics",
+     "task": "Design complex graphics and animation, using independent judgment, creativity, and computer equipment."
+    },
+    {
+     "id": "special-effects-artists-and-animators:1",
+     "text": "Make pictures of things moving on the computer",
+     "task": "Create two-dimensional and three-dimensional images depicting objects in motion or illustrating a process, using computer animation or modeling programs."
+    },
+    {
+     "id": "special-effects-artists-and-animators:2",
+     "text": "Make drawings look real by changing colors and shadows",
+     "task": "Make objects or characters appear lifelike by manipulating light, color, texture, shadow, and transparency, or manipulating static images to give the illusion of motion."
+    },
+    {
+     "id": "special-effects-artists-and-animators:3",
+     "text": "Plan out how an animation will look and feel",
+     "task": "Apply story development, directing, cinematography, and editing to animation to create storyboards that show the flow of the animation and map out key scenes and characters."
+    }
+   ],
+   "reviewed": false
+  },
+  "speech-language-pathologists": {
+   "items": [
+    {
+     "id": "speech-language-pathologists:0",
+     "text": "Check test results to figure out what speech or swallowing problems someone has",
+     "task": "Evaluate hearing or speech and language test results, barium swallow results, or medical or background information to diagnose and plan treatment for speech, language, fluency, voice, or swallowing disorders."
+    },
+    {
+     "id": "speech-language-pathologists:1",
+     "text": "Watch how people are doing and change their treatment if needed",
+     "task": "Monitor patients' progress and adjust treatments accordingly."
+    },
+    {
+     "id": "speech-language-pathologists:2",
+     "text": "Give tests to find out if someone has trouble talking or hearing",
+     "task": "Administer hearing or speech and language evaluations, tests, or examinations to patients to collect information on type and degree of impairments, using written or oral tests or special instruments."
+    },
+    {
+     "id": "speech-language-pathologists:3",
+     "text": "Teach people and their families how to better communicate or solve problems",
+     "task": "Educate patients and family members about various topics, such as communication techniques or strategies to cope with or to avoid personal misunderstandings."
+    }
+   ],
+   "reviewed": false
+  },
+  "veterinarians": {
+   "items": [
+    {
+     "id": "veterinarians:0",
+     "text": "Help animals feel better by giving them medicine or fixing their injuries",
+     "task": "Treat sick or injured animals by prescribing medication, setting bones, dressing wounds, or performing surgery."
+    },
+    {
+     "id": "veterinarians:1",
+     "text": "Give shots to animals to keep them safe from getting sick",
+     "task": "Inoculate animals against various diseases, such as rabies or distemper."
+    },
+    {
+     "id": "veterinarians:2",
+     "text": "Check animals to see what's wrong with them",
+     "task": "Examine animals to detect and determine the nature of diseases or injuries."
+    },
+    {
+     "id": "veterinarians:3",
+     "text": "Take samples like blood or poop to figure out what's making animals sick",
+     "task": "Collect body tissue, feces, blood, urine, or other body fluids for examination and analysis."
+    }
+   ],
+   "reviewed": false
+  },
+  "video-game-designers": {
+   "items": [
+    {
+     "id": "video-game-designers:0",
+     "text": "Design fun challenges and puzzles for players to solve in the game",
+     "task": "Devise missions, challenges, or puzzles to be encountered in game play."
+    },
+    {
+     "id": "video-game-designers:1",
+     "text": "Write exciting stories and create characters for a new video game",
+     "task": "Create core game features, including storylines, role-play mechanics, and character biographies for a new video game or game franchise."
+    },
+    {
+     "id": "video-game-designers:2",
+     "text": "Ask team members for ideas and use their feedback to improve the game",
+     "task": "Solicit, obtain, and integrate feedback from design and technical staff into original game design."
+    },
+    {
+     "id": "video-game-designers:3",
+     "text": "Write down all the rules and plans for how the game will work",
+     "task": "Develop and maintain design level documentation, including mechanics, guidelines, and mission outlines."
+    }
+   ],
+   "reviewed": false
+  },
+  "web-developers": {
+   "items": [
+    {
+     "id": "web-developers:0",
+     "text": "Create and update websites using tools like HTML, CSS, and JavaScript",
+     "task": "Design, build, or maintain Web sites, using authoring or scripting languages, content creation tools, management tools, and digital media."
+    },
+    {
+     "id": "web-developers:1",
+     "text": "Check code to make sure it works well and follows rules for the web",
+     "task": "Evaluate code to ensure that it is valid, is properly structured, meets industry standards, and is compatible with browsers, devices, or operating systems."
+    },
+    {
+     "id": "web-developers:2",
+     "text": "Build systems to store and organize information for websites",
+     "task": "Develop databases that support Web applications and Web sites."
+    },
+    {
+     "id": "web-developers:3",
+     "text": "Test websites to find and fix problems before they go live",
+     "task": "Perform Web site tests according to planned schedules, or after any Web site or product revision."
+    }
+   ],
+   "reviewed": false
+  },
+  "web-and-digital-interface-designers": {
+   "items": [
+    {
+     "id": "web-and-digital-interface-designers:0",
+     "text": "Create and update websites using tools like code and design software",
+     "task": "Design, build, or maintain Web sites, using authoring or scripting languages, content creation tools, management tools, and digital media."
+    },
+    {
+     "id": "web-and-digital-interface-designers:1",
+     "text": "Write code to make websites work the way they should",
+     "task": "Write supporting code for Web applications or Web sites."
+    },
+    {
+     "id": "web-and-digital-interface-designers:2",
+     "text": "Check websites to make sure they work correctly and fix any issues",
+     "task": "Perform Web site tests according to planned schedules, or after any Web site or product revision."
+    },
+    {
+     "id": "web-and-digital-interface-designers:3",
+     "text": "Work with other developers to build and improve websites",
+     "task": "Collaborate with web development professionals, such as front-end or back-end developers, to complete the full scope of Web development projects."
+    }
+   ],
+   "reviewed": false
+  },
+  "welders-cutters-solderers-and-brazers": {
+   "items": [
+    {
+     "id": "welders-cutters-solderers-and-brazers:0",
+     "text": "Use safety gear and follow rules to stay safe while working",
+     "task": "Operate safety equipment and use safe work habits."
+    },
+    {
+     "id": "welders-cutters-solderers-and-brazers:1",
+     "text": "Check parts for problems and measure them to make sure they're right",
+     "task": "Examine workpieces for defects and measure workpieces with straightedges or templates to ensure conformance with specifications."
+    },
+    {
+     "id": "welders-cutters-solderers-and-brazers:2",
+     "text": "Join metal pieces together using a welding tool",
+     "task": "Weld components in flat, vertical, or overhead positions."
+    },
+    {
+     "id": "welders-cutters-solderers-and-brazers:3",
+     "text": "Tell someone if something isn't working or if there's a problem",
+     "task": "Detect faulty operation of equipment or defective materials and notify supervisors."
+    }
+   ],
+   "reviewed": false
+  },
+  "writers-and-authors": {
+   "items": [
+    {
+     "id": "writers-and-authors:0",
+     "text": "Create stories or articles about people, places, or ideas",
+     "task": "Write fiction or nonfiction prose, such as short stories, novels, biographies, articles, descriptive or critical analyses, and essays."
+    },
+    {
+     "id": "writers-and-authors:1",
+     "text": "Fix and improve your writing to make it better",
+     "task": "Revise written material to meet personal standards and to satisfy needs of clients, publishers, directors, or producers."
+    },
+    {
+     "id": "writers-and-authors:2",
+     "text": "Show your work to people who want to buy it",
+     "task": "Present drafts and ideas to clients."
+    },
+    {
+     "id": "writers-and-authors:3",
+     "text": "Find out facts and details by reading books or talking to people",
+     "task": "Conduct research to obtain factual information and authentic detail, using sources such as newspaper accounts, diaries, and interviews."
+    }
+   ],
+   "reviewed": false
+  },
+  "zoologists-and-wildlife-biologists": {
+   "items": [
+    {
+     "id": "zoologists-and-wildlife-biologists:0",
+     "text": "Count or guess how many plants and animals live in a place",
+     "task": "Inventory or estimate plant and wildlife populations."
+    },
+    {
+     "id": "zoologists-and-wildlife-biologists:1",
+     "text": "Write reports and talk to groups about animals and nature",
+     "task": "Disseminate information by writing reports and scientific papers or journal articles, and by making presentations and giving talks for schools, clubs, interest groups and park interpretive programs."
+    },
+    {
+     "id": "zoologists-and-wildlife-biologists:2",
+     "text": "Help plan how to protect animals and their homes",
+     "task": "Develop, or make recommendations on, management systems and plans for wildlife populations and habitat, consulting with stakeholders and the public at large to explore options."
+    },
+    {
+     "id": "zoologists-and-wildlife-biologists:3",
+     "text": "Watch animals in the wild and see how people affect them",
+     "task": "Study animals in their natural habitats, assessing effects of environment and industry on animals, interpreting findings and recommending alternative operating conditions for industry."
+    }
+   ],
+   "reviewed": false
+  }
+ },
+ "about": "Focused-quiz activities: each catalog career's O*NET tasks rewritten for high school students by the local model (app/services/field_quiz.py). Each item keeps its source task. Not yet reviewed by a school counselor.",
+ "reviewed": false
+}

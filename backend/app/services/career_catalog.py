@@ -16,6 +16,67 @@ CATALOG_PATH = Path(__file__).resolve().parents[1] / "data" / "careers.json"
 # Pay, outlook, education, classes and courses from official sources,
 # written by scripts/refresh_career_data.py.
 CAREER_DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "career_data.json"
+# Careers added at runtime from official data (career_expansion.py), shared
+# by every student on this server; outside git so the repo stays clean.
+ADDED_PATH = Path(__file__).resolve().parents[2] / "storage" / "catalog" / "added_careers.json"
+
+
+# Every official O*NET job title -> its occupation (scripts/build_title_index.py).
+TITLES_PATH = Path(__file__).resolve().parents[1] / "data" / "onet_job_titles.tsv"
+
+
+def normalize_title(text: str) -> str:
+    """Lowercase words, plurals folded: "AI Engineers" -> "ai engineer"."""
+
+    words = re.findall(r"[a-z0-9]+", text.lower())
+    return " ".join(word[:-1] if len(word) > 3 and word.endswith("s") and not word.endswith("ss") else word for word in words)
+
+
+@lru_cache(maxsize=1)
+def _title_index() -> dict[str, list[tuple[str, str, int]]]:
+    index: dict[str, list[tuple[str, str, int]]] = {}
+
+    if not TITLES_PATH.exists():
+        return index
+
+    for line in TITLES_PATH.read_text(encoding="utf-8").splitlines():
+        if not line or line.startswith("#"):
+            continue
+
+        code, title, short, sources = line.split("\t")
+        main = re.sub(r"\s*\(.*?\)\s*", " ", title).strip()
+        expanded = re.findall(r"\((.*?)\)", title)
+        display = main or short
+
+        for name in {main, short, *expanded}:
+            if name:
+                index.setdefault(normalize_title(name), []).append((code, display, int(sources or 1)))
+
+    return index
+
+
+def official_titles(phrase: str) -> list[dict]:
+    """
+    The O*NET occupations that list this exact job title, most-reported
+    first: [{"code", "title", "sources"}]. Empty when it isn't an official
+    title ("unicorn wrangler").
+    """
+
+    best: dict[str, dict] = {}
+
+    for code, title, sources in _title_index().get(normalize_title(phrase), []):
+        if code not in best or sources > best[code]["sources"]:
+            best[code] = {"code": code, "title": title, "sources": sources}
+
+    return sorted(best.values(), key=lambda item: (-item["sources"], item["code"]))
+
+
+def load_added() -> dict:
+    if not ADDED_PATH.exists():
+        return {"careers": [], "facts": {}, "aliases": {}}
+
+    data = json.loads(ADDED_PATH.read_text(encoding="utf-8"))
+    return {"careers": data.get("careers", []), "facts": data.get("facts", {}), "aliases": data.get("aliases", {})}
 
 # Friendly labels for O*NET's six interest types (RIASEC).
 INTEREST_LABELS = {
@@ -31,16 +92,46 @@ INTEREST_LABELS = {
 @lru_cache(maxsize=1)
 def load_catalog() -> dict:
     data = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    added = load_added()
+    known = {career["onet_code"] for career in data["careers"]} | {career["slug"] for career in data["careers"]}
+
+    for career in added["careers"]:
+        # A title page ("AI Engineer") shares its occupation's code.
+        if career.get("variant_of"):
+            if career["slug"] not in known:
+                data["careers"].append(career)
+                known.add(career["slug"])
+        elif career["onet_code"] not in known and career["slug"] not in known:
+            data["careers"].append(career)
+            known |= {career["onet_code"], career["slug"]}
+
+    data["careers"].sort(key=lambda career: career["title"])
     data["by_slug"] = {career["slug"]: career for career in data["careers"]}
+    data["by_code"] = {career["onet_code"]: career for career in data["careers"] if not career.get("variant_of")}
+    # Everyday job titles ("marine biologist") -> catalog slug.
+    data["aliases"] = {phrase: slug for phrase, slug in added["aliases"].items() if slug in data["by_slug"]}
     return data
+
+
+def reload_catalog() -> None:
+    """Forget every cached view of the catalog after a career is added."""
+
+    for cached in (load_catalog, load_career_data, career_scopes, _career_stems, _title_stems, _idf, _search_index):
+        cached.cache_clear()
 
 
 @lru_cache(maxsize=1)
 def load_career_data() -> dict:
     if not CAREER_DATA_PATH.exists():
-        return {"retrieved": None, "sources": {}, "careers": {}}
+        data = {"retrieved": None, "sources": {}, "careers": {}}
+    else:
+        data = json.loads(CAREER_DATA_PATH.read_text(encoding="utf-8"))
 
-    return json.loads(CAREER_DATA_PATH.read_text(encoding="utf-8"))
+    # Facts for added careers were gathered from the same sources.
+    for slug, facts in load_added()["facts"].items():
+        data["careers"].setdefault(slug, facts)
+
+    return data
 
 
 def career_facts(slug: str) -> dict | None:
@@ -48,6 +139,11 @@ def career_facts(slug: str) -> dict | None:
 
     data = load_career_data()
     facts = data["careers"].get(slug)
+
+    if not facts:
+        # A title page uses its occupation's facts.
+        career = get_career(slug)
+        facts = data["careers"].get(career["variant_of"]) if career and career.get("variant_of") else None
 
     if not facts:
         return None
@@ -172,14 +268,24 @@ def named_careers(text: str) -> list[str]:
     lowered = text.lower()
     found = []
 
+    covered: list[tuple[int, int]] = []
+
+    for phrase, slug in load_catalog()["aliases"].items():
+        match = re.search(rf"\b{re.escape(phrase)}", lowered)
+
+        if match:
+            found.append((match.start(), slug))
+            covered.append(match.span())
+
     for career in load_catalog()["careers"]:
         title = career["title"].lower()
         match = re.search(rf"\b{re.escape(title[:-1] if title.endswith('s') else title)}", lowered)
 
-        if match:
+        # "biologist" inside an alias like "fisheries biologist" is that alias.
+        if match and not any(start <= match.start() < end for start, end in covered):
             found.append((match.start(), career["slug"]))
 
-    return [slug for _, slug in sorted(found)]
+    return list(dict.fromkeys(slug for _, slug in sorted(found)))
 
 
 def get_career(slug: str) -> dict | None:
@@ -835,6 +941,7 @@ def search_careers(
         corrected = corrected or bool(correction)
 
     phrase = query.strip().lower()
+    alias = load_catalog()["aliases"].get(re.sub(r"\s+", " ", phrase))
     scored = []
 
     for career in candidates:
@@ -861,7 +968,7 @@ def search_careers(
                 matched_terms += 1
                 score += best
 
-        if not matched_terms:
+        if not matched_terms and alias != career["slug"]:
             continue
 
         # Matching every word of the query beats matching one word strongly.
@@ -869,6 +976,10 @@ def search_careers(
 
         if phrase and phrase in career["title"].lower():
             score += 40
+
+        if alias == career["slug"]:
+            # An everyday title we've mapped to this career ("marine biologist").
+            score += 60
 
         scored.append((score, career, best_hit))
 

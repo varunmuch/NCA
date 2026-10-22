@@ -3,7 +3,9 @@ Student-owned API. Every route resolves the student from the verified
 session identity (see app.core.security); no route accepts a student ID.
 """
 
+import asyncio
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -41,13 +43,13 @@ from app.models.progress import (
 )
 from app.services import account_service
 from app.services import career_catalog
-from app.services import interest_quiz
+from app.services import career_expansion, field_quiz, interest_quiz
 from app.services import conversation_service as conversations
 from app.services import document_service as documents
 from app.services import plan_service as plans
 from app.services import progress_service as progress
 from app.services import roadmap_service as roadmaps
-from app.services import staff_service
+from app.services import document_review, pathways, staff_service, text_clean
 from app.services.context_service import build_context, context_block
 from app.services.counselor_service import run_turn, run_turn_stream, summarize_if_needed
 from app.services.home_service import home_summary
@@ -63,6 +65,8 @@ from app.services.student_service import (
     update_fact,
 )
 
+
+logger = logging.getLogger("cie.routes")
 
 router = APIRouter(prefix="/api/v1")
 
@@ -155,6 +159,10 @@ async def update_profile(updates: dict[str, Any], student_id: str = Student):
 
     profile = await save_profile_dict(student_id, updates)
 
+    if updates.get("career_aspiration"):
+        # A goal we don't have yet is looked up and added in the background.
+        career_expansion.ensure_in_background([updates["career_aspiration"]])
+
     return {"display_name": display_name(profile), "profile": profile}
 
 
@@ -166,11 +174,70 @@ class QuizAnswers(BaseModel):
     training: str = "unsure"
 
 
-@router.get("/interest-quiz")
-async def get_interest_quiz(student_id: str = Student):
-    profile = await get_profile_dict(student_id)
+class FieldQuizAnswers(BaseModel):
+    activities: dict[str, int]
+    tradeoffs: dict[str, str]
+    training: str = "unsure"
 
-    return {**interest_quiz.questions(), "result": interest_quiz.result_payload(profile)}
+
+async def _field_anchor(profile: dict) -> str | None:
+    """The catalog career behind the student's goal, adding it if it's new."""
+
+    anchor = field_quiz.anchor_for(profile)
+
+    if anchor is None and field_quiz.goal_of(profile):
+        outcome = await career_expansion.ensure_within(field_quiz.goal_of(profile), seconds=25)
+
+        if outcome.get("result") in ("added", "alias", "existing"):
+            anchor = outcome["slug"]
+
+    if anchor and not field_quiz.items_for(anchor):
+        career = career_catalog.get_career(anchor)
+
+        if career:
+            try:
+                await field_quiz.ensure_items(career)
+            except Exception:
+                logger.exception("Couldn't build quiz activities for %s", anchor)
+
+    return anchor if anchor and field_quiz.items_for(anchor) else None
+
+
+@router.get("/interest-quiz")
+async def get_interest_quiz(mode: str = "", student_id: str = Student):
+    """
+    With a career goal, the focused quiz stays inside that field;
+    mode=general gives the all-careers quiz.
+    """
+
+    profile = await get_profile_dict(student_id)
+    goal = field_quiz.goal_of(profile)
+
+    if mode != "general" and goal:
+        anchor = await _field_anchor(profile)
+
+        if anchor:
+            return {**field_quiz.questions(profile, anchor), "result": field_quiz.result_payload(profile)}
+
+    return {
+        **interest_quiz.questions(),
+        "mode": "general",
+        "goal": goal,
+        "result": interest_quiz.result_payload(profile),
+    }
+
+
+@router.post("/me/interest-quiz/field")
+async def submit_field_quiz(payload: FieldQuizAnswers, student_id: str = Student):
+    profile = await get_profile_dict(student_id)
+    anchor = await _field_anchor(profile)
+
+    if anchor is None:
+        raise HTTPException(status_code=409, detail="Add a career goal to your profile to take the focused quiz.")
+
+    saved = field_quiz.score(profile, anchor, payload.model_dump())
+    profile = await save_profile_dict(student_id, {"field_quiz": saved})
+    return field_quiz.result_payload(profile)
 
 
 @router.post("/me/interest-quiz")
@@ -436,6 +503,16 @@ async def upload_document(
     return document
 
 
+@router.post("/me/documents/{document_id}/review")
+async def review_document(document_id: int, refresh: bool = False, student_id: str = Student):
+    """Suggestions from a transcript or resume, aimed at the student's goal."""
+
+    try:
+        return await document_review.review_document(student_id, document_id, refresh=refresh)
+    except LLMError:
+        raise HTTPException(status_code=503, detail="Suggestions couldn't be made just now. Please try again.")
+
+
 @router.get("/me/documents/{document_id}")
 async def get_document(document_id: int, student_id: str = Student):
     record = await documents.get_owned_document(student_id, document_id)
@@ -528,17 +605,25 @@ async def careers_search(
     interest: str = "",
     student_id: str = Student,
 ):
-    found = career_catalog.search_careers(
-        query=q[:100],
-        family=family,
-        subject=subject,
-        interest=interest,
-    )
+    query = q[:100]
+    found = career_catalog.search_careers(query=query, family=family, subject=subject, interest=interest)
+    added = None
+
+    # Nothing here for a job title: look it up in the official occupation
+    # list and add it to the catalog for everyone, then search again.
+    if not found["careers"] and query.strip() and not (family or subject or interest):
+        outcome = await career_expansion.ensure_within(query, seconds=20)
+
+        if outcome["result"] in ("added", "alias", "existing"):
+            found = career_catalog.search_careers(query=query)
+            added = outcome if outcome["result"] == "added" else None
+
     saved = set(await _saved_slugs(student_id))
 
     return {
         "careers": [{**career, "saved": career["slug"] in saved} for career in found["careers"]],
         "suggestion": found["suggestion"],
+        "added": career_catalog.get_career(added["slug"])["title"] if added else None,
     }
 
 
@@ -609,11 +694,14 @@ async def career_detail(slug: str, student_id: str = Student):
 INSIGHTS_SCHEMA = {
     "type": "object",
     "properties": {
-        "day_to_day": {"type": "string", "maxLength": 600},
-        "connection_to_you": {"type": "string", "maxLength": 500},
-        "beginner_experiences": {"type": "array", "items": {"type": "string", "maxLength": 200}, "maxItems": 5},
-        "alternative_routes": {"type": "array", "items": {"type": "string", "maxLength": 200}, "maxItems": 4},
-        "questions_to_consider": {"type": "array", "items": {"type": "string", "maxLength": 200}, "maxItems": 5},
+        # Limits are roomy on purpose: a tight limit cuts a sentence in half
+        # and the model carries it on into the next item. Length is enforced
+        # by the prompt and by text_clean afterward.
+        "day_to_day": {"type": "string", "maxLength": 900},
+        "connection_to_you": {"type": "string", "maxLength": 900},
+        "beginner_experiences": {"type": "array", "items": {"type": "string", "maxLength": 320}, "minItems": 2, "maxItems": 4},
+        "alternative_routes": {"type": "array", "items": {"type": "string", "maxLength": 320}, "minItems": 1, "maxItems": 3},
+        "questions_to_consider": {"type": "array", "items": {"type": "string", "maxLength": 240}, "minItems": 2, "maxItems": 4},
     },
     "required": [
         "day_to_day",
@@ -624,6 +712,61 @@ INSIGHTS_SCHEMA = {
     ],
 }
 
+INSIGHTS_PROMPT = """You help a high school student understand one career. Write for a 9th grader: warm, plain words, short sentences.
+
+Rules:
+- Use the O*NET facts provided for what the job involves. Do not invent salaries, statistics, program names, or admission requirements.
+- connection_to_you: 2 to 4 sentences linking this career to specific things in the student's own record below: classes or grades from their transcript, activities or skills from their resume, things they said in past chats, their interest quiz results, and facts in their profile. Mention where each detail comes from in a natural way ("Your transcript shows...", "You told me...", "Your quiz results..."). Use only details that appear below; never invent any. If little is known, say what they could notice about themselves instead. Never say they are or aren't suited for it.
+- beginner_experiences: things a high school student can realistically do (clubs, electives, free online courses, volunteering, job shadowing, personal projects). Build on classes or activities they already have when you can.
+- alternative_routes: other careers from the Related careers list (only those), or other routes into this same career, each with a short reason.
+- questions_to_consider: questions for the student to ask themselves.
+- Every list item is ONE complete sentence of at most 30 words. Write fewer items rather than padding.
+- Use the student's name at most once in the whole answer.
+- Plain text only: no Markdown, no asterisks, no field names, no underscores.
+
+"""
+
+# Extra words for retrieval, so resume and transcript passages are pulled in
+# alongside the career title.
+INSIGHTS_QUERY_WORDS = "transcript resume courses grades classes activities skills interests"
+
+
+def _related_for_student(career: dict, profile: dict) -> list[str]:
+    """
+    Related careers for "Other ways in". With a goal, stay inside its field
+    so a future software engineer isn't pointed to biomedical engineering.
+    """
+
+    anchor = field_quiz.anchor_for(profile)
+
+    if not anchor:
+        return career["related"]
+
+    field = field_quiz.goal_field_slugs(anchor)
+
+    if career["slug"] not in field:
+        return career["related"]
+
+    titles = [
+        item["title"]
+        for slug in sorted(field - {career["slug"]})
+        if (item := career_catalog.get_career(slug))
+    ]
+
+    return titles or career["related"]
+
+
+@router.get("/careers/{slug}/quick-path")
+async def career_quick_path(slug: str, student_id: str = Student):
+    """The career in 30 seconds, from official data only (no AI, instant)."""
+
+    found = await pathways.quick_path(slug)
+
+    if found is None:
+        raise HTTPException(status_code=404, detail="Career not found.")
+
+    return found
+
 
 @router.post("/careers/{slug}/insights")
 async def career_insights(slug: str, student_id: str = Student):
@@ -632,7 +775,7 @@ async def career_insights(slug: str, student_id: str = Student):
     if career is None:
         raise HTTPException(status_code=404, detail="Career not found.")
 
-    context = await build_context(student_id, None, career["title"])
+    context = await build_context(student_id, None, f"{career['title']} {INSIGHTS_QUERY_WORDS}")
 
     facts_block = (
         f"Career: {career['title']}\n"
@@ -641,7 +784,7 @@ async def career_insights(slug: str, student_id: str = Student):
         f"Important knowledge: {', '.join(career['knowledge'])}\n"
         f"Skills: {', '.join(career['skills'])}\n"
         f"Typical preparation: {career['preparation']}. {career['education_summary']}\n"
-        f"Related careers: {', '.join(career['related'])}"
+        f"Related careers: {', '.join(_related_for_student(career, context['profile']))}"
     )
 
     try:
@@ -649,20 +792,7 @@ async def career_insights(slug: str, student_id: str = Student):
             [
                 {
                     "role": "system",
-                    "content": (
-                        "You help high school students understand a career. Use "
-                        "the O*NET facts provided for what the job involves. Write "
-                        "for a 9th grader. Do not invent salaries, statistics, "
-                        "program names, or admission requirements. Beginner "
-                        "experiences must be things a high school student can "
-                        "realistically do (clubs, electives, free online courses, "
-                        "volunteering, job shadowing, personal projects). "
-                        "connection_to_you: relate the career to the student's own "
-                        "information; if little is known, say what they could "
-                        "notice about themselves instead. Never say they are or "
-                        "aren't suited for it.\n\n"
-                        + context_block(context)
-                    ),
+                    "content": INSIGHTS_PROMPT + context_block(context),
                 },
                 {"role": "user", "content": facts_block},
             ],
@@ -677,7 +807,13 @@ async def career_insights(slug: str, student_id: str = Student):
             detail="The counselor couldn't put this together right now. Please try again.",
         )
 
-    return insights
+    return {
+        "day_to_day": text_clean.clean_paragraph(insights.get("day_to_day", "")),
+        "connection_to_you": text_clean.clean_paragraph(insights.get("connection_to_you", "")),
+        "beginner_experiences": text_clean.clean_items(insights.get("beginner_experiences"), 4),
+        "alternative_routes": text_clean.clean_items(insights.get("alternative_routes"), 3),
+        "questions_to_consider": text_clean.clean_items(insights.get("questions_to_consider"), 4),
+    }
 
 
 @router.get("/careers/{slug}/roadmap")
@@ -776,6 +912,44 @@ async def create_plan(payload: PlanGenerate, student_id: str = Student):
         )
     except LLMError:
         raise _plan_error()
+
+
+@router.post("/me/plans/stream")
+async def create_plan_stream(payload: PlanGenerate, student_id: str = Student):
+    """
+    The same as POST /me/plans, as server-sent events: progress lines while
+    the plan is built (what the counselor is checking), then done or error.
+    """
+
+    queue: asyncio.Queue = asyncio.Queue()
+
+    async def build():
+        plans.progress_reporter.set(lambda text: queue.put_nowait({"event": "progress", "text": text}))
+
+        try:
+            plan = await plans.generate_plan(student_id, career_goal=payload.career_goal, instruction=payload.instruction)
+            await queue.put({"event": "done", "plan": plan})
+        except LLMError:
+            await queue.put({"event": "error", "message": _plan_error().detail})
+        except Exception:
+            logger.exception("Plan stream failed")
+            await queue.put({"event": "error", "message": _plan_error().detail})
+
+    async def events():
+        task = asyncio.create_task(build())
+
+        try:
+            while True:
+                event = await queue.get()
+                yield _sse(event)
+
+                if event["event"] in ("done", "error"):
+                    break
+        finally:
+            if not task.done():
+                task.cancel()
+
+    return StreamingResponse(events(), media_type="text/event-stream", headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"})
 
 
 @router.get("/me/plans/{plan_id}")

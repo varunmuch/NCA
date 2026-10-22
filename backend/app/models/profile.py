@@ -71,4 +71,6 @@ class StudentProfile(BaseModel):
     # subjects, training), and when it was taken.
     interest_scores: dict[str, int] = Field(default_factory=dict)
     interest_quiz: dict = Field(default_factory=dict)
+    # Focused quiz within the student's goal field (field_quiz.py).
+    field_quiz: dict = Field(default_factory=dict)
     interest_quiz_at: str = ""

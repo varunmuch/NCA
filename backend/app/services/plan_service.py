@@ -8,6 +8,8 @@ same action.
 """
 
 import copy
+import logging
+from contextvars import ContextVar
 import json
 from datetime import datetime
 from uuid import uuid4
@@ -16,10 +18,25 @@ from fastapi import HTTPException
 from sqlalchemy import select
 
 from app.core.database import AsyncSessionLocal
-from app.core.llm import chat_json
+from app.core.llm import LLMError, chat_json
 from app.db.models import CareerPlan, ProgressTask, ProgressTimeline
-from app.services import career_catalog, grounding, plan_stages
+from app.services import career_catalog, field_quiz, grounding, pathways, plan_stages, text_clean
 from app.services.context_service import build_context, context_block, grounding_corpus
+from app.services.student_service import save_profile_dict
+
+
+logger = logging.getLogger(__name__)
+
+# Set by the streaming endpoint: a function that receives progress lines
+# ("Checking 89 Florida colleges...") while a plan is being built.
+progress_reporter: ContextVar = ContextVar("plan_progress_reporter", default=None)
+
+
+def _progress(text: str) -> None:
+    report = progress_reporter.get()
+
+    if report is not None:
+        report(text)
 
 
 def _items(properties: dict, required: list[str], max_items: int) -> dict:
@@ -42,7 +59,7 @@ MAX_PLAN_CAREERS = 3
 PLAN_SCHEMA = {
     "type": "object",
     "properties": {
-        "title": _text(80),
+        "title": _text(120),
         "career_goal": _text(100),
         "summary": _text(300),
         "next_steps": _items({"title": _text(90), "why": _text(200)}, ["title", "why"], 3),
@@ -131,6 +148,9 @@ def career_card(slug: str, why: str) -> dict | None:
         "pay_median_florida": florida.get("annual_median"),
         "pay_hourly": national.get("hourly_median"),
         "education": ((facts.get("education") or {}).get("typical_entry")),
+        # What workers in the occupation report (O*NET survey), e.g. many
+        # AI engineers start with a bachelor's though the typical entry is a master's.
+        "education_survey": pathways.education_survey(career.get("onet_code") or ""),
         "growth_percent": ((facts.get("outlook") or {}).get("growth_percent")),
         "pay_source": (sources.get("wages") or {}).get("name"),
         "outlook_source": (sources.get("outlook") or {}).get("name"),
@@ -179,6 +199,19 @@ def _ground_plan(content: dict, corpus: str) -> list[dict]:
     return removed
 
 
+def _whole_words(text: str, limit: int) -> str:
+    """Shorten to whole words so a title never ends mid-word."""
+
+    text = " ".join((text or "").split())
+
+    if len(text) <= limit:
+        return text
+
+    cut = text[:limit].rsplit(" ", 1)[0]
+
+    return cut.rstrip(" ,:;-–—")
+
+
 def _clean_content(raw: dict, grade_level: str, corpus: str) -> dict:
     content = copy.deepcopy(raw)
     removed = _ground_plan(content, corpus)
@@ -191,6 +224,8 @@ def _clean_content(raw: dict, grade_level: str, corpus: str) -> dict:
 
         if card and card["slug"] not in {item["slug"] for item in cards}:
             cards.append(card)
+
+    content["title"] = _whole_words(content.get("title", ""), 90)
 
     content.update(
         {
@@ -220,6 +255,7 @@ async def _generate_content(
     previous: dict | None,
 ) -> dict:
     query = " ".join(part for part in [career_goal, instruction] if part) or "career plan"
+    _progress("Reading your profile, quiz, documents and past chats")
     context = await build_context(student_id, None, query)
 
     request_lines = []
@@ -253,6 +289,7 @@ async def _generate_content(
         + context["candidates_text"]
     )
 
+    _progress("Writing your next steps for this month")
     raw = await chat_json(
         [
             {"role": "system", "content": system},
@@ -264,7 +301,125 @@ async def _generate_content(
         temperature=0.4,
     )
 
-    return _clean_content(raw, grade_level, grounding_corpus(context, query))
+    corpus = grounding_corpus(context, query)
+    _progress("Checking every figure against official sources")
+    content = _clean_content(raw, grade_level, corpus)
+
+    focus = _focus_career(content, career_goal)
+
+    # A goal the student typed for this plan becomes their goal if they had none.
+    if focus and career_goal and not (context["profile"].get("career_aspiration") or "").strip():
+        await save_profile_dict(student_id, {"career_aspiration": (career_catalog.get_career(focus) or {}).get("title", career_goal)})
+
+    if focus and focus not in {card["slug"] for card in content.get("careers", [])}:
+        card = career_card(focus, f"You told us you want to become {(career_catalog.get_career(focus) or {}).get('title', 'this')}.")
+
+        if card:
+            content["careers"] = [card] + content.get("careers", [])[: MAX_PLAN_CAREERS - 1]
+            content["careers_exploring"] = [{"slug": item["slug"], "title": item["title"], "why": item["why"]} for item in content["careers"]]
+
+    if focus:
+        # Keep the plan's careers inside the goal's field, so a future
+        # software engineer isn't shown biomedical engineering.
+        field = field_quiz.goal_field_slugs(focus)
+        content["careers"] = [card for card in content.get("careers", []) if card["slug"] in field]
+
+        # Fill the list with the closest careers in the same field.
+        for item in field_quiz.field_for(focus):
+            if len(content["careers"]) >= MAX_PLAN_CAREERS:
+                break
+
+            if item["slug"] not in {card["slug"] for card in content["careers"]}:
+                card = career_card(item["slug"], f"Close to {(career_catalog.get_career(focus) or {}).get('title', 'your goal')}: it uses many of the same interests and school subjects.")
+
+                if card:
+                    content["careers"].append(card)
+        content["careers_exploring"] = [{"slug": item["slug"], "title": item["title"], "why": item["why"]} for item in content["careers"]]
+
+    if focus:
+        try:
+            content["pathway"] = await _build_pathway(focus, context, grade_level, corpus)
+        except LLMError:
+            # The plan is still useful without the pathway; it can be rebuilt.
+            logger.warning("Pathway for %s could not be built", focus)
+
+    return content
+
+
+PATHWAY_PROMPT = """You map out the education path to one career for a high school student at NeoCity Academy in Kissimmee, Florida. You pick ONLY from the lists below; the app adds official details (net price, graduation rate, earnings, certifying organization, links) itself.
+
+Rules:
+- courses: up to 8 high school courses, each with the grade to take it in, starting with the student's current grade (never an earlier grade). Skip courses the student's transcript shows they already finished. Prefer the AP courses listed for this career, plus the core math and science that lead to them. Use dual enrollment or FLVS where it helps.
+- majors: up to 3 college majors that lead to this career.
+- colleges: 4 to 6 Florida colleges. Include at least one state college (2-year) for the route of starting there and transferring to a university, and favor schools near NeoCity when they fit.
+- certifications: up to 4, putting first the ones marked as needing no degree or long work experience, since a teenager or new graduate can work toward them.
+- Describe schools only by facts in the list (city, public or private, 2-year or 4-year, being near NeoCity, the programs listed). Never call a school or program top, strong, competitive, excellent, or prestigious.
+- For a college, begin why with the college's own name, and talk only about that college.
+- why: one plain sentence linking the pick to this student (their interests, classes, activities, or goals), or to the career if little is known.
+- summary: 1 or 2 sentences describing the route, including more than one way in when realistic (for example a bachelor's degree, or starting at a state college).
+- Never write prices, percentages, salaries, rankings, dates, or admission requirements; the app shows official figures.
+- Plain text only: no Markdown, no asterisks, no field names. Address the student as "you"."""
+
+
+def _focus_career(content: dict, career_goal: str) -> str:
+    """
+    The career the pathway is built for: the goal the student asked for
+    (which may be an added career, like AI Engineer), else the plan's first
+    career.
+    """
+
+    named = career_catalog.named_careers(career_goal) if career_goal else []
+
+    if named:
+        return named[0]
+
+    if content.get("careers"):
+        return content["careers"][0]["slug"]
+
+    named = career_catalog.named_careers(content.get("career_goal", ""))
+
+    return named[0] if named else ""
+
+
+async def _build_pathway(slug: str, context: dict, grade_level: str, corpus: str) -> dict:
+    title = (career_catalog.get_career(slug) or {}).get("title", "this career")
+    _progress(f"Looking up the path to {title}: Florida colleges, majors and certifications")
+    found = await pathways.candidates(slug)
+    _progress(
+        f"Found {len(found['colleges'])} Florida colleges with a matching program, "
+        f"{len(found['majors'])} majors and {len(found['certifications'])} certifications"
+    )
+    _progress("Choosing the courses, colleges and certifications that fit you")
+    allowed = pathways.candidates_text(found)
+    scopes = list(career_catalog.career_scopes())
+
+    def clean(text: str) -> str:
+        text = text_clean.clean_paragraph(text)
+        cleaned, _ = grounding.ground_reply(text, corpus + "\n" + allowed, scopes, note=False)
+        return cleaned
+
+    career = career_catalog.get_career(slug) or {}
+    raw = await chat_json(
+        [
+            {
+                "role": "system",
+                "content": PATHWAY_PROMPT
+                + "\n\n## Grade stage\n"
+                + plan_stages.stage_text(grade_level)
+                + "\n\n"
+                + context_block(context)
+                + "\n\n"
+                + allowed,
+            },
+            {"role": "user", "content": f"Build the path to: {career.get('title', slug)}."},
+        ],
+        schema=pathways.schema(found),
+        schema_name="career_pathway",
+        max_tokens=2500,
+        temperature=0.3,
+    )
+
+    return pathways.attach(raw, found, clean)
 
 
 async def list_plans(student_id: str) -> list[dict]:

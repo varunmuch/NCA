@@ -81,6 +81,8 @@ export type MessageMetadata = {
   sources?: { id: string; title: string; url: string }[];
   // Figures or names removed because no source supported them.
   grounding?: { removed: { kind: string; text: string }[] };
+  // The career page the counselor opened for a career the student named.
+  open_career?: { slug: string; title: string; created: boolean; note: string };
   // Set only in the browser while a reply is still arriving.
   streaming?: boolean;
 };
@@ -162,6 +164,9 @@ export type CareerDetail = CareerSummary & {
   source_url: string;
   source: CatalogSource;
   facts: CareerFacts | null;
+  // A page for an official job title within another occupation ("AI Engineer").
+  variant_of?: string;
+  official_note?: string;
 };
 
 export type WageFigures = {
@@ -229,9 +234,9 @@ export type CareerRoadmapContent = {
   what_to_learn: { topic: string; why: string; how: string }[];
   high_school_courses: { course: string; kind: string; why: string }[];
   college_majors: { major: string; why: string }[];
-  certifications: { name: string; why: string }[];
+  certifications: { name: string; why: string; organization?: string; url?: string; beginner_friendly?: boolean }[];
   online_learning: { topic: string; provider: string; search: string; why: string; url: string }[];
-  college_options: { name: string; kind: string; why: string }[];
+  college_options: { name: string; kind: string; why: string; city?: string; url?: string; net_price?: number | null; graduation_rate?: number | null }[];
   picked_resources: { id: string; why: string }[];
 };
 
@@ -303,6 +308,7 @@ export type PlanContent = {
   skills?: { skill: string; how: string }[];
   stage?: { grade: number; name: string; goal: string; priorities: string[] } | null;
   grounding?: { removed: { kind: string; text: string }[] };
+  pathway?: Pathway;
 };
 
 export type PlanStep = { title: string; why: string };
@@ -321,6 +327,54 @@ export type PlanCareer = {
   pay_source: string | null;
   outlook_source: string | null;
   as_of: string | null;
+  education_survey?: EducationSurvey | null;
+};
+
+// What workers in an occupation say the job requires (O*NET survey).
+export type EducationSurvey = {
+  levels: { level: string; percent: number }[];
+  respondents: number;
+  small_sample: boolean;
+  source: string;
+};
+
+export type PathwayCollege = {
+  id: string;
+  name: string;
+  city: string;
+  ownership: string;
+  kind: "4-year" | "2-year";
+  url: string;
+  net_price: number | null;
+  graduation_rate: number | null;
+  central_florida: boolean;
+  programs: { title: string; credential: string; earnings_median: number | null; earnings_years: string; cip4: string }[];
+  why: string;
+};
+
+export type PathwayCertification = {
+  id: string;
+  name: string;
+  organization: string;
+  url: string;
+  description: string;
+  beginner_friendly: boolean;
+  exam_required: boolean;
+  why: string;
+};
+
+// Courses, majors, colleges and certifications for the plan's main career.
+// The model picks from official lists; details come from the data.
+export type Pathway = {
+  career_slug: string;
+  career_title: string;
+  summary: string;
+  courses: { course: string; grade: string; kind: string; why: string }[];
+  majors: { cip: string; title: string; includes?: string[]; florida_colleges: number; why: string }[];
+  colleges: PathwayCollege[];
+  certifications: PathwayCertification[];
+  education_survey: EducationSurvey | null;
+  sources: Record<string, { name?: string; url?: string; retrieved?: string }>;
 };
 
 export type PlanSummary = {
@@ -432,17 +486,42 @@ export type InterestQuizResult = {
   preferences?: { settings: string[]; subjects: string[]; training: string };
   taken_at: string | null;
   careers: CareerSummary[];
+  // With a career goal, careers stay in its field; other matches are listed apart.
+  goal?: { slug: string; title: string } | null;
+  other_careers?: CareerSummary[];
 };
 
 export type QuizChoice = { key: string; text: string };
 
 export type InterestQuiz = {
+  mode?: "general";
+  // The student's career goal, when they have one (the focused quiz exists).
+  goal?: string;
   activities: { items: { id: string; text: string }[]; scale: string[] };
   tradeoffs: { id: string; a: QuizChoice; b: QuizChoice }[];
   settings: { options: { key: string; label: string }[]; max: number };
   subjects: { options: string[]; max: number };
   training: { key: string; label: string; description: string }[];
   result: InterestQuizResult | null;
+};
+
+// The focused quiz: only careers in the student's goal field.
+export type FieldQuizCareer = PlanCareer & { match_score: number; match_reasons: string[]; is_goal: boolean };
+
+export type FieldQuizResult = {
+  goal: string;
+  anchor: { slug: string; title: string };
+  careers: FieldQuizCareer[];
+  taken_at: string | null;
+};
+
+export type FieldQuiz = {
+  mode: "field";
+  field: { goal: string; anchor: { slug: string; title: string }; family_label: string; careers: string[] };
+  activities: { items: { id: string; text: string }[]; scale: string[] };
+  tradeoffs: { id: string; a: QuizChoice; b: QuizChoice }[];
+  training: { key: string; label: string; description: string }[];
+  result: FieldQuizResult | null;
 };
 
 export type InterestQuizAnswers = {
@@ -486,3 +565,59 @@ export type StaffStudentDetail = {
   saved_careers: CareerSummary[];
   documents: { id: number; filename: string; doc_type: string; status: string; uploaded_at: string | null }[];
 };
+
+
+// A career in 30 seconds, from official data only (no AI, instant).
+export type QuickPathCollege = {
+  name: string;
+  city: string;
+  kind: "4-year" | "2-year";
+  ownership: string;
+  url: string;
+  net_price: number | null;
+  graduation_rate: number | null;
+  central_florida: boolean;
+};
+
+export type QuickPath = {
+  slug: string;
+  title: string;
+  pay_median: number | null;
+  pay_median_florida: number | null;
+  education: string | null;
+  education_survey: EducationSurvey | null;
+  growth_percent: number | null;
+  tasks: string[];
+  courses: string[];
+  university: QuickPathCollege | null;
+  state_college: QuickPathCollege | null;
+  certification: { name: string; organization: string; url: string; beginner_friendly: boolean } | null;
+};
+
+export type PlanStreamEvent =
+  | { event: "progress"; text: string }
+  | { event: "done"; plan: PlanDetail }
+  | { event: "error"; message: string };
+
+// Suggestions from a transcript or resume, aimed at the student's goal.
+export type DocumentReview =
+  | { status: "not_ready" | "unsupported" | "needs_goal"; message: string }
+  | {
+      status: "ready";
+      doc_type: "transcript" | "resume";
+      goal_slug: string;
+      goal_title: string;
+      goal_source: "goal" | "quiz";
+      summary: string;
+      // Transcript
+      done?: { course: string; matched: string }[];
+      in_progress?: { course: string; matched: string }[];
+      next_up?: string[];
+      next_courses?: { course: string; kind: string; why: string }[];
+      tips?: string[];
+      // Resume
+      strengths?: { skill: string; evidence: string }[];
+      gaps?: string[];
+      suggestions?: string[];
+      certifications?: { name: string; organization: string; url: string; why: string }[];
+    };

@@ -23,6 +23,8 @@ import type { CareerDetail, CareerInsights } from "@/types/cie";
 
 import { CareerCard, FamilyIcon, SaveCareerButton } from "./CareerCard";
 import { CareerFacts } from "./CareerFacts";
+import { QuickPathCard } from "./QuickPathCard";
+import { SetGoalButton } from "./SetGoalButton";
 import { CareerRoadmap } from "./CareerRoadmap";
 
 function Chips({ items, tone = "neutral" }: { items: string[]; tone?: "neutral" | "primary" }) {
@@ -123,7 +125,7 @@ function Insights({ slug }: { slug: string }) {
   );
 }
 
-export function CareerDetailView({ career }: { career: CareerDetail }) {
+export function CareerDetailView({ career, autoBuildRoadmap = false }: { career: CareerDetail; autoBuildRoadmap?: boolean }) {
   const prep = preparationLabel(career.job_zone);
   const askHref = `/counselor?ask=${encodeURIComponent(`I'm curious about ${career.title}. What's it really like, and could it be a good fit for me?`)}`;
 
@@ -153,6 +155,7 @@ export function CareerDetailView({ career }: { career: CareerDetail }) {
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
+          <SetGoalButton title={career.title} />
           <SaveCareerButton slug={career.slug} title={career.title} saved={Boolean(career.saved)} variant="button" />
           <ButtonLink href="#roadmap" variant="secondary" icon={<MapIcon aria-hidden className="size-4" />}>
             See my roadmap
@@ -163,9 +166,22 @@ export function CareerDetailView({ career }: { career: CareerDetail }) {
         </div>
       </header>
 
-      {career.facts && <CareerFacts facts={career.facts} />}
+      {career.official_note && (
+        <p className="rounded-[var(--radius-card)] border border-line bg-surface px-5 py-4 text-sm leading-relaxed text-ink-muted">
+          {career.official_note}{" "}
+          {career.variant_of && (
+            <Link href={`/explore/${career.variant_of}`} className="font-medium text-primary hover:underline">
+              See the full occupation
+            </Link>
+          )}
+        </p>
+      )}
 
-      <CareerRoadmap slug={career.slug} title={career.title} />
+      <QuickPathCard slug={career.slug} />
+
+      {career.facts && <CareerFacts facts={career.facts} commonEducation={career.common_education} />}
+
+      <CareerRoadmap slug={career.slug} title={career.title} autoBuild={autoBuildRoadmap} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-6">

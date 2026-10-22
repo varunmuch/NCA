@@ -7,7 +7,10 @@ import { Check, ChevronDown, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
 import { TextInput } from "@/components/ui/Field";
+import { surveyNote } from "@/lib/education";
 import type { PlanDetail, PlanStep } from "@/types/cie";
+
+import { PlanPathway } from "./PlanPathway";
 
 function dollars(value: number) {
   return value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
@@ -39,8 +42,33 @@ export function SimplePlan({
   const done = steps.filter((_, index) => plan.task_status[String(taskIds[index])] === "done").length;
   const sources = [...new Set(careers.flatMap((career) => [career.pay_source, career.outlook_source]).filter(Boolean))];
 
+  const pathway = content.pathway;
+  const glance = pathway
+    ? [
+        { label: "Your goal", value: pathway.career_title },
+        { label: "Next class", value: pathway.courses[0] ? `${pathway.courses[0].course} (${pathway.courses[0].grade})` : "" },
+        { label: "College to look at", value: pathway.colleges.find((college) => college.kind === "4-year")?.name ?? pathway.colleges[0]?.name ?? "" },
+        { label: "First certification", value: pathway.certifications[0]?.name ?? "" },
+      ].filter((item) => item.value)
+    : [];
+
   return (
     <div className="space-y-8">
+      {glance.length > 0 && (
+        <section aria-label="Your plan at a glance" className="rounded-[var(--radius-card)] border border-primary/25 bg-primary-softer p-5 sm:p-6">
+          <p className="text-sm font-semibold text-primary">Your plan in 30 seconds</p>
+          <dl className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {glance.map((item) => (
+              <div key={item.label}>
+                <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">{item.label}</dt>
+                <dd className="mt-0.5 font-semibold leading-snug text-ink">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+          {steps[0] && <p className="mt-4 border-t border-primary/15 pt-3 text-sm text-ink">This week: {steps[0].title}</p>}
+        </section>
+      )}
+
       <section aria-labelledby="next-steps" className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-7">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -125,7 +153,13 @@ export function SimplePlan({
                   {career.education && (
                     <div>
                       <dt className="sr-only">Education</dt>
-                      <dd className="text-ink-muted">To start: {career.education}</dd>
+                      <dd className="text-ink-muted">Typical start: {career.education}</dd>
+                    </div>
+                  )}
+                  {surveyNote(career.education, career.education_survey?.levels, career.education_survey?.small_sample) && (
+                    <div>
+                      <dt className="sr-only">What workers report</dt>
+                      <dd className="text-ink">{surveyNote(career.education, career.education_survey?.levels, career.education_survey?.small_sample)}</dd>
                     </div>
                   )}
                 </dl>
@@ -139,6 +173,8 @@ export function SimplePlan({
           )}
         </section>
       )}
+
+      {content.pathway && <PlanPathway pathway={content.pathway} />}
 
       <details className="group rounded-[var(--radius-card)] border border-line bg-surface">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-6 py-4 font-semibold text-ink">

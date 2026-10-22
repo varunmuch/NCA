@@ -28,9 +28,9 @@ const PURPOSE = [
 export default async function PlansPage({
   searchParams,
 }: {
-  searchParams: Promise<{ generate?: string; goal?: string }>;
+  searchParams: Promise<{ generate?: string; goal?: string; start?: string }>;
 }) {
-  const { generate, goal } = await searchParams;
+  const { generate, goal, start } = await searchParams;
   const { me } = await getStudent();
   const { plans } = await fetchAsStudent<{ plans: PlanSummary[] }>("/me/plans");
 
@@ -115,6 +115,7 @@ export default async function PlansPage({
       <PlanGenerator
         suggestedGoal={goal?.slice(0, 200) || (me.profile.career_status === "have_goal" ? me.profile.career_aspiration : "")}
         autoFocus={generate === "1"}
+        autoStart={start === "1"}
       />
     </div>
   );

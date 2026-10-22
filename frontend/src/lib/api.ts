@@ -2,6 +2,8 @@ import type {
   CareerDetail,
   CareerInsights,
   CareerRoadmap,
+  FieldQuiz,
+  FieldQuizResult,
   InterestQuiz,
   InterestQuizAnswers,
   InterestQuizResult,
@@ -17,6 +19,9 @@ import type {
   HomeSummary,
   MeResponse,
   PlanDetail,
+  PlanStreamEvent,
+  QuickPath,
+  DocumentReview,
   PlanMilestone,
   PlanStep,
   PlanSummary,
@@ -95,6 +100,51 @@ async function request<T>(
 }
 
 const json = (body: unknown) => JSON.stringify(body);
+
+/** Read a server-sent event stream, calling onEvent for each event. */
+async function readEvents<T>(body: ReadableStream<Uint8Array>, onEvent: (event: T) => void) {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  const handle = (block: string) => {
+    let name = "";
+    let data = "";
+
+    for (const line of block.split("\n")) {
+      if (line.startsWith("event: ")) {
+        name = line.slice(7).trim();
+      } else if (line.startsWith("data: ")) {
+        data += line.slice(6);
+      }
+    }
+
+    if (name && data) {
+      onEvent({ event: name, ...JSON.parse(data) } as T);
+    }
+  };
+
+  for (;;) {
+    const { value, done } = await reader.read();
+
+    if (done) {
+      break;
+    }
+
+    buffer += decoder.decode(value, { stream: true });
+    let boundary = buffer.indexOf("\n\n");
+
+    while (boundary !== -1) {
+      handle(buffer.slice(0, boundary));
+      buffer = buffer.slice(boundary + 2);
+      boundary = buffer.indexOf("\n\n");
+    }
+  }
+
+  if (buffer.trim()) {
+    handle(buffer);
+  }
+}
 
 export const api = {
   me: () => request<MeResponse>("/me"),
@@ -275,7 +325,7 @@ export const api = {
       }
     }
 
-    return request<{ careers: CareerSummary[]; suggestion: string | null }>(`/careers?${params.toString()}`);
+    return request<{ careers: CareerSummary[]; suggestion: string | null; added?: string | null }>(`/careers?${params.toString()}`);
   },
 
   careersForMe: () =>
@@ -293,7 +343,11 @@ export const api = {
       method: "POST",
     }),
 
-  interestQuiz: () => request<InterestQuiz>("/interest-quiz"),
+  interestQuiz: (mode?: "general") =>
+    request<InterestQuiz | FieldQuiz>(`/interest-quiz${mode ? `?mode=${mode}` : ""}`),
+
+  submitFieldQuiz: (answers: Pick<InterestQuizAnswers, "activities" | "tradeoffs" | "training">) =>
+    request<FieldQuizResult>("/me/interest-quiz/field", { method: "POST", body: json(answers) }),
 
   submitInterestQuiz: (answers: InterestQuizAnswers) =>
     request<InterestQuizResult>("/me/interest-quiz", { method: "POST", body: json(answers) }),
@@ -327,6 +381,57 @@ export const api = {
   plans: () => request<{ plans: PlanSummary[] }>("/me/plans"),
 
   plan: (id: string) => request<PlanDetail>(`/me/plans/${id}`),
+
+  /** Build a plan and hear what the counselor is checking while it works. */
+  streamPlan: async (payload: { career_goal?: string; instruction?: string }, onProgress: (text: string) => void): Promise<PlanDetail> => {
+    let response: Response;
+
+    try {
+      response = await fetch(`${BASE}/me/plans/stream`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
+        body: json(payload),
+      });
+    } catch {
+      throw new ApiError("You seem to be offline. Check your connection and try again.", 0);
+    }
+
+    if (!response.ok || !response.body) {
+      const data = await response.json().catch(() => null);
+      throw new ApiError(errorMessage(data, "Your plan couldn't be created just now. Please try again."), response.status);
+    }
+
+    let final: PlanStreamEvent | null = null;
+
+    await readEvents<PlanStreamEvent>(response.body, (event) => {
+      if (event.event === "progress") {
+        onProgress(event.text);
+      } else {
+        final = event;
+      }
+    });
+
+    const finished = final as PlanStreamEvent | null;
+
+    if (!finished) {
+      throw new ApiError("The connection dropped before your plan was ready. Please try again.", 0);
+    }
+
+    if (finished.event === "error") {
+      throw new ApiError(finished.message, 503);
+    }
+
+    return (finished as { plan: PlanDetail }).plan;
+  },
+
+  careerQuickPath: (slug: string) => request<QuickPath>(`/careers/${encodeURIComponent(slug)}/quick-path`),
+
+  reviewDocument: (id: number, refresh = false) =>
+    request<DocumentReview>(
+      `/me/documents/${id}/review${refresh ? "?refresh=true" : ""}`,
+      { method: "POST" },
+      "Suggestions couldn't be made just now. Please try again."
+    ),
 
   generatePlan: (payload: { career_goal?: string; instruction?: string }) =>
     request<PlanDetail>(

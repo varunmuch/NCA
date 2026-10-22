@@ -42,6 +42,7 @@ export function ExploreCareers() {
     key: string;
     careers: CareerSummary[] | null;
     suggestion: string | null;
+    added?: string | null;
     error: string;
   } | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
@@ -63,6 +64,7 @@ export function ExploreCareers() {
   const current = response?.key === requestKey ? response : null;
   const results = current?.careers ?? null;
   const suggestion = current?.suggestion ?? null;
+  const added = current?.added ?? null;
   const error = current?.error ?? "";
 
   // "/" jumps to the search box, like most search-heavy sites.
@@ -88,7 +90,7 @@ export function ExploreCareers() {
       .then(
         (data) =>
           !cancelled &&
-          setResponse({ key: requestKey, careers: data.careers, suggestion: data.suggestion ?? null, error: "" })
+          setResponse({ key: requestKey, careers: data.careers, suggestion: data.suggestion ?? null, added: data.added ?? null, error: "" })
       )
       .catch(
         (caught) =>
@@ -326,8 +328,16 @@ export function ExploreCareers() {
         <div className="mt-6 flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm text-ink-muted" aria-live="polite">
             {results === null
-              ? "Searching…"
+              ? q
+                ? "Searching… If it's a career we don't have yet, we'll look it up in the official list."
+                : "Searching…"
               : `${results.length} career${results.length === 1 ? "" : "s"}${familyLabel ? ` in ${familyLabel}` : ""}${q ? ", best match first" : ""}`}
+            {added && (
+              <>
+                {" · "}
+                <span className="font-semibold text-ink">{added}</span> was just added to the career list from official U.S. Department of Labor data.
+              </>
+            )}
             {suggestion && (
               <>
                 {" · "}Showing results for <span className="font-semibold text-ink">“{suggestion}”</span>

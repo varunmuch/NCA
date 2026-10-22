@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ExternalLink } from "lucide-react";
 
+import { surveyNote, type EducationLevel } from "@/lib/education";
 import type { CareerFacts as Facts } from "@/types/cie";
 
 function dollars(value: number, hourly = false) {
@@ -42,7 +43,7 @@ function growthSentence(growth: number, average: number | undefined, period: str
 }
 
 /** Pay, job outlook, and how to get started, each from an official source. */
-export function CareerFacts({ facts }: { facts: Facts }) {
+export function CareerFacts({ facts, commonEducation = [] }: { facts: Facts; commonEducation?: EducationLevel[] }) {
   const national = facts.wages.national ?? {};
   const florida = facts.wages.florida ?? {};
   const outlook = facts.outlook;
@@ -93,6 +94,9 @@ export function CareerFacts({ facts }: { facts: Facts }) {
             {education.training && education.training !== "None" && <p>Plus training: {education.training.toLowerCase()}.</p>}
             {education.work_experience && education.work_experience !== "None" && (
               <p>Usually after {education.work_experience.toLowerCase()} in a related job.</p>
+            )}
+            {surveyNote(education.typical_entry, commonEducation) && (
+              <p className="font-medium text-ink">{surveyNote(education.typical_entry, commonEducation)}</p>
             )}
           </Stat>
         )}

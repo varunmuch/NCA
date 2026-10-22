@@ -328,3 +328,48 @@ def test_a_reply_still_cut_after_continuing_ends_on_a_whole_sentence(fake_turn, 
 
     assert events[-1]["event"] == "done"
     assert fake_turn[-1]["content"] == "Nursing could fit you."
+
+
+def test_goals_are_found_in_how_students_say_them():
+    from app.services.career_expansion import goal_phrases
+
+    assert goal_phrases("Help me build a roadmap. I want to become an AI Engineer someday") == ["ai engineer"]
+    assert goal_phrases("I'd like a career as a marine biologist in Florida") == ["marine biologist"]
+    assert goal_phrases("what classes should I take?") == []
+
+
+def test_a_named_career_gets_a_page_the_reply_points_to(fake_turn, monkeypatch):
+    seen = {}
+
+    async def ensure(phrase):
+        seen["phrase"] = phrase
+        return {"result": "added", "slug": "software-developers"}
+
+    async def stream(messages, **kwargs):
+        seen["system"] = messages[0]["content"]
+        yield "That's a great goal."
+
+    async def extras(*args, **kwargs):
+        return {}
+
+    monkeypatch.setattr(cs.career_expansion, "ensure_career", ensure)
+    monkeypatch.setattr(cs, "chat_stream", stream)
+    monkeypatch.setattr(cs, "chat_json", extras)
+
+    events = collect(text="I want to become a software engineer")
+    metadata = fake_turn[-1]["metadata"]
+
+    assert seen["phrase"] == "software engineer"
+    # The counselor knew about the page before writing.
+    assert "The app has a page for Software Developers" in seen["system"]
+    assert metadata["open_career"]["slug"] == "software-developers"
+    assert metadata["career_suggestions"][0]["slug"] == "software-developers"
+    assert events[-1]["event"] == "done"
+
+
+def test_the_named_careers_page_is_the_first_source():
+    context = {"candidates": [{"slug": "interior-designers"}, {"slug": "software-developers"}]}
+    cs._lead_sources_with(context, {"slug": "software-developers", "title": "Software Developers"})
+
+    assert [source["slug"] for source in context["sources"]] == ["software-developers", "interior-designers"]
+    assert context["sources_text"].startswith("[S1] Software Developers")

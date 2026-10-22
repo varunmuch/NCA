@@ -1,40 +1,26 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
   Compass,
+  Map as MapIcon,
   MessageCircle,
   Target,
 } from "lucide-react";
+
+import { QuickPathCard } from "@/components/careers/QuickPathCard";
 
 import { BrandMark } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/Button";
 import { ChipInput, TextInput } from "@/components/ui/Field";
 import { ErrorNotice } from "@/components/ui/Feedback";
 import { api } from "@/lib/api";
-import type { StudentProfile } from "@/types/cie";
+import type { CareerSummary, StudentProfile } from "@/types/cie";
 
 const GRADES = ["9th grade", "10th grade", "11th grade", "12th grade"];
-
-const SUBJECTS = [
-  "Math",
-  "Biology",
-  "Chemistry",
-  "Physics",
-  "English",
-  "History",
-  "Art",
-  "Music",
-  "Computer Science",
-  "Psychology",
-  "World Languages",
-  "Business",
-  "Health",
-  "PE & Sports",
-];
 
 const INTERESTS = [
   "Building things",
@@ -51,7 +37,7 @@ const INTERESTS = [
   "Making videos",
 ];
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 3;
 
 function Choice({
   selected,
@@ -78,6 +64,96 @@ function Choice({
   );
 }
 
+/** Type a career and pick its official title (new valid titles get a page). */
+function GoalSearch({ value, onPick }: { value: CareerSummary | null; onPick: (career: CareerSummary | null) => void }) {
+  const [query, setQuery] = useState(value?.title ?? "");
+  const [results, setResults] = useState<CareerSummary[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searched, setSearched] = useState("");
+
+  useEffect(() => {
+    const phrase = query.trim();
+
+    if (phrase.length < 3 || phrase === value?.title) {
+      return;
+    }
+
+    let active = true;
+    const timer = setTimeout(async () => {
+      setSearching(true);
+
+      try {
+        const found = await api.careers({ q: phrase });
+
+        if (active) {
+          setResults(found.careers.slice(0, 5));
+          setSearched(phrase);
+        }
+      } catch {
+        if (active) {
+          setResults([]);
+        }
+      } finally {
+        if (active) {
+          setSearching(false);
+        }
+      }
+    }, 450);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [query, value?.title]);
+
+  return (
+    <div className="mt-5">
+      <label htmlFor="career-goal" className="text-sm font-semibold">
+        What career are you thinking about?
+      </label>
+      <TextInput
+        id="career-goal"
+        autoFocus
+        value={query}
+        onChange={(event) => {
+          setQuery(event.target.value);
+          onPick(null);
+        }}
+        placeholder="For example: software engineer, nurse, electrician"
+        className="mt-1.5"
+      />
+      {searching && <p className="mt-2 text-sm text-ink-muted" role="status">Checking official job titles…</p>}
+      {!searching && results.length > 0 && !value && (
+        <ul className="mt-3 space-y-2" aria-label="Matching careers">
+          {results.map((career) => (
+            <li key={career.slug}>
+              <button
+                type="button"
+                onClick={() => {
+                  onPick(career);
+                  setQuery(career.title);
+                }}
+                className="w-full rounded-2xl border border-line bg-surface px-4 py-3 text-left hover:border-primary/40 hover:bg-primary-softer"
+              >
+                <span className="font-semibold text-ink">{career.title}</span>
+                <span className="block text-sm text-ink-muted">{career.family_label}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {!searching && searched && results.length === 0 && !value && (
+        <p className="mt-2 text-sm text-ink-muted">We couldn&apos;t find that as an official job title. Try another name for it.</p>
+      )}
+      {value && (
+        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-accent-softer px-3 py-1 text-sm font-semibold text-accent-ink">
+          <Target aria-hidden className="size-4" /> Goal: {value.title}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -91,12 +167,11 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
   const [customGrade, setCustomGrade] = useState(
     profile.grade_level && !GRADES.includes(profile.grade_level) ? profile.grade_level : ""
   );
-  const [subjects, setSubjects] = useState<string[]>(profile.favorite_subjects || []);
   const [interests, setInterests] = useState<string[]>(profile.interests || []);
   const [careerStatus, setCareerStatus] = useState<StudentProfile["career_status"]>(
     profile.career_status || ""
   );
-  const [careerGoal, setCareerGoal] = useState(profile.career_aspiration || "");
+  const [goal, setGoal] = useState<CareerSummary | null>(null);
 
   async function save(updates: Partial<StudentProfile>) {
     setSaving(true);
@@ -116,15 +191,15 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
   function updatesForStep(current: number): Partial<StudentProfile> {
     switch (current) {
       case 1:
-        return { preferred_name: preferredName.trim() };
+        return {
+          preferred_name: preferredName.trim(),
+          grade_level: (grade === "other" ? customGrade : grade).trim(),
+        };
       case 2:
-        return { grade_level: (grade === "other" ? customGrade : grade).trim() };
-      case 3:
-        return { favorite_subjects: subjects, interests };
-      case 4:
         return {
           career_status: careerStatus,
-          ...(careerStatus === "have_goal" ? { career_aspiration: careerGoal.trim() } : {}),
+          interests,
+          ...(careerStatus === "have_goal" && goal ? { career_aspiration: goal.title } : {}),
         };
       default:
         return {};
@@ -146,8 +221,7 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
     }
   }
 
-  const counselorStart =
-    careerStatus === "have_goal" ? "/counselor?start=have_goal" : careerStatus === "exploring" ? "/counselor?start=exploring" : "/counselor";
+  const canContinue = step !== 2 || careerStatus === "exploring" || (careerStatus === "have_goal" && goal !== null);
 
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
@@ -162,7 +236,7 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
         </button>
       </header>
 
-      <main className="mx-auto flex w-full max-w-xl flex-1 flex-col px-5 pb-10 pt-4">
+      <main className={`mx-auto flex w-full flex-1 flex-col px-5 pb-10 pt-4 ${step === 3 && goal ? "max-w-3xl" : "max-w-xl"}`}>
         <div
           role="progressbar"
           aria-label="Onboarding progress"
@@ -187,14 +261,10 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
         <div key={step} className="mt-6 flex-1 animate-[var(--animate-fade-up)]">
           {step === 1 && (
             <section>
-              <h1 className="font-display text-[2.25rem] font-semibold leading-tight">
-                Welcome! What should we call you?
-              </h1>
-              <p className="mt-3 text-lg text-ink-muted">
-                Your counselor will use this name when it talks with you.
-              </p>
-              <label htmlFor="preferred-name" className="sr-only">
-                Preferred name
+              <h1 className="font-display text-[2.25rem] font-semibold leading-tight">Hi! Let&apos;s get you started.</h1>
+              <p className="mt-3 text-lg text-ink-muted">Two quick questions, then you&apos;ll see your first result.</p>
+              <label htmlFor="preferred-name" className="mt-8 block text-sm font-semibold">
+                What should we call you?
               </label>
               <TextInput
                 id="preferred-name"
@@ -202,18 +272,11 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
                 value={preferredName}
                 onChange={(event) => setPreferredName(event.target.value)}
                 placeholder="Your first name or nickname"
-                className="mt-8 h-14 text-lg"
+                className="mt-1.5 h-12 text-lg"
                 maxLength={80}
-                onKeyDown={(event) => event.key === "Enter" && void next()}
               />
-            </section>
-          )}
-
-          {step === 2 && (
-            <section>
-              <h1 className="font-display text-[2.25rem] font-semibold leading-tight">What grade are you in?</h1>
-              <p className="mt-3 text-lg text-ink-muted">This helps your plan fit where you are right now.</p>
-              <div className="mt-8 flex flex-wrap gap-2.5">
+              <p className="mt-6 text-sm font-semibold">What grade are you in?</p>
+              <div className="mt-2 flex flex-wrap gap-2.5">
                 {GRADES.map((item) => (
                   <Choice key={item} selected={grade === item} onClick={() => setGrade(item)}>
                     {item}
@@ -235,43 +298,14 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
             </section>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <section>
-              <h1 className="font-display text-[2.25rem] font-semibold leading-tight">What do you enjoy?</h1>
-              <p className="mt-3 text-lg text-ink-muted">
-                Pick a few favorite subjects and interests, or type your own. There are no wrong answers.
-              </p>
-              <h2 className="mt-8 text-sm font-bold text-ink-muted">Favorite subjects</h2>
-              <div className="mt-3">
-                <ChipInput value={subjects} onChange={setSubjects} placeholder="Type a subject" suggestions={SUBJECTS} />
-              </div>
-              <h2 className="mt-7 text-sm font-bold text-ink-muted">Interests & hobbies</h2>
-              <div className="mt-3">
-                <ChipInput value={interests} onChange={setInterests} placeholder="Type an interest" suggestions={INTERESTS} />
-              </div>
-            </section>
-          )}
-
-          {step === 4 && (
-            <section>
-              <h1 className="font-display text-[2.25rem] font-semibold leading-tight">
-                Do you have a career in mind?
-              </h1>
+              <h1 className="font-display text-[2.25rem] font-semibold leading-tight">Do you have a career in mind?</h1>
               <p className="mt-3 text-lg text-ink-muted">Either answer is a great place to start.</p>
               <div className="mt-8 grid gap-3 sm:grid-cols-2">
                 {[
-                  {
-                    value: "have_goal" as const,
-                    icon: Target,
-                    title: "I have a career in mind",
-                    body: "Let's map out how to get there.",
-                  },
-                  {
-                    value: "exploring" as const,
-                    icon: Compass,
-                    title: "I'm still figuring it out",
-                    body: "Totally normal. Let's discover what fits you.",
-                  },
+                  { value: "have_goal" as const, icon: Target, title: "I have a career in mind", body: "See how to get there, right away." },
+                  { value: "exploring" as const, icon: Compass, title: "I'm still figuring it out", body: "Totally normal. Let's find what fits." },
                 ].map((option) => (
                   <button
                     key={option.value}
@@ -279,9 +313,7 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
                     aria-pressed={careerStatus === option.value}
                     onClick={() => setCareerStatus(option.value)}
                     className={`rounded-[var(--radius-card)] border-2 p-5 text-left transition-colors ${
-                      careerStatus === option.value
-                        ? "border-primary bg-primary-softer"
-                        : "border-line bg-surface hover:border-primary/40"
+                      careerStatus === option.value ? "border-primary bg-primary-softer" : "border-line bg-surface hover:border-primary/40"
                     }`}
                   >
                     <option.icon aria-hidden className="size-6 text-primary" />
@@ -290,37 +322,52 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
                   </button>
                 ))}
               </div>
-              {careerStatus === "have_goal" && (
-                <div className="mt-5">
-                  <label htmlFor="career-goal" className="text-sm font-semibold">
-                    What career are you thinking about?
-                  </label>
-                  <TextInput
-                    id="career-goal"
-                    value={careerGoal}
-                    onChange={(event) => setCareerGoal(event.target.value)}
-                    placeholder="For example: nurse, game designer, electrician"
-                    className="mt-1.5"
-                  />
+              {careerStatus === "have_goal" && <GoalSearch value={goal} onPick={setGoal} />}
+              {careerStatus === "exploring" && (
+                <div className="mt-6">
+                  <h2 className="text-sm font-bold text-ink-muted">Pick a few things you enjoy (optional)</h2>
+                  <div className="mt-3">
+                    <ChipInput value={interests} onChange={setInterests} placeholder="Type an interest" suggestions={INTERESTS} />
+                  </div>
                 </div>
               )}
             </section>
           )}
 
-          {step === 5 && (
-            <section className="text-center">
-              <h1 className="font-display mt-4 text-[2.25rem] font-semibold leading-tight">
-                You&apos;re all set{preferredName ? `, ${preferredName}` : ""}!
+          {step === 3 && goal && (
+            <section>
+              <h1 className="font-display text-[2rem] font-semibold leading-tight">
+                {preferredName ? `${preferredName}, here's` : "Here's"} your path to {goal.title}
               </h1>
-              <p className="mx-auto mt-3 max-w-md text-lg text-ink-muted">
-                Your AI Career Counselor is ready to help you explore, ask questions, and build a plan that works for you.
-              </p>
-              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <Button size="lg" loading={saving} onClick={() => finish(counselorStart)} icon={<MessageCircle aria-hidden className="size-[18px]" />}>
+              <p className="mt-2 text-lg text-ink-muted">Real numbers, real Florida colleges. Your counselor can build the full plan next.</p>
+              <div className="mt-6">
+                <QuickPathCard slug={goal.slug} title="Your path in 30 seconds" />
+              </div>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <Button size="lg" loading={saving} onClick={() => finish("/plan?start=1")} icon={<MapIcon aria-hidden className="size-[18px]" />}>
+                  Build my full plan
+                </Button>
+                <Button size="lg" variant="secondary" disabled={saving} onClick={() => finish("/counselor?start=have_goal")} icon={<MessageCircle aria-hidden className="size-[18px]" />}>
                   Talk to my counselor
                 </Button>
-                <Button size="lg" variant="secondary" disabled={saving} onClick={() => finish("/")}>
-                  Look around first
+              </div>
+            </section>
+          )}
+
+          {step === 3 && !goal && (
+            <section className="text-center">
+              <h1 className="font-display mt-4 text-[2.25rem] font-semibold leading-tight">
+                Let&apos;s find what fits{preferredName ? `, ${preferredName}` : ""}.
+              </h1>
+              <p className="mx-auto mt-3 max-w-md text-lg text-ink-muted">
+                The interest quiz takes about 5 minutes and shows careers that match you, with real pay and schools.
+              </p>
+              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                <Button size="lg" loading={saving} onClick={() => finish("/discover?mode=general")} icon={<Compass aria-hidden className="size-[18px]" />}>
+                  Take the quiz
+                </Button>
+                <Button size="lg" variant="secondary" disabled={saving} onClick={() => finish("/counselor?start=exploring")} icon={<MessageCircle aria-hidden className="size-[18px]" />}>
+                  Just talk to my counselor
                 </Button>
               </div>
             </section>
@@ -339,15 +386,10 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
             >
               Back
             </Button>
-            <div className="flex gap-2">
-              <Button variant="ghost" onClick={() => next(true)} disabled={saving}>
-                Skip
-              </Button>
-              <Button onClick={() => next()} loading={saving}>
-                Continue
-                <ArrowRight aria-hidden className="size-4" />
-              </Button>
-            </div>
+            <Button onClick={() => next()} loading={saving} disabled={!canContinue}>
+              {step === 2 ? "Show me" : "Continue"}
+              <ArrowRight aria-hidden className="size-4" />
+            </Button>
           </div>
         )}
       </main>

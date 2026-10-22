@@ -131,6 +131,68 @@ def _dollars(value) -> str:
     return f"${value:,.0f}"
 
 
+def _pathway(story: list, pathway: dict | None) -> None:
+    """Courses, majors, Florida colleges and certifications for the main career."""
+
+    if not pathway:
+        return
+
+    title = pathway.get("career_title", "")
+    _section(story, f"My path to {title}" if title else "My path", [_p(pathway.get("summary", ""))] if pathway.get("summary") else [])
+
+    courses = [
+        {"title": f"{item['grade']}: {item['course']} ({item['kind']})", "why": item.get("why", "")}
+        for item in pathway.get("courses") or []
+    ]
+    _section(story, "Courses to take in high school", _titled_items(courses, "title", "why"))
+
+    majors = [
+        {
+            "title": f"{item['title']} (offered at {item['florida_colleges']} Florida colleges)",
+            "why": " · ".join(part for part in [("Includes " + ", ".join(item["includes"][:3])) if item.get("includes") else "", item.get("why", "")] if part),
+        }
+        for item in pathway.get("majors") or []
+    ]
+    _section(story, "College majors", _titled_items(majors, "title", "why"))
+
+    colleges = []
+
+    for college in pathway.get("colleges") or []:
+        facts = [f"{college['city']}, {college['ownership']} {college['kind']}"]
+        facts.append(f"cost after aid {_dollars(college['net_price'])}/yr" if college.get("net_price") else "cost not published")
+
+        if college.get("graduation_rate") is not None:
+            facts.append(f"graduation rate {college['graduation_rate']}%")
+
+        programs = "; ".join(
+            f"{program['credential']} in {program['title']}"
+            + (f" (graduates earn {_dollars(program['earnings_median'])})" if program.get("earnings_median") else "")
+            for program in (college.get("programs") or [])[:2]
+        )
+        body = " · ".join(part for part in [", ".join(facts), programs, college.get("why", "")] if part)
+        colleges.append({"title": college["name"], "why": body})
+
+    _section(story, "Florida colleges to look at", _titled_items(colleges, "title", "why"))
+
+    certs = [
+        {
+            "title": f"{cert['name']} ({cert['organization']})",
+            "why": " · ".join(
+                part
+                for part in ["No degree needed" if cert.get("beginner_friendly") else "Needs a degree or work experience first", cert.get("why", "")]
+                if part
+            ),
+        }
+        for cert in pathway.get("certifications") or []
+    ]
+    _section(story, "Certifications to work toward", _titled_items(certs, "title", "why"))
+
+    names = [source.get("name") for source in (pathway.get("sources") or {}).values() if source and source.get("name")]
+
+    if names:
+        story.append(_p("Courses, majors, colleges and certifications: " + "; ".join(names) + ".", "small"))
+
+
 def _simple_plan(story: list, content: dict, task_status: dict[str, str]) -> None:
     """The Phase 5 plan: next 3 steps first, then careers with sourced facts."""
 
@@ -164,9 +226,17 @@ def _simple_plan(story: list, content: dict, task_status: dict[str, str]) -> Non
         if card.get("education"):
             facts.append(f"Typical education to start: {card['education']}")
 
+        survey = card.get("education_survey") or {}
+        top = (survey.get("levels") or [None])[0]
+
+        if top and card.get("education") and top["level"].lower() != card["education"].lower():
+            facts.append(f"{top['percent']}% of workers surveyed say a {top['level'].lower()} is what the job requires")
+
         careers.append({"title": card.get("title", ""), "why": " · ".join([card.get("why", ""), *facts])})
 
     _section(story, "Careers I'm exploring", _titled_items(careers, "title", "why"))
+
+    _pathway(story, content.get("pathway"))
 
     for period in content.get("this_year") or []:
         _section(story, period.get("period", "This year"), [_bullets(period.get("steps") or [])])
