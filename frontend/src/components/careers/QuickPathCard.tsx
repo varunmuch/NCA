@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Award, BookOpen, Check, Clock, GraduationCap, PlayCircle, School, Wallet, X } from "lucide-react";
+import { Award, BookOpen, Check, Clock, GraduationCap, School, Wallet, X } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/Feedback";
 import { api } from "@/lib/api";
@@ -87,31 +87,6 @@ export function QuickPathCard({ slug, initial, title = "In 30 seconds" }: { slug
       <h2 id={`quick-${slug}`} className="mt-1 text-xl font-bold text-ink">
         {quick.title}
       </h2>
-
-      {quick.video && (
-        <figure className="mt-5 overflow-hidden rounded-2xl border border-line bg-black">
-          <video
-            controls
-            preload="none"
-            playsInline
-            className="aspect-video w-full"
-            aria-label={`Video: what ${quick.title} do`}
-          >
-            <source src={quick.video.mp4} type="video/mp4" />
-          </video>
-          <figcaption className="flex flex-wrap items-center justify-between gap-2 bg-surface px-4 py-2.5 text-xs text-ink-muted">
-            <span>
-              <PlayCircle aria-hidden className="mr-1 inline size-3.5" />
-              Real workers, about 2 minutes. U.S. Department of Labor, CareerOneStop.
-            </span>
-            {quick.video.page && (
-              <a href={quick.video.page} target="_blank" rel="noreferrer" className="font-semibold text-primary hover:underline">
-                Watch on CareerOneStop
-              </a>
-            )}
-          </figcaption>
-        </figure>
-      )}
 
       <dl className="mt-5 grid gap-4 sm:grid-cols-2">
         {quick.pay_median ? (

@@ -596,8 +596,6 @@ export type QuickPath = {
   university: QuickPathCollege | null;
   state_college: QuickPathCollege | null;
   certification: { name: string; organization: string; url: string; beginner_friendly: boolean } | null;
-  // Official CareerOneStop video (U.S. Department of Labor), when there is one.
-  video?: { code: string; title: string; mp4: string; page: string } | null;
 };
 
 export type PlanStreamEvent =

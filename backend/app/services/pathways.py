@@ -534,6 +534,5 @@ async def quick_path(slug: str) -> dict | None:
         "university": college_card(university),
         "state_college": college_card(state_college),
         "certification": {key: first_cert[key] for key in ("name", "organization", "url", "beginner_friendly")} if first_cert else None,
-        "video": await video(code) if code else None,
         "sources": sources(),
     }

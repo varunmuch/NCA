@@ -14,8 +14,7 @@ test("a career page opens with the 30-second card and real Florida options", asy
   await expect(card.getByText("University near you")).toBeVisible();
   await expect(card.getByText("Or start at a state college")).toBeVisible();
   await expect(card.getByText("AP Computer Science A", { exact: false })).toBeVisible();
-  // An official CareerOneStop video, loaded only when played.
-  await expect(card.locator("video source")).toHaveAttribute("src", /cdn\.careeronestop\.org\/.+\.mp4$/);
+  await expect(card.locator("video")).toHaveCount(0);
 
   // React to each task; the summary appears once all are answered.
   const yes = card.getByRole("button", { name: "Sounds like me" });
