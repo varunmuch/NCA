@@ -8,7 +8,7 @@ import { formatDate } from "@/lib/format";
 import { fetchAsStudent, getStudent } from "@/lib/student-session";
 import type { PlanSummary } from "@/types/cie";
 
-export const metadata: Metadata = { title: "My Career Plan" };
+export const metadata: Metadata = { title: "My Path" };
 
 const PURPOSE = [
   {
@@ -53,14 +53,14 @@ export default async function PlansPage({
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="My Career Plan"
+        eyebrow="My Path"
         title={lineages.length ? "Your plans" : "Let's build your plan"}
         description="Your plan turns everything you've explored into what to actually do this year, so ideas become steps."
       />
 
       <section aria-labelledby="plan-purpose" className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-7">
         <h2 id="plan-purpose" className="font-semibold text-ink">
-          What a career plan is for
+          What My Path is for
         </h2>
         <dl className="mt-4 grid gap-6 md:grid-cols-3">
           {PURPOSE.map((item, index) => (

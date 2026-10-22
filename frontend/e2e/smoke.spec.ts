@@ -112,6 +112,11 @@ test("plan shows the next 3 steps and they can be checked off", async ({ page })
   await first.click();
   await expect(first).toHaveAttribute("aria-checked", "false");
 
-  await page.getByText("See the full plan").click();
-  await expect(page.getByRole("heading", { name: "After high school" })).toBeVisible();
+  // My Path: one page, in tabs.
+  await page.getByRole("tab", { name: "High school" }).click();
+  await expect(page.getByRole("tabpanel")).toBeVisible();
+  await page.getByRole("tab", { name: "College" }).click();
+  await expect(page.getByRole("heading", { name: /Other routes after high school|Florida colleges and universities/ }).first()).toBeVisible();
+  await page.getByRole("tab", { name: "This month" }).click();
+  await expect(page.getByRole("heading", { name: "Your next 3 steps this month" })).toBeVisible();
 });

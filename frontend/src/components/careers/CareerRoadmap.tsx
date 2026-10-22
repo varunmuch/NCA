@@ -294,9 +294,16 @@ export function CareerRoadmap({ slug, title, autoBuild = false }: { slug: string
       <div className="bg-surface-2 p-6 sm:p-8">
         <div className="flex flex-wrap items-center gap-2">
           <MapIcon aria-hidden className="size-5 text-primary" />
-          <h2 className="text-xl font-bold">Your roadmap: {title}</h2>
+          <h2 className="text-xl font-bold">Roadmap preview: {title}</h2>
           <Badge tone="primary">Personalized</Badge>
         </div>
+        <p className="mt-2 text-sm text-ink-muted">
+          A preview for this career.{" "}
+          <Link href={`/plan?start=1&goal=${encodeURIComponent(title)}`} className="font-semibold text-primary hover:underline">
+            Make it my path
+          </Link>{" "}
+          to get one plan with steps you can check off, classes by grade, colleges and certifications.
+        </p>
 
         {!roadmap && !building && (
           <>

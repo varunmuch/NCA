@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CircleAlert, CircleCheck, FileText, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, Check, CircleAlert, CircleCheck, FileText, Loader2 } from "lucide-react";
 
 import { ButtonLink } from "@/components/ui/Button";
+import { api } from "@/lib/api";
 import { timeAgo } from "@/lib/format";
 import type { HomeDocument, HomeSummary } from "@/types/cie";
 
@@ -15,6 +17,80 @@ function greeting() {
   }
 
   return hour < 18 ? "Good afternoon" : "Good evening";
+}
+
+/** One step from the saved plan, checkable right here. */
+function ThisWeek({ home }: { home: HomeSummary }) {
+  const step = home.this_week;
+  const [done, setDone] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  if (!step) {
+    return null;
+  }
+
+  return (
+    <section aria-labelledby="this-week-title" className="rounded-[var(--radius-card)] border border-primary/25 bg-primary-softer p-6 sm:p-7">
+      <p className="text-sm font-semibold text-primary">Your step this week</p>
+      <div className="mt-2 flex items-start gap-4">
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={done}
+          aria-label={`Mark "${step.title}" ${done ? "not done" : "done"}`}
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+
+            try {
+              await api.updateTask(step.id, { status: done ? "not_started" : "done" });
+              setDone(!done);
+            } finally {
+              setBusy(false);
+            }
+          }}
+          className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full border-2 transition-colors disabled:opacity-50 ${
+            done ? "border-accent bg-accent text-on-accent" : "border-line-strong bg-surface hover:border-accent"
+          }`}
+        >
+          {done && <Check aria-hidden className="size-4" />}
+        </button>
+        <div>
+          <h2 id="this-week-title" className={`text-lg font-semibold leading-snug ${done ? "text-ink-muted line-through" : "text-ink"}`}>
+            {step.title}
+          </h2>
+          <p className="mt-1 text-sm text-ink-muted" role="status">
+            {done ? "Nice work. Your next step will be here when you come back." : "Tap the circle when it's done."}
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** What changed since the last visit, from the student's own records. */
+function SinceLastTime({ home }: { home: HomeSummary }) {
+  const since = home.since_last_time;
+
+  if (!since || since.items.length === 0) {
+    return null;
+  }
+
+  return (
+    <section aria-labelledby="since-title" className="rounded-[var(--radius-card)] border border-line bg-surface px-5 py-4">
+      <h2 id="since-title" className="text-sm font-semibold text-ink-muted">
+        Since you were last here ({timeAgo(since.since)})
+      </h2>
+      <ul className="mt-2 space-y-1">
+        {since.items.map((item) => (
+          <li key={item} className="flex gap-2 text-[15px] text-ink">
+            <CircleCheck aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }
 
 /** The one thing to do next, chosen by the backend from the student's records. */
@@ -206,7 +282,10 @@ export function HomeDashboard({ home }: { home: HomeSummary }) {
         {home.grade_level && <p className="mt-1 text-ink-muted">{home.grade_level}</p>}
       </header>
 
-      <NextStep home={home} />
+      <SinceLastTime home={home} />
+      <ThisWeek home={home} />
+      {/* The weekly step already is the next step when it comes from the plan. */}
+      {!(home.this_week && home.next_step.kind === "task") && <NextStep home={home} />}
       <PlanSteps home={home} />
       <DocumentsStrip home={home} />
       <ContinueList home={home} />

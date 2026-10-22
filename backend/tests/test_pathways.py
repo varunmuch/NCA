@@ -142,3 +142,10 @@ def test_plan_careers_stay_in_the_goal_field_and_are_filled():
     assert "software-developers" in field
     assert "bioengineers-and-biomedical-engineers" not in field
     assert len(field_quiz.field_for("software-developers")) >= 3
+
+
+def test_career_videos_are_official_mp4s():
+    found = asyncio.run(pathways.video("15-1252.00"))
+
+    assert found["mp4"].startswith("https://cdn.careeronestop.org/") and found["mp4"].endswith(".mp4")
+    assert found["title"]

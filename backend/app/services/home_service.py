@@ -3,16 +3,18 @@ The data behind the Home page. Everything shown is read from the
 student's real records; nothing is generated here.
 """
 
+from datetime import datetime, timedelta, timezone
+
 from sqlalchemy import func, select
 
 from app.core.database import AsyncSessionLocal
-from app.db.models import Message, ProgressTask, SavedCareer
+from app.db.models import CareerPlan, Message, ProgressTask, SavedCareer
 from app.services import career_catalog, field_quiz
 from app.services.conversation_service import list_conversations
 from app.services.document_service import list_documents
 from app.services.plan_service import latest_plan
 from app.services.roadmap_service import list_roadmaps
-from app.services.student_service import display_name, get_profile_dict, list_facts
+from app.services.student_service import display_name, get_profile_dict, list_facts, save_profile_dict
 
 
 async def _saved_slugs(student_id: str) -> list[str]:
@@ -284,8 +286,89 @@ async def _documents(student_id: str) -> dict:
     return latest
 
 
+# A new visit starts after this long away, so "Since last time" survives refreshes.
+NEW_VISIT_AFTER = timedelta(hours=6)
+
+
+def _parse(moment: str) -> datetime | None:
+    try:
+        parsed = datetime.fromisoformat(moment)
+    except (TypeError, ValueError):
+        return None
+
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+
+
+async def _visit(student_id: str, profile: dict) -> datetime | None:
+    """Record this visit; return when the previous visit started."""
+
+    now = datetime.now(timezone.utc)
+    seen = _parse(profile.get("home_seen_at", ""))
+
+    if seen is None or now - seen > NEW_VISIT_AFTER:
+        await save_profile_dict(student_id, {"home_seen_at": now.isoformat(), "home_prev_seen_at": seen.isoformat() if seen else ""})
+        return seen
+
+    return _parse(profile.get("home_prev_seen_at", ""))
+
+
+def since_items(since: datetime, done: list[str], plans: int, documents: list[dict], roadmaps: list[dict], quiz_at: str) -> list[str]:
+    """Plain sentences about what the student did after `since`."""
+
+    items = []
+
+    if done:
+        items.append(f"You finished {len(done)} step{'s' if len(done) != 1 else ''}: " + "; ".join(done[:2]) + ("…" if len(done) > 2 else ""))
+
+    new_documents = [item for item in documents if (_parse(item.get("uploaded_at") or "") or since) > since]
+
+    if new_documents:
+        items.append("You added your " + " and ".join(sorted({item["doc_type"] for item in new_documents})))
+
+    if plans:
+        items.append(f"You made {'a new plan' if plans == 1 else f'{plans} new plans'}")
+
+    new_roadmaps = [item for item in roadmaps if (_parse(item.get("updated_at") or "") or since) > since]
+
+    if new_roadmaps:
+        items.append("You built a roadmap for " + ", ".join(item["title"] for item in new_roadmaps[:2]))
+
+    if (_parse(quiz_at) or since) > since:
+        items.append("You took the interest quiz")
+
+    return items
+
+
+async def _since_last_time(student_id: str, profile: dict, since: datetime | None, documents: list[dict], roadmaps: list[dict]) -> dict | None:
+    """What the student did since their last visit, from their own records."""
+
+    if since is None:
+        return None
+
+    naive = since.replace(tzinfo=None)
+
+    async with AsyncSessionLocal() as db:
+        done = (
+            await db.execute(
+                select(ProgressTask.title)
+                .where(ProgressTask.student_id == student_id, ProgressTask.status == "done", ProgressTask.updated_at > naive)
+                .order_by(ProgressTask.updated_at.desc())
+            )
+        ).scalars().all()
+        plans = (
+            await db.execute(
+                select(func.count()).select_from(CareerPlan).where(CareerPlan.student_id == student_id, CareerPlan.created_at > naive)
+            )
+        ).scalar_one()
+
+    items = since_items(since, list(done), plans, documents, roadmaps, profile.get("interest_quiz_at", ""))
+
+    return {"since": since.isoformat(), "items": items}
+
+
 async def home_summary(student_id: str) -> dict:
     profile = await get_profile_dict(student_id)
+    previous_visit = await _visit(student_id, profile)
     conversations = await list_conversations(student_id, limit=5)
     facts = await list_facts(student_id)
     plan = await latest_plan(student_id)
@@ -325,4 +408,7 @@ async def home_summary(student_id: str) -> dict:
         "documents": await _documents(student_id),
         "plan": plan_preview,
         "pending_facts": pending,
+        # One step at a time, checkable from Home.
+        "this_week": journey["next_task"],
+        "since_last_time": await _since_last_time(student_id, profile, previous_visit, await list_documents(student_id), roadmaps),
     }

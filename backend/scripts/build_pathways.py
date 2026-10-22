@@ -220,6 +220,26 @@ async def build_certifications() -> dict:
     return result
 
 
+async def build_videos() -> dict:
+    """Career videos for every catalog occupation (those that have one)."""
+
+    catalog = json.loads((DATA / "careers.json").read_text())
+    result: dict[str, list] = {}
+
+    for career in catalog["careers"]:
+        try:
+            found = await careeronestop.videos(career["onet_code"])
+        except careeronestop.CareerOneStopError as exc:
+            print(f"  {career['onet_code']}: {exc}")
+            continue
+
+        if found:
+            result[career["onet_code"]] = found
+
+    print(f"  videos for {len(result)} of {len(catalog['careers'])} careers")
+    return result
+
+
 def write(name: str, payload: dict, source: dict) -> None:
     path = DATA / name
     path.write_text(json.dumps({"source": source, "data": payload}, ensure_ascii=False, separators=(",", ":")))
@@ -228,12 +248,24 @@ def write(name: str, payload: dict, source: dict) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--onet-dir", type=Path, required=True)
-    parser.add_argument("--crosswalk", type=Path, required=True)
-    parser.add_argument("--scorecard", type=Path, nargs="+", required=True)
+    parser.add_argument("--onet-dir", type=Path)
+    parser.add_argument("--crosswalk", type=Path)
+    parser.add_argument("--scorecard", type=Path, nargs="+")
     parser.add_argument("--skip-certifications", action="store_true")
+    parser.add_argument("--only-videos", action="store_true")
     args = parser.parse_args()
     today = date.today().isoformat()
+
+    if args.only_videos:
+        write(
+            "career_videos.json",
+            asyncio.run(build_videos()),
+            {"name": "CareerOneStop career videos, U.S. Department of Labor", "url": "https://www.careeronestop.org/Videos/careeronestop-videos.aspx", "retrieved": today},
+        )
+        return
+
+    if not (args.onet_dir and args.crosswalk and args.scorecard):
+        parser.error("--onet-dir, --crosswalk and --scorecard are required unless --only-videos")
 
     write(
         "onet_education.json",

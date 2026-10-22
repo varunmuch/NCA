@@ -6,7 +6,7 @@ import { PlanWorkspace } from "@/components/plan/PlanWorkspace";
 import { identityFromSession, studentFetch } from "@/lib/cie-server";
 import type { PlanDetail } from "@/types/cie";
 
-export const metadata: Metadata = { title: "My Career Plan" };
+export const metadata: Metadata = { title: "My Path" };
 
 export default async function PlanPage({
   params,

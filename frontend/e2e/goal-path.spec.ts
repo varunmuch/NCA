@@ -14,6 +14,8 @@ test("a career page opens with the 30-second card and real Florida options", asy
   await expect(card.getByText("University near you")).toBeVisible();
   await expect(card.getByText("Or start at a state college")).toBeVisible();
   await expect(card.getByText("AP Computer Science A", { exact: false })).toBeVisible();
+  // An official CareerOneStop video, loaded only when played.
+  await expect(card.locator("video source")).toHaveAttribute("src", /cdn\.careeronestop\.org\/.+\.mp4$/);
 
   // React to each task; the summary appears once all are answered.
   const yes = card.getByRole("button", { name: "Sounds like me" });
@@ -39,4 +41,20 @@ test("making a career the goal keeps quiz results in that field", async ({ page 
   await page.goto("/discover?mode=general");
   await expect(page.getByRole("heading", { name: "Careers in your field: Software Developers" })).toBeVisible();
   await expect(page.getByText(/Outside your goal/)).toBeVisible();
+});
+
+test("Home shows this week's step from the saved plan, checkable in one tap", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "Checks a step off; runs once.");
+
+  await page.goto("/");
+  const section = page.locator("section", { has: page.getByText("Your step this week") });
+  await expect(section).toBeVisible();
+
+  const box = section.getByRole("checkbox");
+  await box.click();
+  await expect(box).toHaveAttribute("aria-checked", "true");
+  await expect(section.getByText("Nice work.")).toBeVisible();
+  // Undo, so the account stays as it was.
+  await box.click();
+  await expect(box).toHaveAttribute("aria-checked", "false");
 });

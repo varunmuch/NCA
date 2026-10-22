@@ -74,3 +74,6 @@ class StudentProfile(BaseModel):
     # Focused quiz within the student's goal field (field_quiz.py).
     field_quiz: dict = Field(default_factory=dict)
     interest_quiz_at: str = ""
+    # Home visits, for "Since last time" (ISO times, set by home_service).
+    home_seen_at: str = ""
+    home_prev_seen_at: str = ""

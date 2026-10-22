@@ -25,7 +25,7 @@ export const primaryNav: NavItem[] = [
   { href: "/counselor", label: "AI Counselor", shortLabel: "Counselor", icon: MessageCircle },
   { href: "/discover", label: "Interest Quiz", shortLabel: "Quiz", icon: Lightbulb },
   { href: "/explore", label: "Explore Careers", shortLabel: "Explore", icon: Compass },
-  { href: "/plan", label: "My Career Plan", shortLabel: "Plan", icon: Map },
+  { href: "/plan", label: "My Path", shortLabel: "Path", icon: Map },
   { href: "/profile", label: "My Profile", shortLabel: "Profile", icon: UserRound },
 ];
 

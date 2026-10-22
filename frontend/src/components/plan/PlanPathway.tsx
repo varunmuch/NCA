@@ -43,22 +43,29 @@ function Tag({ children, tone = "plain" }: { children: ReactNode; tone?: "plain"
  * majors, Florida colleges, and certifications. Every name comes from an
  * official list and every figure from the data, not from the AI.
  */
-export function PlanPathway({ pathway }: { pathway: Pathway }) {
+export type PathwayPart = "courses" | "majors" | "colleges" | "certifications";
+
+export function PlanPathway({ pathway, only, bare = false }: { pathway: Pathway; only?: PathwayPart[]; bare?: boolean }) {
+  const show = (part: PathwayPart) => !only || only.includes(part);
   const grades = GRADE_ORDER.filter((grade) => pathway.courses.some((course) => course.grade === grade));
   const universities = pathway.colleges.filter((college) => college.kind === "4-year");
   const stateColleges = pathway.colleges.filter((college) => college.kind === "2-year");
   const sources = Object.values(pathway.sources ?? {}).filter((source) => source?.name);
 
   return (
-    <section aria-labelledby="pathway-title" className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-7">
-      <p className="text-sm font-semibold text-primary">Your path</p>
-      <h2 id="pathway-title" className="mt-1 text-xl font-bold text-ink">
-        How to become: {pathway.career_title}
-      </h2>
-      {pathway.summary && <p className="mt-2 leading-relaxed text-ink-muted">{pathway.summary}</p>}
+    <section aria-labelledby={bare ? undefined : "pathway-title"} className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-7">
+      {!bare && (
+        <>
+          <p className="text-sm font-semibold text-primary">Your path</p>
+          <h2 id="pathway-title" className="mt-1 text-xl font-bold text-ink">
+            How to become: {pathway.career_title}
+          </h2>
+          {pathway.summary && <p className="mt-2 leading-relaxed text-ink-muted">{pathway.summary}</p>}
+        </>
+      )}
 
-      <div className="mt-7 space-y-8">
-        {pathway.courses.length > 0 && (
+      <div className={`${bare ? "" : "mt-7 "}space-y-8`}>
+        {show("courses") && pathway.courses.length > 0 && (
           <Section id="pathway-courses" icon={<BookOpen className="size-5" />} title="Courses to take in high school">
             <div className="space-y-5">
               {grades.map((grade) => (
@@ -83,7 +90,7 @@ export function PlanPathway({ pathway }: { pathway: Pathway }) {
           </Section>
         )}
 
-        {pathway.majors.length > 0 && (
+        {show("majors") && pathway.majors.length > 0 && (
           <Section id="pathway-majors" icon={<GraduationCap className="size-5" />} title="College majors that lead here">
             <ul className="grid gap-3 md:grid-cols-3">
               {pathway.majors.map((major) => (
@@ -100,7 +107,7 @@ export function PlanPathway({ pathway }: { pathway: Pathway }) {
           </Section>
         )}
 
-        {pathway.colleges.length > 0 && (
+        {show("colleges") && pathway.colleges.length > 0 && (
           <Section
             id="pathway-colleges"
             icon={<School className="size-5" />}
@@ -169,7 +176,7 @@ export function PlanPathway({ pathway }: { pathway: Pathway }) {
           </Section>
         )}
 
-        {pathway.certifications.length > 0 && (
+        {show("certifications") && pathway.certifications.length > 0 && (
           <Section id="pathway-certs" icon={<Award className="size-5" />} title="Certifications to work toward">
             <ul className="space-y-3">
               {pathway.certifications.map((cert) => (

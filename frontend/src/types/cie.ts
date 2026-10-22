@@ -458,6 +458,10 @@ export type HomeSummary = {
   } | null;
   pending_facts: number;
   roadmaps: RoadmapSummary[];
+  // The next open step from the saved plan, checkable from Home.
+  this_week?: { id: number; title: string; due_date: string | null; status: string } | null;
+  // What the student did since their previous visit (from their own records).
+  since_last_time?: { since: string; items: string[] } | null;
 };
 
 export type RoadmapSummary = {
@@ -592,6 +596,8 @@ export type QuickPath = {
   university: QuickPathCollege | null;
   state_college: QuickPathCollege | null;
   certification: { name: string; organization: string; url: string; beginner_friendly: boolean } | null;
+  // Official CareerOneStop video (U.S. Department of Labor), when there is one.
+  video?: { code: string; title: string; mp4: string; page: string } | null;
 };
 
 export type PlanStreamEvent =

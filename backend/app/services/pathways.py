@@ -19,6 +19,7 @@ from app.services import career_catalog, careeronestop
 logger = logging.getLogger(__name__)
 
 DATA = Path(__file__).resolve().parents[1] / "data"
+ADDED_VIDEOS_PATH = Path(__file__).resolve().parents[2] / "storage" / "catalog" / "added_videos.json"
 ADDED_CERTS_PATH = Path(__file__).resolve().parents[2] / "storage" / "catalog" / "added_certifications.json"
 
 # Cities within about an hour of NeoCity Academy (Kissimmee).
@@ -86,6 +87,32 @@ def _colleges() -> dict:
 @lru_cache(maxsize=1)
 def _certifications() -> dict:
     return _load("certifications.json")
+
+
+@lru_cache(maxsize=1)
+def _videos() -> dict:
+    return _load("career_videos.json")
+
+
+async def video(code: str) -> dict | None:
+    """The official CareerOneStop video for an occupation, if there is one."""
+
+    if code in _videos()["data"]:
+        return _videos()["data"][code][0]
+
+    added = json.loads(ADDED_VIDEOS_PATH.read_text(encoding="utf-8")) if ADDED_VIDEOS_PATH.exists() else {}
+
+    if code not in added:
+        try:
+            added[code] = await careeronestop.videos(code)
+        except careeronestop.CareerOneStopError as exc:
+            logger.warning("Video for %s unavailable: %s", code, exc)
+            return None
+
+        ADDED_VIDEOS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        ADDED_VIDEOS_PATH.write_text(json.dumps(added), encoding="utf-8")
+
+    return added[code][0] if added[code] else None
 
 
 def sources() -> dict:
@@ -507,5 +534,6 @@ async def quick_path(slug: str) -> dict | None:
         "university": college_card(university),
         "state_college": college_card(state_college),
         "certification": {key: first_cert[key] for key in ("name", "organization", "url", "beginner_friendly")} if first_cert else None,
+        "video": await video(code) if code else None,
         "sources": sources(),
     }

@@ -87,3 +87,28 @@ async def certifications(onet_code: str, limit: int = 30) -> list[dict]:
     data = await _get(f"{quote(onet_code)}/0/0/0/0/0/0/0/0/0/{limit}", base=CERT_BASE)
 
     return [item for item in data.get("CertList") or [] if item.get("Id") and item.get("Name")]
+
+
+VIDEO_FILE = "https://cdn.careeronestop.org/OccVids/OccupationVideos/{code}.mp4"
+
+
+async def videos(onet_code: str) -> list[dict]:
+    """
+    Short official career videos (U.S. Department of Labor) for an
+    occupation: [{"code", "title", "mp4", "page"}].
+    """
+
+    data = await _get(f"{quote(onet_code)}/US?videos=true")
+    found = (data.get("OccupationDetail") or [{}])[0]
+    page = found.get("COSVideoURL") or ""
+
+    return [
+        {
+            "code": item["VideoCode"],
+            "title": item.get("VideoTitle") or found.get("OnetTitle", ""),
+            "mp4": VIDEO_FILE.format(code=item["VideoCode"]),
+            "page": page,
+        }
+        for item in found.get("Video") or []
+        if item.get("VideoCode")
+    ]
