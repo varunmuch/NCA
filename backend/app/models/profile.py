@@ -71,8 +71,15 @@ class StudentProfile(BaseModel):
     # subjects, training), and when it was taken.
     interest_scores: dict[str, int] = Field(default_factory=dict)
     interest_quiz: dict = Field(default_factory=dict)
-    # Focused quiz within the student's goal field (field_quiz.py).
+    # Focused quiz within the student's goal field (field_quiz.py); no longer
+    # offered, kept so older profiles still validate.
     field_quiz: dict = Field(default_factory=dict)
+    # What the student told us that their documents may not show: SAT, ACT,
+    # service hours, paid work hours, the major they want, interests
+    # (student_record.py).
+    academic_profile: dict = Field(default_factory=dict)
+    # The quiz's major and minor suggestions (major_agent.py).
+    major_minor: dict = Field(default_factory=dict)
     interest_quiz_at: str = ""
     # Home visits, for "Since last time" (ISO times, set by home_service).
     home_seen_at: str = ""

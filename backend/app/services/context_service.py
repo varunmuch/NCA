@@ -14,7 +14,7 @@ from sqlalchemy import select
 from app.core.database import AsyncSessionLocal
 from app.core.llm import estimate_tokens, untrusted_block
 from app.db.models import CareerPlan, Conversation, Message, ProgressTask, SavedCareer
-from app.services import career_catalog
+from app.services import career_catalog, college_match, student_record
 from app.services.conversation_service import message_as_model_text
 from app.services.document_service import document_overview, search_chunks
 from app.services.student_service import (
@@ -34,6 +34,14 @@ BUDGET_SOURCES = 1200
 MAX_SOURCES = 5
 BUDGET_RECENT_TURNS = 2500
 BUDGET_SUMMARY = 700
+BUDGET_RECORD = 1400
+BUDGET_COLLEGES = 1500
+
+COLLEGE_WORDS = re.compile(
+    r"\b(college|colleges|universit|major|minor|scholarship|bright futures|apply|applying|admission|sat|act|gpa|"
+    r"reach|safety|ucf|usf|fsu|fiu|uf\b|valencia|tuition|financial aid|degree|campus|course|courses|classes|ap\b)",
+    re.IGNORECASE,
+)
 
 RECENT_MESSAGE_LIMIT = 16
 
@@ -103,17 +111,6 @@ def profile_text(profile: dict, facts: list[dict]) -> str:
 
         if quiz_details.get("training") and quiz_details["training"] != "unsure":
             lines.append(f"- Training wanted after high school: {quiz_details['training'].replace('_', ' ')}")
-
-    focused = profile.get("field_quiz") or {}
-
-    if focused.get("scores"):
-        best = sorted(focused["scores"].items(), key=lambda item: -item[1])[:3]
-        titles = [
-            f"{career['title']} {fit}"
-            for slug, fit in best
-            if (career := career_catalog.get_career(slug))
-        ]
-        lines.append(f"- Focused quiz within their goal ({focused.get('goal', '')}), best fits 0-100: " + ", ".join(titles))
 
     status = profile.get("career_status")
 
@@ -365,6 +362,39 @@ def _candidates(profile: dict, facts: list[dict], query: str) -> tuple[str, list
     return _fit("\n".join(lines), BUDGET_CANDIDATES), matches
 
 
+def target_majors(record: dict, profile: dict) -> list[str]:
+    """The majors to look up colleges for: the quiz's suggestion, else the major or career they want."""
+
+    options = (record.get("major_minor") or {}).get("options") or []
+
+    if options:
+        return [option["major"]["cip4"] for option in options[:2]]
+
+    for wish in (record.get("intended_major"), profile.get("career_aspiration")):
+        major = college_match.find_major(wish or "")
+
+        if major:
+            return [major["cip4"]]
+
+    # No goal yet: the majors that best fit their quiz, grades and resume.
+    if record.get("riasec") or record.get("academics") or record.get("resume"):
+        return [major["cip4"] for major in college_match.rank_majors(record, limit=2)]
+
+    return []
+
+
+def college_text(record: dict, profile: dict, text: str) -> str:
+    """Colleges and scholarships for this student, when the conversation is about them."""
+
+    if not COLLEGE_WORDS.search(text):
+        return ""
+
+    majors = target_majors(record, profile)
+    cards = college_match.colleges_for_majors(majors, record, limit=7) if majors else []
+
+    return college_match.sources_text(record, cards)
+
+
 def build_sources(candidates: list[dict], limit: int = MAX_SOURCES) -> list[dict]:
     """
     Numbered catalog facts for the best-fitting careers. Factual claims in
@@ -448,6 +478,8 @@ def grounding_corpus(context: dict, student_message: str) -> str:
             sources_block(context.get("sources") or []),
             " ".join(source["url"] for source in context.get("sources") or []),
             context["profile_text"],
+            context.get("record_text", ""),
+            context.get("college_text", ""),
             context["documents_text"],
             context["candidates_text"],
             *student_turns,
@@ -465,6 +497,7 @@ async def build_context(
     facts = await list_facts(student_id)
 
     candidates_text, candidates = _candidates(profile, facts, query)
+    record = await student_record.build_record(student_id, profile)
 
     # Recent turns, newest kept first when trimming to budget.
     recent: list[Message] = []
@@ -504,10 +537,15 @@ async def build_context(
     while turns and turns[0]["role"] == "assistant":
         turns.pop(0)
 
+    recent_student_text = " ".join(turn["content"] for turn in turns if turn["role"] == "user")
+
     return {
         "name": display_name(profile),
         "profile": profile,
         "facts": facts,
+        "record": record,
+        "record_text": _fit(student_record.record_text(record), BUDGET_RECORD),
+        "college_text": _fit(college_text(record, profile, f"{recent_student_text} {query}"), BUDGET_COLLEGES),
         "profile_text": _fit(profile_text(profile, facts), BUDGET_PROFILE),
         "documents_text": await _documents(student_id, query, profile),
         "past_text": await _past_conversations(
@@ -526,7 +564,9 @@ async def build_context(
             profile,
             facts,
             [turn["content"] for turn in turns if turn["role"] == "user"] + [query],
-        ),
+        )
+        # A transcript or resume tells the counselor enough to suggest things.
+        + (2 if record["academics"] or record["resume"] else 0),
         # Careers the student just named come first, so "do nurses make good
         # money?" is answered from the nurses' data.
         "sources": (
@@ -554,6 +594,12 @@ def context_block(context: dict) -> str:
         "## What you know about this student\n" + context["profile_text"],
     ]
 
+    if context.get("record_text"):
+        sections.append(
+            "## Their records (transcript, resume, quiz, test scores; GPA calculated by the app)\n"
+            + untrusted_block("student_records", context["record_text"])
+        )
+
     if context["plan_text"]:
         sections.append("## Plan, saved careers, and progress\n" + context["plan_text"])
 
@@ -565,6 +611,12 @@ def context_block(context: dict) -> str:
     if context["past_text"]:
         sections.append(
             "## Related earlier conversations (summaries)\n" + context["past_text"]
+        )
+
+    if context.get("college_text"):
+        sections.append(
+            "## Colleges and scholarships (official data; labels are the app's estimates for this student)\n"
+            + context["college_text"]
         )
 
     sections.append(

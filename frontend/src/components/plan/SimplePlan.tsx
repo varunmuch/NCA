@@ -10,14 +10,16 @@ import { TextInput } from "@/components/ui/Field";
 import { surveyNote } from "@/lib/education";
 import type { PlanDetail, PlanStep } from "@/types/cie";
 
+import { BrightFuturesCard } from "@/components/college/BrightFuturesCard";
+
 import { PlanPathway } from "./PlanPathway";
 
 type TabKey = "month" | "school" | "college" | "certs" | "careers";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "month", label: "This month" },
-  { key: "school", label: "High school" },
-  { key: "college", label: "College" },
+  { key: "school", label: "Classes" },
+  { key: "college", label: "Major, colleges & scholarships" },
   { key: "certs", label: "Certifications & skills" },
   { key: "careers", label: "Careers" },
 ];
@@ -54,33 +56,8 @@ export function SimplePlan({
 
   const pathway = content.pathway;
   const [tab, setTab] = useState<TabKey>("month");
-  const glance = pathway
-    ? [
-        { label: "Your goal", value: pathway.career_title },
-        { label: "Next class", value: pathway.courses[0] ? `${pathway.courses[0].course} (${pathway.courses[0].grade})` : "" },
-        { label: "College to look at", value: pathway.colleges.find((college) => college.kind === "4-year")?.name ?? pathway.colleges[0]?.name ?? "" },
-        { label: "First certification", value: pathway.certifications[0]?.name ?? "" },
-      ].filter((item) => item.value)
-    : [];
-
   return (
     <div className="space-y-8">
-      {glance.length > 0 && (
-        <section aria-label="Your plan at a glance" className="rounded-[var(--radius-card)] border border-primary/25 bg-primary-softer p-5 sm:p-6">
-          <p className="text-sm font-semibold text-primary">Your plan in 30 seconds</p>
-          <dl className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {glance.map((item) => (
-              <div key={item.label}>
-                <dt className="text-xs font-semibold uppercase tracking-wide text-ink-muted">{item.label}</dt>
-                <dd className="mt-0.5 font-semibold leading-snug text-ink">{item.value}</dd>
-              </div>
-            ))}
-          </dl>
-          {steps[0] && <p className="mt-4 border-t border-primary/15 pt-3 text-sm text-ink">This week: {steps[0].title}</p>}
-        </section>
-      )}
-
-
       <div role="tablist" aria-label="Your path" className="-mx-1 flex gap-1 overflow-x-auto border-b border-line px-1">
         {TABS.filter((item) => item.key !== "careers" || careers.length > 0).map((item) => (
           <button
@@ -205,7 +182,25 @@ export function SimplePlan({
       {tab === "college" && (
         <div role="tabpanel" id="panel-college" aria-labelledby="tab-college" className="space-y-6">
           {pathway?.summary && <p className="leading-relaxed text-ink-muted">{pathway.summary}</p>}
+          {pathway?.major_minor && (
+            <section className="grid gap-3 rounded-[var(--radius-card)] border border-line bg-gradient-to-br from-primary-softer via-white to-pink-soft p-5 sm:grid-cols-2 sm:p-6">
+              <div>
+                <p className="text-xs font-semibold text-primary">Your major</p>
+                <p className="font-display text-xl font-semibold text-ink">{pathway.major_minor.major.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-ink-muted">{pathway.major_minor.why_major}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-pink">Your minor</p>
+                <p className="font-display text-xl font-semibold text-ink">{pathway.major_minor.minor.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-ink-muted">{pathway.major_minor.why_minor}</p>
+              </div>
+              <Link href="/discover" className="text-sm font-semibold text-primary hover:underline sm:col-span-2">
+                See all three major and minor options
+              </Link>
+            </section>
+          )}
           {pathway && <PlanPathway pathway={pathway} only={["majors", "colleges"]} bare />}
+          {pathway?.bright_futures && <BrightFuturesCard data={pathway.bright_futures} />}
           {(content.after_high_school ?? []).length > 0 && (
             <section className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-7">
               <h2 className="text-lg font-bold text-ink">Other routes after high school</h2>

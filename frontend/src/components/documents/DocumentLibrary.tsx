@@ -246,7 +246,7 @@ function DocumentDetailDialog({
   );
 }
 
-export function DocumentLibrary() {
+export function DocumentLibrary({ embedded = false, onChange }: { embedded?: boolean; onChange?: () => void } = {}) {
   const toast = useToast();
   const params = useSearchParams();
   const [documents, setDocuments] = useState<StudentDocument[] | null>(null);
@@ -274,6 +274,13 @@ export function DocumentLibrary() {
 
   // Poll while anything is being read.
   const processing = documents?.some((document) => document.status === "processing");
+
+  // Tell the page when a file finishes reading, so GPA and the resume checklist refresh.
+  useEffect(() => {
+    if (processing === false) {
+      onChange?.();
+    }
+  }, [processing, onChange]);
 
   useEffect(() => {
     if (!processing) {
@@ -314,11 +321,20 @@ export function DocumentLibrary() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow="My Documents"
-        title="Resumes and transcripts"
-        description="Share your resume or transcript and your counselor can give advice that fits your actual classes and activities. This is optional."
-      />
+      {embedded ? (
+        <div>
+          <h2 className="text-xl font-semibold text-ink">Transcript and resume</h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            Your grades and everything on your resume decide your major, colleges and scholarships. Upload new versions any time.
+          </p>
+        </div>
+      ) : (
+        <PageHeader
+          eyebrow="My Documents"
+          title="Resumes and transcripts"
+          description="Your transcript and resume are what your counselor, quiz and plan use most. Put everything you've done on your resume."
+        />
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
         <Card className="h-fit p-5 sm:p-6">

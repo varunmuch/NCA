@@ -15,6 +15,7 @@ const PAGES = [
   ["explore", "/explore"],
   ["career", "/explore/registered-nurses"],
   ["plan-list", "/plan"],
+  ["profile", "/profile"],
 ] as const;
 
 test.skip(!process.env.SHOTS_LABEL, "Set SHOTS_LABEL to take screenshots.");
@@ -47,16 +48,6 @@ test("key pages", async ({ page }, info) => {
   await page.goto("/plan");
   await page.locator('a[href^="/plan/"]').first().click();
   await shot("plan");
-
-  // Dark mode, which follows the device setting.
-  await page.emulateMedia({ colorScheme: "dark" });
-
-  for (const [name, path] of [["home", "/"], ["counselor", "/counselor"], ["career", "/explore/registered-nurses"]] as const) {
-    await page.goto(path);
-    await shot(`dark-${name}`);
-  }
-
-  await page.emulateMedia({ colorScheme: "light" });
 });
 
 test("signed-out pages", async ({ page }, info) => {

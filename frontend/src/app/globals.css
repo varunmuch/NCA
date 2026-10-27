@@ -3,62 +3,68 @@
 /*
  * NeoCity Academy design tokens.
  *
- * One accent (steel blue, "primary") on calm neutrals. Two status colors
- * only: green ("accent") for done or on file, amber ("sun") for drafts and
- * warnings. "warm" is a neutral kept for older class names. Dark values
- * are below in :root under prefers-color-scheme. Every text pairing is
- * checked for WCAG AA in both themes (ink and ink-muted on canvas and
- * surface; white on primary and accent).
+ * White base with a bright, friendly palette: indigo is the main color,
+ * with pink, teal, amber and sky for variety. Green ("accent") still means
+ * done or on file, amber ("sun") drafts and warnings. The app is light
+ * only, on a white base. Text pairings meet WCAG AA on white.
  */
 @theme {
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 
-  --color-canvas: #f7f7f5;
+  --color-canvas: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-2: #f1f1ee;
-  --color-surface-3: #e7e7e3;
+  --color-surface-2: #f5f6fb;
+  --color-surface-3: #eaecf5;
 
-  --color-ink: #1c1f24;
-  --color-ink-muted: #565b64;
-  --color-ink-soft: #6d727a;
+  --color-ink: #1a1b2e;
+  --color-ink-muted: #545772;
+  --color-ink-soft: #6c6f88;
 
-  --color-line: #e4e4e0;
-  --color-line-strong: #cfcfca;
+  --color-line: #e7e8f2;
+  --color-line-strong: #d3d5e4;
 
-  --color-primary: #275d8c;
-  --color-primary-hover: #1f4c73;
-  --color-primary-soft: #e3edf5;
-  --color-primary-softer: #f1f6fa;
-  --color-primary-ink: #1b4266;
-  /* Text on a primary or accent fill: white in light, near-black in dark. */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-soft: #e8e7fd;
+  --color-primary-softer: #f3f2ff;
+  --color-primary-ink: #3730a3;
   --color-on-primary: #ffffff;
   --color-on-accent: #ffffff;
 
-  --color-accent: #2e7d4f;
-  --color-accent-hover: #256840;
-  --color-accent-soft: #e3f1e8;
-  --color-accent-softer: #f1f8f3;
-  --color-accent-ink: #1d5535;
+  --color-accent: #059669;
+  --color-accent-hover: #047857;
+  --color-accent-soft: #d9f5ea;
+  --color-accent-softer: #effbf6;
+  --color-accent-ink: #065f46;
 
   --color-warm: #8a8f96;
-  --color-warm-soft: #f1f1ee;
+  --color-warm-soft: #f5f6fb;
   --color-warm-ink: #4f545b;
 
-  --color-sun: #b7791f;
-  --color-sun-soft: #f7f0e1;
-  --color-sun-ink: #7a5410;
+  --color-sun: #d97706;
+  --color-sun-soft: #fef3dc;
+  --color-sun-ink: #92400e;
 
-  --color-danger: #b42318;
-  --color-danger-soft: #fbe9e7;
+  --color-pink: #db2777;
+  --color-pink-soft: #fde7f1;
+  --color-teal: #0d9488;
+  --color-teal-soft: #d9f5f2;
+  --color-sky: #0284c7;
+  --color-sky-soft: #e0f2fe;
+  --color-violet: #7c3aed;
+  --color-violet-soft: #efe7fe;
+
+  --color-danger: #c81e1e;
+  --color-danger-soft: #fdecec;
 
   --radius-input: 0.5rem;
   --radius-card: 0.75rem;
   --radius-hero: 1rem;
 
-  --shadow-card: 0 1px 2px rgb(28 31 36 / 0.04);
-  --shadow-raised: 0 2px 8px rgb(28 31 36 / 0.08);
-  --shadow-focus: 0 0 0 3px rgb(39 93 140 / 0.3);
+  --shadow-card: 0 1px 3px rgb(79 70 229 / 0.06), 0 1px 2px rgb(26 27 46 / 0.04);
+  --shadow-raised: 0 8px 24px rgb(79 70 229 / 0.12);
+  --shadow-focus: 0 0 0 3px rgb(79 70 229 / 0.3);
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -112,52 +118,7 @@
 }
 
 :root {
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-canvas: #121417;
-    --color-surface: #1a1d21;
-    --color-surface-2: #22262b;
-    --color-surface-3: #2c3036;
-
-    --color-ink: #e9eaec;
-    --color-ink-muted: #a9adb4;
-    --color-ink-soft: #8b9098;
-
-    --color-line: #2c3036;
-    --color-line-strong: #3a3f46;
-
-    --color-primary: #7aaee0;
-    --color-primary-hover: #93bee8;
-    --color-primary-soft: #1d2c3b;
-    --color-primary-softer: #18222d;
-    --color-primary-ink: #a9c9ea;
-    --color-on-primary: #0f1a24;
-    --color-on-accent: #0f1f16;
-
-    --color-accent: #6cc493;
-    --color-accent-hover: #86d1a6;
-    --color-accent-soft: #1c2e24;
-    --color-accent-softer: #17241d;
-    --color-accent-ink: #8fd1aa;
-
-    --color-warm: #8b9098;
-    --color-warm-soft: #22262b;
-    --color-warm-ink: #c3c6cb;
-
-    --color-sun: #d19a3a;
-    --color-sun-soft: #33291a;
-    --color-sun-ink: #e9c27a;
-
-    --color-danger: #ef8a7f;
-    --color-danger-soft: #3a1f1d;
-
-    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
-    --shadow-raised: 0 2px 10px rgb(0 0 0 / 0.4);
-    --shadow-focus: 0 0 0 3px rgb(122 174 224 / 0.45);
-  }
+  color-scheme: light;
 }
 
 html {
@@ -270,4 +231,137 @@ select {
   body {
     background: white;
   }
+}
+
+/*
+ * 3D career scene on Home: a slowly turning cube of career icons with two
+ * tilted orbits around it. Pure CSS 3D; reduced motion stops it (above).
+ */
+.scene-3d {
+  --cube: 78px;
+  --tilt: 72deg;
+  position: relative;
+  width: calc(var(--cube) * 2.4);
+  height: calc(var(--cube) * 2.4);
+  perspective: 900px;
+  transform-style: preserve-3d;
+  display: grid;
+  place-items: center;
+}
+
+@media (min-width: 640px) {
+  .scene-3d {
+    --cube: 124px;
+  }
+}
+
+.scene-3d .float {
+  transform-style: preserve-3d;
+  animation: scene-float 6s ease-in-out infinite;
+}
+
+.cube-3d {
+  position: relative;
+  width: var(--cube);
+  height: var(--cube);
+  transform-style: preserve-3d;
+  animation: cube-spin 20s linear infinite;
+}
+
+.cube-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22px;
+  color: #fff;
+  border: 1px solid rgb(255 255 255 / 0.45);
+  box-shadow: inset 0 0 24px rgb(255 255 255 / 0.25);
+}
+
+.cube-face svg {
+  width: 42%;
+  height: 42%;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.18));
+}
+
+.cube-face:nth-child(1) { transform: rotateY(0deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #6366f1, #4338ca); }
+.cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #f472b6, #db2777); }
+.cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #2dd4bf, #0d9488); }
+.cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #fbbf24, #ea580c); }
+.cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #38bdf8, #0369a1); }
+.cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+
+.orbit-3d {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt)) rotateY(var(--lean, 0deg));
+  pointer-events: none;
+}
+
+.orbit-3d .ring {
+  position: absolute;
+  inset: var(--gap, 4%);
+  border-radius: 9999px;
+  border: 2px dashed rgb(99 102 241 / 0.35);
+}
+
+.orbit-3d .spin {
+  position: absolute;
+  inset: var(--gap, 4%);
+  transform-style: preserve-3d;
+  animation: orbit-spin var(--speed, 12s) linear infinite;
+}
+
+.orbit-3d .planet {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--size, 18px);
+  height: var(--size, 18px);
+  margin: calc(var(--size, 18px) / -2) 0 0 calc(var(--size, 18px) / -2);
+  border-radius: 9999px;
+  background: radial-gradient(circle at 32% 30%, #fff 0 8%, var(--c1) 30%, var(--c2) 100%);
+  box-shadow: 0 6px 14px rgb(26 27 46 / 0.18);
+  animation: planet-face var(--speed, 12s) linear infinite;
+}
+
+.scene-shadow {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  width: 52%;
+  height: 10%;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, rgb(79 70 229 / 0.22), transparent);
+  animation: shadow-breathe 6s ease-in-out infinite;
+}
+
+@keyframes cube-spin {
+  from { transform: rotateX(-18deg) rotateY(0deg); }
+  to { transform: rotateX(-18deg) rotateY(360deg); }
+}
+
+@keyframes orbit-spin {
+  from { transform: rotateZ(0deg); }
+  to { transform: rotateZ(360deg); }
+}
+
+/* Cancels the orbit's turn and tilt so each planet faces the viewer. */
+@keyframes planet-face {
+  from { transform: rotateZ(0deg) rotateY(calc(-1 * var(--lean, 0deg))) rotateX(calc(-1 * var(--tilt))); }
+  to { transform: rotateZ(-360deg) rotateY(calc(-1 * var(--lean, 0deg))) rotateX(calc(-1 * var(--tilt))); }
+}
+
+@keyframes scene-float {
+  0%, 100% { transform: translateY(-6px); }
+  50% { transform: translateY(6px); }
+}
+
+@keyframes shadow-breathe {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(0.9); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
 }

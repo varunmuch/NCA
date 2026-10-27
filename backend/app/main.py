@@ -14,6 +14,7 @@ from app.services import account_service
 from app.services.auth_service import bootstrap_google_identity
 from app.core.llm import warm_up
 from app.services.counselor_service import SYSTEM_PROMPT
+from app.services import agent
 from app.services.document_service import resume_interrupted
 from app.services.llm_service import check_llm
 from app.services.password_auth_service import (
@@ -84,6 +85,8 @@ if not allowed_origins:
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
+    # Background counselor jobs don't survive a restart; say so on Home.
+    await agent.mark_interrupted()
     # Keep a reference so the task isn't garbage-collected mid-run.
     resume = asyncio.create_task(resume_interrupted())
     # Wake the model and cache the fixed system prompt in the background,

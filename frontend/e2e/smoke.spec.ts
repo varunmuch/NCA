@@ -24,13 +24,12 @@ test("sign-in rejects a wrong password and accepts the right one", async ({ brow
 
   await signIn(page);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/Good (morning|afternoon|evening)/);
-  await expect(page.getByText("Your next step")).toBeVisible();
+  await expect(page.getByText(/^(Your next step|Your step this week)$/)).toBeVisible();
   await context.close();
 });
 
 test("interest quiz can be taken start to finish", async ({ page }) => {
-  // The general quiz (a student with a goal gets the focused one by default).
-  await page.goto("/discover?mode=general");
+  await page.goto("/discover");
 
   // Wait for the quiz to load: results (seeded account) or the intro.
   await expect(page.getByRole("button", { name: /^(Retake|Start)$/ })).toBeVisible();
@@ -67,8 +66,15 @@ test("interest quiz can be taken start to finish", async ({ page }) => {
   await page.getByRole("radio", { name: /Not sure yet/ }).click();
   await page.getByRole("button", { name: "See my results" }).click();
 
-  await expect(page.getByText("Your interest code")).toBeVisible();
-  await expect(page.getByRole("heading", { name: /^(Careers that fit|Careers in your field)/ })).toBeVisible();
+  // Part 6: the quiz reads the student's records and asks only what's missing.
+  await expect(page.getByRole("heading", { name: "A few questions about you" })).toBeVisible();
+  await page.getByPlaceholder(/Computer Science, Nursing/).fill("Computer Science");
+  await page.getByRole("button", { name: "See my major and minor" }).click();
+
+  await expect(page.getByText("Your interest code")).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole("heading", { name: "Your major and minor" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: /Option 1/ })).toBeVisible();
+  await expect(page.getByText("est. chance").first()).toBeVisible();
 });
 
 test("chat streams a reply", async ({ page }) => {
@@ -113,10 +119,27 @@ test("plan shows the next 3 steps and they can be checked off", async ({ page })
   await expect(first).toHaveAttribute("aria-checked", "false");
 
   // My Path: one page, in tabs.
-  await page.getByRole("tab", { name: "High school" }).click();
+  await page.getByRole("tab", { name: "Classes" }).click();
   await expect(page.getByRole("tabpanel")).toBeVisible();
-  await page.getByRole("tab", { name: "College" }).click();
+  await page.getByRole("tab", { name: "Major, colleges & scholarships" }).click();
   await expect(page.getByRole("heading", { name: /Other routes after high school|Florida colleges and universities/ }).first()).toBeVisible();
   await page.getByRole("tab", { name: "This month" }).click();
   await expect(page.getByRole("heading", { name: "Your next 3 steps this month" })).toBeVisible();
+});
+
+test("the counselor acts on a request and says what it did", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "Adds a checklist step; runs once.");
+
+  await page.goto("/counselor");
+  const composer = page.getByPlaceholder(/Ask anything/);
+  await composer.fill("Please add visit the UCF campus to my plan");
+  await composer.press("Enter");
+
+  const card = page.locator("div", { has: page.getByText("What I did", { exact: true }) }).last();
+  await expect(card).toBeVisible({ timeout: 60_000 });
+  await expect(card.getByText(/visit the UCF campus/i)).toBeVisible();
+
+  // Home lists it as something the counselor did.
+  await page.goto("/");
+  await expect(page.getByText(/Added to your checklist: visit the UCF campus/i)).toBeVisible();
 });

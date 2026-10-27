@@ -10,21 +10,6 @@ import type { PlanSummary } from "@/types/cie";
 
 export const metadata: Metadata = { title: "My Path" };
 
-const PURPOSE = [
-  {
-    title: "It connects the dots",
-    body: "Your quiz results, saved careers, conversations, and any resume or transcript are pulled into one place: the careers you're exploring and why they fit you.",
-  },
-  {
-    title: "It tells you what to do next",
-    body: "Classes to take, skills to build, activities to try, and your next three actions, laid out year by year through high school and beyond.",
-  },
-  {
-    title: "It goes with you",
-    body: "Save it to check off steps as you go, and download the PDF to bring to a meeting with your school counselor or family.",
-  },
-];
-
 export default async function PlansPage({
   searchParams,
 }: {
@@ -55,28 +40,8 @@ export default async function PlansPage({
       <PageHeader
         eyebrow="My Path"
         title={lineages.length ? "Your plans" : "Let's build your plan"}
-        description="Your plan turns everything you've explored into what to actually do this year, so ideas become steps."
+        description="One plan built from your grades, resume and interests: what to study, where to apply, how to pay for it, and what to do this month."
       />
-
-      <section aria-labelledby="plan-purpose" className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-7">
-        <h2 id="plan-purpose" className="font-semibold text-ink">
-          What My Path is for
-        </h2>
-        <dl className="mt-4 grid gap-6 md:grid-cols-3">
-          {PURPOSE.map((item, index) => (
-            <div key={item.title} className="md:border-l md:border-line md:pl-6 md:first:border-l-0 md:first:pl-0">
-              <dt className="flex items-baseline gap-2.5 font-semibold text-ink">
-                <span className="text-sm tabular-nums text-ink-soft">{index + 1}</span>
-                {item.title}
-              </dt>
-              <dd className="mt-1.5 text-sm leading-relaxed text-ink-muted">{item.body}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="mt-5 border-t border-line pt-4 text-sm text-ink-muted">
-          A plan is a starting point, not a promise. Revise it whenever your interests change. Each revision is saved as a new version.
-        </p>
-      </section>
 
       {lineages.length > 0 && (
         <section aria-labelledby="saved-plans">

@@ -43,7 +43,7 @@ from app.models.progress import (
 )
 from app.services import account_service
 from app.services import career_catalog
-from app.services import career_expansion, field_quiz, interest_quiz
+from app.services import agent, career_expansion, field_quiz, interest_quiz, major_agent, student_record
 from app.services import conversation_service as conversations
 from app.services import document_service as documents
 from app.services import plan_service as plans
@@ -174,70 +174,94 @@ class QuizAnswers(BaseModel):
     training: str = "unsure"
 
 
-class FieldQuizAnswers(BaseModel):
-    activities: dict[str, int]
-    tradeoffs: dict[str, str]
-    training: str = "unsure"
-
-
-async def _field_anchor(profile: dict) -> str | None:
-    """The catalog career behind the student's goal, adding it if it's new."""
-
-    anchor = field_quiz.anchor_for(profile)
-
-    if anchor is None and field_quiz.goal_of(profile):
-        outcome = await career_expansion.ensure_within(field_quiz.goal_of(profile), seconds=25)
-
-        if outcome.get("result") in ("added", "alias", "existing"):
-            anchor = outcome["slug"]
-
-    if anchor and not field_quiz.items_for(anchor):
-        career = career_catalog.get_career(anchor)
-
-        if career:
-            try:
-                await field_quiz.ensure_items(career)
-            except Exception:
-                logger.exception("Couldn't build quiz activities for %s", anchor)
-
-    return anchor if anchor and field_quiz.items_for(anchor) else None
-
-
 @router.get("/interest-quiz")
-async def get_interest_quiz(mode: str = "", student_id: str = Student):
-    """
-    With a career goal, the focused quiz stays inside that field;
-    mode=general gives the all-careers quiz.
-    """
+async def get_interest_quiz(student_id: str = Student):
+    """The RIASEC (Holland code) interest quiz across all careers."""
 
     profile = await get_profile_dict(student_id)
-    goal = field_quiz.goal_of(profile)
-
-    if mode != "general" and goal:
-        anchor = await _field_anchor(profile)
-
-        if anchor:
-            return {**field_quiz.questions(profile, anchor), "result": field_quiz.result_payload(profile)}
 
     return {
         **interest_quiz.questions(),
         "mode": "general",
-        "goal": goal,
-        "result": interest_quiz.result_payload(profile),
+        "goal": None,
+        "result": await _quiz_result(student_id, profile),
     }
 
 
-@router.post("/me/interest-quiz/field")
-async def submit_field_quiz(payload: FieldQuizAnswers, student_id: str = Student):
+async def _quiz_result(student_id: str, profile: dict) -> dict | None:
+    result = interest_quiz.result_payload(profile)
+
+    if result is not None:
+        result["majors"] = await major_agent.with_colleges(student_id, profile.get("major_minor"))
+
+    return result
+
+
+class AcademicAnswers(BaseModel):
+    intended_major: str | None = None
+    sat: int | str | None = None
+    act: int | str | None = None
+    test_plan: str | None = None
+    service_hours: int | str | None = None
+    paid_hours: int | str | None = None
+    interests: str | None = None
+    follow_ups: dict[str, str] = {}
+
+
+@router.get("/me/record")
+async def get_record(student_id: str = Student):
+    """Everything the agents know from the student's own records: GPA, tests, resume, quiz."""
+
     profile = await get_profile_dict(student_id)
-    anchor = await _field_anchor(profile)
+    record = await student_record.build_record(student_id, profile)
 
-    if anchor is None:
-        raise HTTPException(status_code=409, detail="Add a career goal to your profile to take the focused quiz.")
+    return {**record, "major_minor": await major_agent.with_colleges(student_id, profile.get("major_minor"))}
 
-    saved = field_quiz.score(profile, anchor, payload.model_dump())
-    profile = await save_profile_dict(student_id, {"field_quiz": saved})
-    return field_quiz.result_payload(profile)
+
+@router.put("/me/academic-profile")
+async def update_academic_profile(payload: AcademicAnswers, student_id: str = Student):
+    before = (await get_profile_dict(student_id)).get("academic_profile") or {}
+    await major_agent.save_answers(student_id, payload.model_dump(exclude_none=True))
+    after = (await get_profile_dict(student_id)).get("academic_profile") or {}
+    changed = {key for key in ("sat", "act", "service_hours", "paid_hours", "intended_major") if before.get(key) != after.get(key)}
+
+    if changed:
+        labels = {"sat": "SAT", "act": "ACT", "service_hours": "service hours", "paid_hours": "paid work hours", "intended_major": "major"}
+        await agent.on_record_change(student_id, changed, "you updated your " + ", ".join(labels[key] for key in sorted(changed)))
+
+    return await get_record(student_id)
+
+
+@router.get("/me/agent-activity")
+async def agent_activity(student_id: str = Student):
+    """What the counselor did on its own or is doing now (Home and chat show this)."""
+
+    items = await agent.recent(student_id)
+    return {"items": items, "running": any(item["status"] == "running" for item in items)}
+
+
+@router.get("/me/interest-quiz/follow-ups")
+async def quiz_follow_ups(student_id: str = Student):
+    return await major_agent.follow_ups(student_id)
+
+
+@router.post("/me/interest-quiz/majors")
+async def quiz_majors(payload: AcademicAnswers, student_id: str = Student):
+    """Save the follow-up answers, then suggest majors and minors from everything we know."""
+
+    await major_agent.save_answers(student_id, payload.model_dump(exclude_none=True))
+
+    try:
+        await major_agent.recommend(student_id)
+    except LLMError:
+        raise HTTPException(status_code=503, detail="Your counselor is taking a short break. Your quiz is saved; try the majors again in a few minutes.")
+
+    # A plan built before these suggestions gets updated to match them.
+    if await agent._has_plan(student_id):
+        agent.queue(student_id, "refresh_plan", "you have new major and minor suggestions from the quiz")
+
+    profile = await get_profile_dict(student_id)
+    return await _quiz_result(student_id, profile)
 
 
 @router.post("/me/interest-quiz")
@@ -252,7 +276,7 @@ async def submit_interest_quiz(payload: QuizAnswers, student_id: str = Student):
         },
     )
 
-    return interest_quiz.result_payload(profile)
+    return await _quiz_result(student_id, profile)
 
 
 @router.get("/me/home")
@@ -954,7 +978,15 @@ async def create_plan_stream(payload: PlanGenerate, student_id: str = Student):
 
 @router.get("/me/plans/{plan_id}")
 async def get_plan(plan_id: str, student_id: str = Student):
-    return await plans.get_plan_detail(student_id, plan_id)
+    detail = await plans.get_plan_detail(student_id, plan_id)
+    pathway = (detail.get("content") or {}).get("pathway")
+
+    # Chances and Bright Futures follow today's record (new scores, a new transcript).
+    if pathway:
+        record = await student_record.build_record(student_id, await get_profile_dict(student_id))
+        plans.fit_pathway(pathway, record)
+
+    return detail
 
 
 @router.patch("/me/plans/{plan_id}")

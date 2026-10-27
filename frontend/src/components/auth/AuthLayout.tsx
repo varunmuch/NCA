@@ -16,7 +16,7 @@ export function AuthLayout({
       <div className="w-full max-w-md">
         <div className="mb-8 flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/neocity-knight-mark.png" alt="" width={40} height={40} className="dark:rounded-full dark:bg-[#f7f7f5] dark:p-0.5 size-10 object-contain" />
+          <img src="/brand/neocity-knight-mark.png" alt="" width={40} height={40} className="size-10 object-contain" />
           <div className="leading-tight">
             <p className="text-xs font-medium text-ink-muted">NeoCity Academy</p>
             <p className="font-display text-lg font-semibold text-ink">Career Explorer</p>

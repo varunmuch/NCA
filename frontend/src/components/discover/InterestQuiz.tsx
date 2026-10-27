@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, MessageCircle, RotateCcw } from "lucide-react";
 
@@ -9,15 +8,9 @@ import { CardSkeleton, ErrorNotice } from "@/components/ui/Feedback";
 import { useToast } from "@/components/ui/Toast";
 import { api } from "@/lib/api";
 import { formatDate } from "@/lib/format";
-import type {
-  CareerSummary,
-  FieldQuiz as FieldQuizData,
-  InterestQuiz as Quiz,
-  InterestQuizAnswers,
-  InterestQuizResult,
-} from "@/types/cie";
+import type { AcademicAnswers, InterestQuiz as Quiz, InterestQuizAnswers, InterestQuizResult } from "@/types/cie";
 
-import { FieldQuiz } from "./FieldQuiz";
+import { AboutYouPart, MajorMinorResults } from "./MajorMinor";
 
 // Holland's hexagon order: neighbors are similar, opposites are not.
 const HEXAGON = ["Realistic", "Investigative", "Artistic", "Social", "Enterprising", "Conventional"];
@@ -28,18 +21,12 @@ const PARTS = [
   { key: "settings", title: "Work setting", minutes: 1 },
   { key: "subjects", title: "Subjects", minutes: 1 },
   { key: "training", title: "Training", minutes: 1 },
+  { key: "about", title: "About you", minutes: 2 },
 ] as const;
 
 type Part = (typeof PARTS)[number]["key"];
 
 const ACTIVITIES_PER_PAGE = 6;
-
-const PART_LABELS: Record<string, string> = {
-  interests: "Interests",
-  setting: "Setting",
-  subjects: "Subjects",
-  training: "Training",
-};
 
 export function emptyAnswers(): InterestQuizAnswers {
   return { activities: {}, tradeoffs: {}, settings: [], subjects: [], training: "" };
@@ -51,7 +38,7 @@ function Stepper({ part }: { part: Part }) {
   const current = PARTS.findIndex((item) => item.key === part);
 
   return (
-    <ol className="grid grid-cols-5 gap-1.5" aria-label="Quiz parts">
+    <ol className="grid grid-cols-6 gap-1.5" aria-label="Quiz parts">
       {PARTS.map((item, index) => {
         const state = index < current ? "done" : index === current ? "current" : "todo";
 
@@ -73,7 +60,7 @@ export type QuizCore = Pick<Quiz, "activities" | "tradeoffs" | "training">;
 
 type Step = { number: number; total: number };
 
-function PartHeader({ number, total = 5, title, hint }: { number: number; total?: number; title: string; hint: string }) {
+function PartHeader({ number, total = 6, title, hint }: { number: number; total?: number; title: string; hint: string }) {
   return (
     <div>
       <p className="text-sm font-semibold text-ink-muted">Part {number} of {total}</p>
@@ -514,66 +501,9 @@ function Hexagon({
   );
 }
 
-function FitBar({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="w-16 shrink-0 text-xs text-ink-muted">{label}</span>
-      <span className="h-1.5 w-full overflow-hidden rounded-full bg-surface-3">
-        <span className="block h-full rounded-full bg-ink" style={{ width: `${value}%` }} />
-      </span>
-      <span className="w-8 shrink-0 text-right text-xs tabular-nums text-ink-muted">{value}</span>
-    </div>
-  );
-}
-
-function MatchRow({ career, rank }: { career: CareerSummary; rank: number }) {
-  const parts = Object.entries(career.match_parts ?? {});
-
-  return (
-    <li className="grid gap-4 border-b border-line py-5 last:border-b-0 sm:grid-cols-[2.5rem_1fr_220px] sm:gap-6">
-      <span className="hidden text-sm font-semibold tabular-nums text-ink-soft sm:block">{String(rank).padStart(2, "0")}</span>
-      <div className="min-w-0">
-        <div className="flex items-baseline justify-between gap-3 sm:block">
-          <Link href={`/explore/${career.slug}`} className="text-lg font-semibold text-ink hover:underline">
-            {career.title}
-          </Link>
-          {career.match_score != null && <span className="text-lg font-bold tabular-nums text-ink sm:hidden">{career.match_score}%</span>}
-        </div>
-        <p className="mt-0.5 text-sm text-ink-muted">{career.family_label}</p>
-        <ul className="mt-2.5 space-y-1">
-          {(career.match_reasons ?? []).map((reason) => (
-            <li key={reason} className="flex gap-2 text-sm text-ink">
-              <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />
-              {reason}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        {career.match_score != null ? (
-          <p className="hidden text-right text-2xl font-bold tabular-nums text-ink sm:block">
-            {career.match_score}
-            <span className="text-base font-semibold text-ink-muted">%</span>
-          </p>
-        ) : (
-          <p className="hidden text-right text-sm font-semibold text-accent-ink sm:block">Your goal</p>
-        )}
-        <div className="mt-2 space-y-1.5">
-          {parts.map(([name, value]) => (
-            <FitBar key={name} label={PART_LABELS[name] ?? name} value={value ?? 0} />
-          ))}
-        </div>
-      </div>
-    </li>
-  );
-}
-
-function Results({ result, onRetake }: { result: InterestQuizResult; onRetake: () => void }) {
+function Results({ result, onRetake, onFindMajors }: { result: InterestQuizResult; onRetake: () => void; onFindMajors: () => void }) {
   const [active, setActive] = useState("");
-  const [showAll, setShowAll] = useState(false);
   const ranked = Object.entries(result.scores).sort((a, b) => b[1] - a[1]);
-  const preferences = result.preferences;
-  const careers = showAll ? result.careers : result.careers.slice(0, 6);
 
   return (
     <div className="space-y-10 pb-10">
@@ -656,50 +586,31 @@ function Results({ result, onRetake }: { result: InterestQuizResult; onRetake: (
         </section>
       )}
 
-      <section aria-labelledby="matches-title">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 id="matches-title" className="font-display text-2xl font-semibold">
-              {result.goal ? `Careers in your field: ${result.goal.title}` : "Careers that fit"}
-            </h2>
-            <p className="mt-1 text-sm text-ink-muted">
-              {result.goal
-                ? "Your goal comes first, then the careers closest to it, ranked by how well they fit your answers."
-                : "Ranked by fit: interests count most, then work setting, subjects, and training."}
-            </p>
-          </div>
+      <section aria-labelledby="majors-title" className="space-y-4">
+        <div>
+          <h2 id="majors-title" className="font-display text-2xl font-semibold">
+            Your major and minor
+          </h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            Your major follows what you want to study, backed by your grades and resume. Your minor comes from your interest type ({result.code}).
+          </p>
         </div>
 
-        {preferences && (preferences.settings.length > 0 || preferences.subjects.length > 0 || preferences.training) && (
-          <p className="mt-3 text-sm text-ink-muted">
-            Using your picks:{" "}
-            {[...preferences.settings, ...preferences.subjects, preferences.training].filter(Boolean).join(" · ")}
-          </p>
-        )}
-
-        <ol className="mt-4 rounded-[var(--radius-card)] border border-line bg-surface px-5 sm:px-6">
-          {careers.map((career, index) => (
-            <MatchRow key={career.slug} career={career} rank={index + 1} />
-          ))}
-        </ol>
-
-        {!showAll && result.careers.length > 6 && (
-          <Button variant="ghost" size="sm" className="mt-3" onClick={() => setShowAll(true)}>
-            Show {result.careers.length - 6} more
-          </Button>
-        )}
-
-        {result.goal && (result.other_careers?.length ?? 0) > 0 && (
-          <details className="group mt-6 rounded-[var(--radius-card)] border border-line bg-surface">
-            <summary className="cursor-pointer list-none px-5 py-4 text-sm font-semibold text-ink-muted hover:text-ink sm:px-6">
-              Outside your goal: other careers that match your interests ({result.other_careers!.length})
-            </summary>
-            <ol className="border-t border-line px-5 sm:px-6">
-              {result.other_careers!.map((career, index) => (
-                <MatchRow key={career.slug} career={career} rank={index + 1} />
-              ))}
-            </ol>
-          </details>
+        {result.majors ? (
+          <>
+            <MajorMinorResults result={result.majors} />
+            <Button variant="ghost" size="sm" onClick={onFindMajors} icon={<RotateCcw aria-hidden className="size-4" />}>
+              Update my answers
+            </Button>
+          </>
+        ) : (
+          <div className="rounded-[var(--radius-card)] border border-primary/20 bg-gradient-to-br from-primary-softer to-pink-soft p-6">
+            <p className="font-semibold text-ink">One more step: a few questions about you</p>
+            <p className="mt-1 text-sm text-ink-muted">We&apos;ll read your transcript and resume, ask only what&apos;s missing, and pick three major and minor sets with colleges and scholarships.</p>
+            <Button className="mt-4" onClick={onFindMajors} icon={<ArrowRight aria-hidden className="size-4" />}>
+              Find my major and minor
+            </Button>
+          </div>
         )}
       </section>
 
@@ -709,7 +620,7 @@ function Results({ result, onRetake }: { result: InterestQuizResult; onRetake: (
           <p className="mt-1 text-sm text-ink-muted">Your counselor can see these results and help you narrow things down.</p>
         </div>
         <ButtonLink
-          href={`/counselor?ask=${encodeURIComponent(`My interest code is ${result.code}. Can you help me understand what that means and which careers to look at first?`)}`}
+          href={`/counselor?ask=${encodeURIComponent(`My interest code is ${result.code}. Can you help me decide between the majors and minors the quiz suggested?`)}`}
           variant="secondary"
           icon={<MessageCircle aria-hidden className="size-4" />}
         >
@@ -731,7 +642,7 @@ function Intro({ onStart, hasResult, onCancel }: { onStart: () => void; hasResul
           Find the kinds of work that fit you
         </h1>
         <p className="mt-3 text-lg leading-relaxed text-ink-muted">
-          Five short parts. You&apos;ll get a three-letter interest code, the same model used to describe every career in Explore, and careers ranked by how well they fit.
+          Six short parts. You&apos;ll get your three-letter interest type (RIASEC) and three major and minor sets picked from your answers, your grades and your resume, with Florida colleges and scholarships for each.
         </p>
       </div>
 
@@ -763,10 +674,9 @@ function Intro({ onStart, hasResult, onCancel }: { onStart: () => void; hasResul
   );
 }
 
-export function InterestQuiz({ mode }: { mode?: "general" }) {
+export function InterestQuiz() {
   const toast = useToast();
   const [quiz, setQuiz] = useState<Quiz | null>(null);
-  const [field, setField] = useState<FieldQuizData | null>(null);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
   const [result, setResult] = useState<InterestQuizResult | null>(null);
@@ -779,19 +689,13 @@ export function InterestQuiz({ mode }: { mode?: "general" }) {
     let cancelled = false;
 
     api
-      .interestQuiz(mode)
+      .interestQuiz()
       .then((loaded) => {
         if (cancelled) {
           return;
         }
 
         setError("");
-
-        // A student with a goal gets the quiz focused on that field.
-        if (loaded.mode === "field") {
-          setField(loaded);
-          return;
-        }
 
         setQuiz(loaded);
         setResult(loaded.result);
@@ -802,14 +706,10 @@ export function InterestQuiz({ mode }: { mode?: "general" }) {
     return () => {
       cancelled = true;
     };
-  }, [attempt, mode]);
+  }, [attempt]);
 
   if (error) {
     return <ErrorNotice message={error} onRetry={() => setAttempt((value) => value + 1)} />;
-  }
-
-  if (field) {
-    return <FieldQuiz quiz={field} />;
   }
 
   if (!quiz) {
@@ -826,7 +726,7 @@ export function InterestQuiz({ mode }: { mode?: "general" }) {
 
     try {
       setResult(await api.submitInterestQuiz(answers));
-      go("result");
+      go("about");
     } catch (caught) {
       toast(caught instanceof Error ? caught.message : "Couldn't save your answers.", "error");
     } finally {
@@ -834,38 +734,32 @@ export function InterestQuiz({ mode }: { mode?: "general" }) {
     }
   }
 
-  const goalNote = quiz.goal ? (
-    <p className="mb-6 rounded-[var(--radius-card)] border border-line bg-surface px-4 py-3 text-sm text-ink-muted">
-      This is the general quiz across all careers. Your goal is {quiz.goal}.{" "}
-      <Link href="/discover" className="font-semibold text-primary hover:underline">
-        Take the quiz focused on {quiz.goal}
-      </Link>
-    </p>
-  ) : null;
+  async function findMajors(extra: AcademicAnswers) {
+    try {
+      setResult(await api.quizMajors(extra));
+    } catch (caught) {
+      toast(caught instanceof Error ? caught.message : "Couldn't pick your major and minor just now.", "error");
+    }
+
+    go("result");
+  }
 
   if (part === "result" && result) {
     return (
-      <>
-        {goalNote}
-        <Results
+      <Results
         result={result}
         onRetake={() => {
           setAnswers(emptyAnswers());
           setPage(0);
           go("intro");
         }}
+        onFindMajors={() => go("about")}
       />
-      </>
     );
   }
 
   if (part === "intro" || part === "result") {
-    return (
-      <>
-        {goalNote}
-        <Intro onStart={() => go("activities")} hasResult={Boolean(result)} onCancel={() => go("result")} />
-      </>
-    );
+    return <Intro onStart={() => go("activities")} hasResult={Boolean(result)} onCancel={() => go("result")} />;
   }
 
   return (
@@ -937,6 +831,8 @@ export function InterestQuiz({ mode }: { mode?: "general" }) {
           submitting={submitting}
         />
       )}
+
+      {part === "about" && <AboutYouPart onBack={() => go(result ? "result" : "training")} onDone={findMajors} />}
     </div>
   );
 }

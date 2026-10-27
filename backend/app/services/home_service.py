@@ -9,6 +9,7 @@ from sqlalchemy import func, select
 
 from app.core.database import AsyncSessionLocal
 from app.db.models import CareerPlan, Message, ProgressTask, SavedCareer
+from app.services import student_record
 from app.services import career_catalog, field_quiz
 from app.services.conversation_service import list_conversations
 from app.services.document_service import list_documents
@@ -123,7 +124,18 @@ async def _journey(student_id: str) -> dict:
             ).all()
         )
 
-        next_task = (
+        # The current plan's own steps come first (older versions leave
+        # their steps on the checklist); then steps added in chat, newest first.
+        plan = (
+            await db.execute(
+                select(CareerPlan)
+                .where(CareerPlan.student_id == student_id, CareerPlan.status == "saved", CareerPlan.deleted_at.is_(None))
+                .order_by(CareerPlan.updated_at.desc())
+                .limit(1)
+            )
+        ).scalar_one_or_none()
+        current_ids = [task_id for task_id in ((plan.content or {}).get("next_action_task_ids") or []) if task_id] if plan else []
+        open_tasks = (
             await db.execute(
                 select(ProgressTask)
                 .where(
@@ -136,9 +148,10 @@ async def _journey(student_id: str) -> dict:
                     ProgressTask.sort_order,
                     ProgressTask.id,
                 )
-                .limit(1)
             )
-        ).scalar_one_or_none()
+        ).scalars().all()
+        by_id = {task.id: task for task in open_tasks}
+        next_task = next((by_id[task_id] for task_id in current_ids if task_id in by_id), None) or (open_tasks[0] if open_tasks else None)
 
         recent_done = (
             await db.execute(
@@ -180,6 +193,7 @@ def _next_step(
     journey: dict,
     roadmaps: list[dict],
     saved_slugs: list[str],
+    record: dict | None = None,
 ) -> dict:
     if not profile.get("onboarding_completed"):
         return {
@@ -190,53 +204,43 @@ def _next_step(
             "href": "/welcome",
         }
 
-    if not profile.get("interest_scores") and not saved_slugs and not roadmaps:
+    record = record or {}
+    missing = {item["key"]: item for item in record.get("missing") or []}
+
+    # Profile first: grades and resume decide the advice, so they come before anything else.
+    if "transcript" in missing:
+        return {
+            "kind": "transcript",
+            "title": "Upload your transcript",
+            "description": "Your grades decide which majors, colleges and scholarships are realistic for you. A photo or PDF of your unofficial transcript works.",
+            "cta": "Add my transcript",
+            "href": "/profile#documents",
+        }
+
+    if "resume" in missing:
+        return {
+            "kind": "resume",
+            "title": "Add your resume, with everything you've done",
+            "description": "Clubs, sports, jobs, babysitting, volunteering with hours, projects, awards. It all counts, and it all shapes your advice.",
+            "cta": "Add my resume",
+            "href": "/profile#documents",
+        }
+
+    if not profile.get("interest_scores") or not record.get("major_minor"):
         return {
             "kind": "quiz",
-            "title": "Not sure what you want to be? Take the interest quiz",
-            "description": "Five short parts, about 8 minutes. You'll get your interest code and careers ranked by how well they fit.",
+            "title": "Take the interest quiz to find your major and minor",
+            "description": "About 8 minutes. You'll get your interest type and a major and minor picked from your grades, resume and answers.",
             "cta": "Start the quiz",
             "href": "/discover",
-        }
-
-    if not [item for item in conversations if not item["is_legacy"]]:
-        return {
-            "kind": "counselor",
-            "title": "Have your first conversation",
-            "description": "Your counselor can help whether you already have a career in mind or have no idea yet.",
-            "cta": "Talk to my counselor",
-            "href": "/counselor",
-        }
-
-    if pending_facts:
-        return {
-            "kind": "review_facts",
-            "title": f"Check {pending_facts} thing{'s' if pending_facts != 1 else ''} your counselor noticed",
-            "description": "Confirm what's right so future advice fits you better.",
-            "cta": "Review",
-            "href": "/profile#memory",
-        }
-
-    saved_career = next(
-        (career for slug in saved_slugs if (career := career_catalog.get_career(slug))),
-        None,
-    )
-
-    if not roadmaps and saved_career is not None:
-        return {
-            "kind": "roadmap",
-            "title": f"Map your path to {saved_career['title']}",
-            "description": "Get goals from this week to five years out, plus courses, programs, and scholarships that fit you.",
-            "cta": "Build my roadmap",
-            "href": f"/explore/{saved_career['slug']}#roadmap",
         }
 
     if plan is None:
         return {
             "kind": "plan",
-            "title": "Build your first career plan",
-            "description": "Turn what you've talked about into clear steps for this year.",
-            "cta": "Create my plan",
+            "title": "Build My Path",
+            "description": "Your major and minor, the classes to take next, colleges to aim for with scholarships, and three steps for this month.",
+            "cta": "Build My Path",
             "href": "/plan",
         }
 
@@ -256,6 +260,15 @@ def _next_step(
             "description": "Saving turns your milestones into steps you can check off.",
             "cta": "Open my plan",
             "href": f"/plan/{plan['id']}",
+        }
+
+    if pending_facts:
+        return {
+            "kind": "review_facts",
+            "title": f"Check {pending_facts} thing{'s' if pending_facts != 1 else ''} your counselor noticed",
+            "description": "Confirm what's right so future advice fits you better.",
+            "cta": "Review",
+            "href": "/profile#memory",
         }
 
     return {
@@ -366,8 +379,32 @@ async def _since_last_time(student_id: str, profile: dict, since: datetime | Non
     return {"since": since.isoformat(), "items": items}
 
 
+def _record_summary(record: dict) -> dict:
+    academics = record.get("academics") or {}
+    options = (record.get("major_minor") or {}).get("options") or []
+    bright = record.get("bright_futures") or {}
+    checklist = record.get("resume_checklist") or []
+
+    return {
+        "gpa_unweighted": academics.get("gpa_unweighted"),
+        "gpa_weighted": academics.get("gpa_weighted"),
+        "advanced_courses": sum((academics.get("rigor") or {}).values()),
+        "strong_areas": academics.get("strong_areas") or [],
+        "tests": record.get("tests") or {},
+        "service_hours": record.get("service_hours"),
+        "riasec": (record.get("riasec") or {}).get("code"),
+        "major": options[0]["major"]["title"] if options else "",
+        "minor": options[0]["minor"]["title"] if options else "",
+        "bright_futures": {"summary": bright.get("summary", ""), "levels": [{"name": level["name"], "status": level["status"]} for level in bright.get("levels") or []]},
+        "resume_done": sum(item["done"] for item in checklist),
+        "resume_total": len(checklist),
+        "missing": record.get("missing") or [],
+    }
+
+
 async def home_summary(student_id: str) -> dict:
     profile = await get_profile_dict(student_id)
+    record = await student_record.build_record(student_id, profile)
     previous_visit = await _visit(student_id, profile)
     conversations = await list_conversations(student_id, limit=5)
     facts = await list_facts(student_id)
@@ -400,8 +437,9 @@ async def home_summary(student_id: str) -> dict:
         "grade_level": profile.get("grade_level", ""),
         "onboarding_completed": bool(profile.get("onboarding_completed")),
         "next_step": _next_step(
-            profile, conversations, pending, plan, journey, roadmaps, await _saved_slugs(student_id)
+            profile, conversations, pending, plan, journey, roadmaps, await _saved_slugs(student_id), record
         ),
+        "record": _record_summary(record),
         "roadmaps": roadmaps,
         "latest_conversation": latest_conversation,
         "careers": await _careers_worth_exploring(student_id, profile),

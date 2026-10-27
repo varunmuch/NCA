@@ -1,9 +1,11 @@
 import type {
+  AcademicAnswers,
+  AgentActivityItem,
+  QuizFollowUps,
+  StudentRecord,
   CareerDetail,
   CareerInsights,
   CareerRoadmap,
-  FieldQuiz,
-  FieldQuizResult,
   InterestQuiz,
   InterestQuizAnswers,
   InterestQuizResult,
@@ -343,11 +345,19 @@ export const api = {
       method: "POST",
     }),
 
-  interestQuiz: (mode?: "general") =>
-    request<InterestQuiz | FieldQuiz>(`/interest-quiz${mode ? `?mode=${mode}` : ""}`),
+  interestQuiz: () => request<InterestQuiz>("/interest-quiz"),
 
-  submitFieldQuiz: (answers: Pick<InterestQuizAnswers, "activities" | "tradeoffs" | "training">) =>
-    request<FieldQuizResult>("/me/interest-quiz/field", { method: "POST", body: json(answers) }),
+  quizFollowUps: () => request<QuizFollowUps>("/me/interest-quiz/follow-ups"),
+
+  quizMajors: (answers: AcademicAnswers) =>
+    request<InterestQuizResult>("/me/interest-quiz/majors", { method: "POST", body: json(answers) }),
+
+  record: () => request<StudentRecord>("/me/record"),
+
+  agentActivity: () => request<{ items: AgentActivityItem[]; running: boolean }>("/me/agent-activity"),
+
+  updateAcademicProfile: (answers: AcademicAnswers) =>
+    request<StudentRecord>("/me/academic-profile", { method: "PUT", body: json(answers) }),
 
   submitInterestQuiz: (answers: InterestQuizAnswers) =>
     request<InterestQuizResult>("/me/interest-quiz", { method: "POST", body: json(answers) }),

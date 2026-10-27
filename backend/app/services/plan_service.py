@@ -8,6 +8,7 @@ same action.
 """
 
 import copy
+import re
 import logging
 from contextvars import ContextVar
 import json
@@ -20,8 +21,8 @@ from sqlalchemy import select
 from app.core.database import AsyncSessionLocal
 from app.core.llm import LLMError, chat_json
 from app.db.models import CareerPlan, ProgressTask, ProgressTimeline
-from app.services import career_catalog, field_quiz, grounding, pathways, plan_stages, text_clean
-from app.services.context_service import build_context, context_block, grounding_corpus
+from app.services import career_catalog, college_match, field_quiz, grounding, pathways, plan_stages, text_clean
+from app.services.context_service import build_context, college_text, context_block, grounding_corpus, target_majors
 from app.services.student_service import save_profile_dict
 
 
@@ -62,7 +63,7 @@ PLAN_SCHEMA = {
         "title": _text(120),
         "career_goal": _text(100),
         "summary": _text(300),
-        "next_steps": _items({"title": _text(90), "why": _text(200)}, ["title", "why"], 3),
+        "next_steps": _items({"title": _text(140), "why": _text(220)}, ["title", "why"], 3),
         "careers": _items({"slug": _text(100), "why": _text(220)}, ["slug", "why"], MAX_PLAN_CAREERS),
         "this_year": _items(
             {"period": _text(30), "steps": {"type": "array", "items": _text(150), "maxItems": 3}},
@@ -92,7 +93,12 @@ PLAN_SCHEMA["properties"]["next_steps"]["minItems"] = 3
 
 PLAN_PROMPT = """You create short, personal career plans for high school students at NeoCity Academy in Kissimmee, Florida. You are an AI; the plan is a starting point the student can change, not a prediction.
 
-What matters most is next_steps: exactly 3 things the student can do THIS MONTH, each small, concrete, and starting with a verb ("Ask your counselor about...", "Sign up for...", "Spend an hour on..."). why says, in one sentence, how it connects to the student.
+What matters most is next_steps: exactly 3 things the student can do THIS MONTH, each small, concrete, and starting with a verb. They must be about THIS student, never generic. Cover these three kinds, in this order:
+(a) closing a gap from "they still need": the service hours Bright Futures needs, a test to plan, an empty resume section, with the number when the records give it;
+(b) taking something they already do to the next level, naming it;
+(c) building on their strongest subject or their major: a course to request, a project, a competition.
+Each title is the action itself, for example "Log 13 more volunteer hours at the library to reach 75" or "Offer to teach Java to the new members of your robotics team". Never write "Step 1", the letters (a)-(c), or a description of these instructions as a title.
+why: one sentence that names the record fact it builds on ("You have 62 service hours", "Your A in AP Computer Science Principles").
 
 Rules:
 - Fit everything to the student's grade stage (below) and the time of year.
@@ -102,7 +108,9 @@ Rules:
 - high_school: one short focus for each remaining grade, starting with the current one.
 - after_high_school: up to 3 realistic routes (college, community college, apprenticeship, trade school, military, certificates, work).
 - skills: up to 3 skills and how to build them for free or at school.
-- Never use grades to rule anything out. Prefer free, school-based, or low-cost options, described generically.
+- Build on the student's records: their strongest grades and advanced courses, their resume (activities, leadership, jobs, projects, service hours), their interest type, the major and minor the quiz suggested, and earlier conversations. Each next step names the record it builds on.
+- If the resume is missing or thin, one next step is to add everything they've done to it. If service hours are below what Bright Futures needs, a step builds them.
+- Grades set realistic targets; never use them to rule anything out. Prefer free, school-based, or low-cost options, described generically.
 - summary: 1 or 2 sentences. based_on: one sentence on what you used and what's missing.
 - Write in clear, encouraging language a 9th grader understands. Address the student as "you" everywhere, including the title and summary; never use their name or "the student"."""
 
@@ -255,8 +263,10 @@ async def _generate_content(
     previous: dict | None,
 ) -> dict:
     query = " ".join(part for part in [career_goal, instruction] if part) or "career plan"
-    _progress("Reading your profile, quiz, documents and past chats")
+    _progress("Reading your transcript, resume, quiz and past chats")
     context = await build_context(student_id, None, query)
+    # A plan always weighs colleges and scholarships, whatever the request says.
+    context["college_text"] = college_text(context["record"], context["profile"], "college")
 
     request_lines = []
 
@@ -277,6 +287,9 @@ async def _generate_content(
         request_lines.append(
             "Create the student's career plan from everything you know about them."
         )
+
+    request_lines.append(record_guidance(context["record"]))
+    request_lines.append("Check before answering: does each next step name something from these records? If a step could be given to any student, rewrite it.")
 
     grade_level = context["profile"].get("grade_level", "")
     system = (
@@ -350,8 +363,9 @@ PATHWAY_PROMPT = """You map out the education path to one career for a high scho
 
 Rules:
 - courses: up to 8 high school courses, each with the grade to take it in, starting with the student's current grade (never an earlier grade). Skip courses the student's transcript shows they already finished. Prefer the AP courses listed for this career, plus the core math and science that lead to them. Use dual enrollment or FLVS where it helps.
-- majors: up to 3 college majors that lead to this career.
-- colleges: 4 to 6 Florida colleges. Include at least one state college (2-year) for the route of starting there and transferring to a university, and favor schools near NeoCity when they fit.
+- majors: up to 3 college majors that lead to this career. If the student's records show a suggested or preferred major, put it first.
+- colleges: 5 to 7 Florida colleges offering their major, mixing reach, match and likely schools for this student (the "Colleges and scholarships" section labels each). Include at least one state college (2-year) for the route of starting there and transferring to a university, and favor schools near NeoCity when they fit.
+- courses: build on the subjects where their grades are strongest (an AP or honors next step), and add help for a weaker subject.
 - certifications: up to 4, putting first the ones marked as needing no degree or long work experience, since a teenager or new graduate can work toward them.
 - Describe schools only by facts in the list (city, public or private, 2-year or 4-year, being near NeoCity, the programs listed). Never call a school or program top, strong, competitive, excellent, or prestigious.
 - For a college, begin why with the college's own name, and talk only about that college.
@@ -359,6 +373,35 @@ Rules:
 - summary: 1 or 2 sentences describing the route, including more than one way in when realistic (for example a bachelor's degree, or starting at a state college).
 - Never write prices, percentages, salaries, rankings, dates, or admission requirements; the app shows official figures.
 - Plain text only: no Markdown, no asterisks, no field names. Address the student as "you"."""
+
+
+def _add_chosen_majors(found: dict, context: dict) -> None:
+    """The quiz's majors lead the pathway, with the colleges that offer them."""
+
+    majors = target_majors(context["record"], context["profile"])
+
+    if not majors:
+        return
+
+    catalog = college_match.majors_catalog()
+    chosen = [
+        {"cip": catalog[cip4]["cip"], "title": catalog[cip4]["title"], "includes": [], "florida_colleges": catalog[cip4]["florida_colleges"]}
+        for cip4 in majors
+        if cip4 in catalog
+    ]
+    found["majors"] = chosen + [major for major in found["majors"] if major["cip"] not in {item["cip"] for item in chosen}]
+
+    known = {college["id"] for college in found["colleges"]}
+
+    for card in college_match.colleges_for_majors(majors, context["record"], limit=10):
+        if card["id"] not in known:
+            found["colleges"].append(
+                {
+                    **{key: card[key] for key in ("id", "name", "city", "ownership", "kind", "url", "net_price", "graduation_rate", "students")},
+                    "central_florida": card["city"].lower() in pathways.CENTRAL_FLORIDA,
+                    "programs": card["programs"],
+                }
+            )
 
 
 def _focus_career(content: dict, career_goal: str) -> str:
@@ -385,6 +428,7 @@ async def _build_pathway(slug: str, context: dict, grade_level: str, corpus: str
     title = (career_catalog.get_career(slug) or {}).get("title", "this career")
     _progress(f"Looking up the path to {title}: Florida colleges, majors and certifications")
     found = await pathways.candidates(slug)
+    _add_chosen_majors(found, context)
     _progress(
         f"Found {len(found['colleges'])} Florida colleges with a matching program, "
         f"{len(found['majors'])} majors and {len(found['certifications'])} certifications"
@@ -419,7 +463,83 @@ async def _build_pathway(slug: str, context: dict, grade_level: str, corpus: str
         temperature=0.3,
     )
 
-    return pathways.attach(raw, found, clean)
+    pathway = pathways.attach(raw, found, clean)
+
+    return fit_pathway(pathway, context["record"])
+
+
+def _course_key(name: str) -> str:
+    return " ".join(re.findall(r"[a-z0-9]+", name.lower().replace("honors", "").replace("advanced placement", "ap")))
+
+
+def record_guidance(record: dict) -> str:
+    """Concrete things the plan must build on or fix, worked out in code from the record."""
+
+    lines = ["Use these facts from the student's records (each next step should build on one):"]
+    resume = record.get("resume") or {}
+    doing = (resume.get("activities") or []) + (resume.get("leadership") or [])
+
+    if doing:
+        lines.append("- They already do: " + "; ".join(item.split(":")[0] for item in doing[:6]) + ". Never suggest joining these; suggest the next level (a leadership role, a competition, teaching others).")
+
+    academics = record.get("academics") or {}
+
+    if academics.get("strong_areas"):
+        lines.append(f"- Strongest grades: {', '.join(academics['strong_areas'])}.")
+
+    if academics.get("weak_areas"):
+        lines.append(f"- Lower grades: {', '.join(academics['weak_areas'])}: one step can get help there.")
+
+    taken = [course["name"] for course in academics.get("courses") or []] + list(academics.get("in_progress") or [])
+
+    if taken:
+        lines.append("- Already taken or taking now (never suggest these): " + "; ".join(taken[:25]) + ".")
+
+    for level in (record.get("bright_futures") or {}).get("levels") or []:
+        gaps = [check for check in level["checks"] if check["status"] == "not_yet"]
+
+        if gaps:
+            lines.append(f"- For {level['name']} they still need: " + "; ".join(f"{check['item']} ({check['note']})" for check in gaps) + ".")
+
+    tests = record.get("tests") or {}
+
+    if not (tests.get("sat") or tests.get("act")):
+        lines.append("- No SAT or ACT yet: include when to take the PSAT/SAT in their plan.")
+
+    missing = [item["label"] for item in record.get("resume_checklist") or [] if not item["done"]]
+
+    if missing:
+        lines.append("- Resume sections still empty: " + ", ".join(missing) + ".")
+
+    return "\n".join(lines)
+
+
+def fit_pathway(pathway: dict, record: dict) -> dict:
+    """Reach/match/likely labels, admissions and scholarships for each college; the major and minor; Bright Futures."""
+
+    # Never suggest a course the transcript shows they've taken or are taking.
+    academics = record.get("academics") or {}
+    taken = {_course_key(course["name"]) for course in academics.get("courses") or []} | {_course_key(name) for name in academics.get("in_progress") or []}
+
+    if taken and pathway.get("courses"):
+        pathway["courses"] = [course for course in pathway["courses"] if _course_key(course["course"]) not in taken]
+
+    for item in pathway.get("colleges", []):
+        official = college_match.college(item["id"])
+
+        if official:
+            item["fit"] = college_match.fit_label(official, record)
+            item["admissions"] = official.get("admissions") or {}
+            item["scholarships"] = college_match.college_scholarships(item["id"])
+
+    options = (record.get("major_minor") or {}).get("options") or []
+
+    if options:
+        pathway["major_minor"] = {key: options[0][key] for key in ("major", "minor", "why_major", "why_minor") if key in options[0]}
+
+    pathway["bright_futures"] = record.get("bright_futures")
+
+    return pathway
 
 
 async def list_plans(student_id: str) -> list[dict]:

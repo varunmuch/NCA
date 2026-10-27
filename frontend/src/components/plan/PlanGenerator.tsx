@@ -96,7 +96,7 @@ export function PlanGenerator({
     <div className="rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-8">
       <h2 className="text-lg font-bold">Create a personalized plan</h2>
       <p className="mt-2 max-w-2xl text-ink-muted">
-        Your counselor uses your profile, conversations, and any resume or transcript you&apos;ve shared. No career goal yet? Leave it blank and you&apos;ll get an exploration plan instead.
+        Built from your transcript, resume, quiz, test scores and conversations. No career goal yet? Leave it blank and you&apos;ll get an exploration plan instead.
       </p>
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <Field label="Career goal (optional)" htmlFor="plan-goal" hint="For example: nurse, game designer, or “something in science”.">

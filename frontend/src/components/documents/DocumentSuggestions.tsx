@@ -221,7 +221,7 @@ export function DocumentSuggestions({ documentId }: { documentId: number }) {
                 <Link href="/explore" className="font-semibold text-primary hover:underline">
                   Find a career
                 </Link>
-                <Link href="/discover?mode=general" className="font-semibold text-primary hover:underline">
+                <Link href="/discover" className="font-semibold text-primary hover:underline">
                   Take the interest quiz
                 </Link>
               </div>

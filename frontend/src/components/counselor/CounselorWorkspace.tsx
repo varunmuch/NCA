@@ -6,9 +6,15 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import {
   ArrowDown,
   ArrowLeft,
+  Compass,
   History,
   Info,
+  Lightbulb,
+  Map,
+  Palette,
   Plus,
+  Stethoscope,
+  Target,
   UserRoundPen,
 } from "lucide-react";
 
@@ -23,13 +29,13 @@ import type { ChatMessage, ConversationSummary, CounselorAction, StudentDocument
 
 import { Composer, type ComposerHandle } from "./Composer";
 import { ConversationList } from "./ConversationList";
-import { ACTION_META, MessageBubble } from "./MessageBubble";
+import { ACTION_META, CounselorAvatar, MessageBubble } from "./MessageBubble";
 
 const EXAMPLES = [
-  "Help me figure out what I might enjoy doing.",
-  "I love science and art. What careers combine both?",
-  "I want to become a doctor. Where should I start?",
-  "Can you build a career plan based on my profile?",
+  { text: "Help me figure out what I might enjoy doing.", icon: Lightbulb, tone: "bg-sun-soft text-sun" },
+  { text: "I love science and art. What careers combine both?", icon: Palette, tone: "bg-pink-soft text-pink" },
+  { text: "I want to become a doctor. Where should I start?", icon: Stethoscope, tone: "bg-teal-soft text-teal" },
+  { text: "Can you build a career plan based on my profile?", icon: Map, tone: "bg-sky-soft text-sky" },
 ];
 
 function nowIso() {
@@ -46,43 +52,63 @@ function Intro({
   onExample: (text: string) => void;
 }) {
   return (
-    <div className="pb-6 pt-10 sm:pt-20">
-      <h1 className="font-display text-[1.75rem] font-semibold leading-tight text-ink sm:text-[2.25rem]">
-        {name ? `Hi ${name}. What's on your mind?` : "What's on your mind?"}
-      </h1>
-      <p className="mt-3 max-w-lg leading-relaxed text-ink-muted">
-        Talk through what you enjoy, a career you&apos;re curious about, or what to do next. I remember what you confirm.
-      </p>
+    <div className="pb-6 pt-6 sm:pt-10">
+      <div className="rounded-[var(--radius-hero)] border border-line bg-gradient-to-br from-primary-softer via-white to-pink-soft p-6 sm:p-8">
+        <div className="flex items-center gap-3">
+          <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow-[var(--shadow-card)] ring-2 ring-primary/15">
+            <CounselorAvatar size="lg" />
+          </span>
+          <div>
+            <p className="text-sm font-semibold text-primary">Your career counselor</p>
+            <h1 className="font-display text-[1.6rem] font-semibold leading-tight text-ink sm:text-[2rem]">
+              {name ? `Hi ${name}, let's talk careers.` : "Let's talk careers."}
+            </h1>
+          </div>
+        </div>
+        <p className="mt-4 max-w-lg leading-relaxed text-ink-muted">
+          Talk through what you enjoy, a career you&apos;re curious about, or what to do next. I remember what you confirm.
+        </p>
 
-      <div className="mt-8 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => onStart("exploring")}
-          className="rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-ink hover:border-ink-soft hover:bg-surface-2"
-        >
-          I&apos;m still figuring it out
-        </button>
-        <button
-          type="button"
-          onClick={() => onStart("have_goal")}
-          className="rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-ink hover:border-ink-soft hover:bg-surface-2"
-        >
-          I have a career in mind
-        </button>
+        <div className="mt-6 flex flex-wrap gap-2.5">
+          <button
+            type="button"
+            onClick={() => onStart("exploring")}
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-violet px-5 py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-raised)] transition hover:brightness-110"
+          >
+            <Compass aria-hidden className="size-4" />
+            I&apos;m still figuring it out
+          </button>
+          <button
+            type="button"
+            onClick={() => onStart("have_goal")}
+            className="inline-flex items-center gap-2 rounded-full border border-pink/30 bg-white px-5 py-2.5 text-sm font-semibold text-pink transition hover:bg-pink-soft"
+          >
+            <Target aria-hidden className="size-4" />
+            I have a career in mind
+          </button>
+        </div>
       </div>
 
-      <ul className="mt-8 divide-y divide-line border-y border-line">
-        {EXAMPLES.map((example) => (
-          <li key={example}>
-            <button
-              type="button"
-              onClick={() => onExample(example)}
-              className="w-full py-3 text-left text-[15px] text-ink-muted hover:text-ink"
-            >
-              {example}
-            </button>
-          </li>
-        ))}
+      <p className="mt-8 text-sm font-semibold text-ink-muted">Or start with one of these</p>
+      <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+        {EXAMPLES.map((example) => {
+          const Icon = example.icon;
+
+          return (
+            <li key={example.text}>
+              <button
+                type="button"
+                onClick={() => onExample(example.text)}
+                className="flex h-full w-full items-start gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-4 text-left text-[15px] text-ink transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-[var(--shadow-raised)]"
+              >
+                <span className={`flex size-9 shrink-0 items-center justify-center rounded-xl ${example.tone}`}>
+                  <Icon aria-hidden className="size-[18px]" />
+                </span>
+                {example.text}
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -319,6 +345,79 @@ export function CounselorWorkspace({
     void loadConversations();
   }
 
+  // Word-by-word reveal of the streaming reply.
+  const reveal = useRef({ target: "", shown: 0, frame: 0 });
+
+  function showDraft(text: string) {
+    setMessages((current) => {
+      const last = current[current.length - 1];
+
+      if (!last?.metadata.streaming) {
+        return current;
+      }
+
+      return [...current.slice(0, -1), { ...last, content: text }];
+    });
+  }
+
+  function startReveal() {
+    const state = reveal.current;
+
+    if (state.frame) {
+      return;
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      state.shown = state.target.length;
+      showDraft(state.target);
+      return;
+    }
+
+    const tick = () => {
+      const remaining = state.target.length - state.shown;
+
+      if (remaining <= 0) {
+        state.frame = 0;
+        return;
+      }
+
+      // About 90 characters a second, faster when a lot is waiting.
+      let next = Math.min(state.target.length, state.shown + Math.max(2, Math.ceil(remaining / 40)));
+      // End on a word boundary so words appear whole.
+      const space = state.target.indexOf(" ", next);
+      next = space === -1 || space - next > 12 ? next : space + 1;
+      state.shown = Math.min(next, state.target.length);
+      showDraft(state.target.slice(0, state.shown));
+      state.frame = window.requestAnimationFrame(tick);
+    };
+
+    state.frame = window.requestAnimationFrame(tick);
+  }
+
+  function revealDone(): Promise<void> {
+    const state = reveal.current;
+    const started = Date.now();
+
+    return new Promise((resolve) => {
+      const check = () => {
+        if (state.shown >= state.target.length || Date.now() - started > 6000) {
+          resolve();
+        } else {
+          window.setTimeout(check, 50);
+        }
+      };
+
+      check();
+    });
+  }
+
+  function stopReveal() {
+    window.cancelAnimationFrame(reveal.current.frame);
+    reveal.current = { target: "", shown: 0, frame: 0 };
+  }
+
+  useEffect(() => () => window.cancelAnimationFrame(reveal.current.frame), []);
+
   async function send(text: string, action?: CounselorAction) {
     if (sending) {
       return;
@@ -333,6 +432,7 @@ export function CounselorWorkspace({
     };
 
     nearBottom.current = true;
+    stopReveal();
     setMessages((current) => [...current.filter((message) => !message.metadata.error), optimistic]);
     setSending(true);
     setPendingLabel(action ? `Building your ${ACTION_META[action].label.toLowerCase()}…` : "");
@@ -353,19 +453,16 @@ export function CounselorWorkspace({
               { id: null, role: "assistant", content: "", metadata: { streaming: true }, created_at: null },
             ]);
           } else if (event.event === "delta") {
-            setMessages((current) => {
-              const last = current[current.length - 1];
-
-              if (!last?.metadata.streaming) {
-                return current;
-              }
-
-              return [...current.slice(0, -1), { ...last, content: last.content + event.text }];
-            });
+            // Text is revealed at a steady pace by the reveal loop, even
+            // when the network delivers it in one burst.
+            reveal.current.target += event.text;
+            startReveal();
           }
         }
       );
 
+      // Let the visible text catch up before the saved reply replaces it.
+      await revealDone();
       setMessages((current) => [...withoutDraft(current), result.assistant_message]);
 
       if (result.error) {
@@ -380,6 +477,7 @@ export function CounselorWorkspace({
       ]);
       toast(error instanceof Error ? error.message : "The counselor couldn't answer just now.", "error");
     } finally {
+      stopReveal();
       setSending(false);
       setPendingLabel("");
     }
@@ -418,6 +516,7 @@ export function CounselorWorkspace({
   function onAction(action: CounselorAction) {
     switch (action) {
       case "build_plan":
+      case "career_roadmap":
         router.push("/plan?generate=1");
         break;
       case "explore_careers":
@@ -512,7 +611,8 @@ export function CounselorWorkspace({
   return (
     <div className="flex h-dvh">
       <section className="relative flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-1 border-b border-line bg-canvas px-2 sm:px-4">
+        <header className="relative flex h-14 shrink-0 items-center gap-1 border-b border-line bg-white px-2 sm:px-4">
+          <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-pink to-sun" />
           <Link
             href="/"
             aria-label="Back to Home"
@@ -523,8 +623,9 @@ export function CounselorWorkspace({
           <IconButton label="Conversations" onClick={() => setHistoryOpen(true)}>
             <History aria-hidden className="size-5" />
           </IconButton>
-          <div className="min-w-0 flex-1 px-1">
-            <p className="truncate text-[15px] font-medium text-ink">{title || "Counselor"}</p>
+          <div className="flex min-w-0 flex-1 items-center gap-2 px-1">
+            <CounselorAvatar size="sm" />
+            <p className="truncate text-[15px] font-semibold text-ink">{title || "Counselor"}</p>
           </div>
           <IconButton label="What the counselor knows about you" onClick={() => setContextOpen(true)}>
             <Info aria-hidden className="size-[18px]" />
@@ -534,8 +635,12 @@ export function CounselorWorkspace({
           </IconButton>
         </header>
 
-        <div ref={scrollRef} onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[720px] px-4 py-6 sm:px-6">
+        <div
+          ref={scrollRef}
+          onScroll={onScroll}
+          className="min-h-0 flex-1 overflow-y-auto bg-[radial-gradient(circle_at_1px_1px,var(--color-line)_1px,transparent_0)] [background-size:22px_22px]"
+        >
+          <div className="mx-auto w-full max-w-[860px] px-3 py-6 sm:px-6">
             {loading && (
               <div className="space-y-6" role="status" aria-label="Loading conversation">
                 <Skeleton className="ml-auto h-10 w-2/3 rounded-2xl" />
@@ -563,7 +668,7 @@ export function CounselorWorkspace({
               </p>
             )}
 
-            <div className="space-y-7">
+            <div className="space-y-5">
               {messages.map((message, index) => (
                 <MessageBubble
                   key={message.id ?? `local-${index}`}
@@ -578,13 +683,13 @@ export function CounselorWorkspace({
 
               {sending && !messages.some((message) => message.metadata.streaming && message.content) && (
                 <div className="flex items-center gap-3" aria-live="polite">
-                  <div className="flex items-center gap-3 py-2">
+                  <span className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-white shadow-[var(--shadow-card)] ring-2 ring-primary/15 sm:flex">
+                    <CounselorAvatar />
+                  </span>
+                  <div className="flex items-center gap-3 rounded-2xl rounded-tl-md border border-line bg-surface px-4 py-3 shadow-[var(--shadow-card)]">
                     <ThinkingDots />
-                    {pendingLabel ? (
-                      <span className="text-sm text-ink-muted">{pendingLabel}</span>
-                    ) : (
-                      <span className="sr-only">Your counselor is writing</span>
-                    )}
+                    <span className="text-sm text-ink-muted">{pendingLabel || "Reading your transcript, resume and quiz…"}</span>
+                    <span className="sr-only">Your counselor is writing</span>
                   </div>
                 </div>
               )}
@@ -605,8 +710,8 @@ export function CounselorWorkspace({
           </button>
         )}
 
-        <div className="shrink-0 bg-gradient-to-t from-canvas via-canvas to-canvas/0 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 sm:px-6">
-          <div className="mx-auto w-full max-w-[720px]">
+        <div className="shrink-0 border-t border-line bg-white px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 sm:px-6">
+          <div className="mx-auto w-full max-w-[860px]">
             {!modelAvailable && (
               <p role="status" className="mb-2 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink">
                 Your counselor is taking a short break. Try again in a few minutes. Everything else in Career Explorer still works.

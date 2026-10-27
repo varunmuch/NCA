@@ -1,6 +1,7 @@
 import { Award, BookOpen, ExternalLink, GraduationCap, School } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { ChanceBadge, ScholarshipsToggle } from "@/components/college/CollegeList";
 import type { Pathway } from "@/types/cie";
 
 function dollars(value: number) {
@@ -112,7 +113,7 @@ export function PlanPathway({ pathway, only, bare = false }: { pathway: Pathway;
             id="pathway-colleges"
             icon={<School className="size-5" />}
             title="Florida colleges and universities to look at"
-            intro="Cost is the average a year after grants and scholarships. Earnings are the median for that program's graduates."
+            intro="Your estimated chance at each (hover the i to see how), cost after aid, and scholarships to look at. Earnings are the median for that program's graduates."
           >
             {[
               { label: "Universities", items: universities },
@@ -134,6 +135,7 @@ export function PlanPathway({ pathway, only, bare = false }: { pathway: Pathway;
                           ) : (
                             <span className="font-semibold leading-snug text-ink">{college.name}</span>
                           )}
+                          {college.fit && <ChanceBadge fit={college.fit} college={college.name} />}
                         </div>
                         <div className="mt-1.5 flex flex-wrap gap-1.5">
                           <Tag>{college.city}</Tag>
@@ -168,6 +170,7 @@ export function PlanPathway({ pathway, only, bare = false }: { pathway: Pathway;
                           </ul>
                         )}
                         {college.why && <p className="mt-3 text-sm leading-relaxed text-ink-muted">{college.why}</p>}
+                        {college.scholarships && <ScholarshipsToggle scholarships={college.scholarships} />}
                       </li>
                     ))}
                   </ul>

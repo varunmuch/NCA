@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowUp, Paperclip } from "lucide-react";
+import { Paperclip, SendHorizontal } from "lucide-react";
 
 export type ComposerHandle = {
   setText: (text: string) => void;
@@ -62,14 +62,14 @@ export const Composer = forwardRef<
         event.preventDefault();
         submit();
       }}
-      className="flex items-end gap-2 rounded-2xl border border-line-strong bg-surface p-2 transition-colors focus-within:border-ink-soft"
+      className="flex items-end gap-2 rounded-[1.75rem] border-2 border-primary/15 bg-surface p-2 shadow-[var(--shadow-raised)] transition-colors focus-within:border-primary/45"
     >
       <button
         type="button"
         onClick={onAttach}
         aria-label="Attach a resume or transcript"
         title="Attach a resume or transcript"
-        className="flex size-10 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink"
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-sun-soft text-sun transition-colors hover:bg-sun hover:text-white"
       >
         <Paperclip aria-hidden className="size-5" />
       </button>
@@ -91,9 +91,9 @@ export const Composer = forwardRef<
         type="submit"
         disabled={disabled || !text.trim()}
         aria-label="Send message"
-        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary transition-colors hover:bg-primary-hover disabled:bg-surface-3 disabled:text-ink-soft"
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-pink text-white transition-[filter,opacity] hover:brightness-110 disabled:from-surface-3 disabled:to-surface-3 disabled:text-ink-soft"
       >
-        <ArrowUp aria-hidden className="size-5" />
+        <SendHorizontal aria-hidden className="size-5" />
       </button>
     </form>
   );

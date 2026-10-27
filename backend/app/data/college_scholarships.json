@@ -1,0 +1,221 @@
+{
+  "note": "Hand-collected from each college's own website on the retrieved date. Names, who an award is for, and how to be considered only: amounts, cutoffs and deadlines change every year, so the app links to the official page instead of stating them.",
+  "retrieved": "2026-10-26",
+  "state": {
+    "bright_futures": {
+      "name": "Florida Bright Futures Scholarship",
+      "url": "https://www.floridastudentfinancialaidsg.org/SAPHome/SAPHome?url=home",
+      "source": "Florida Department of Education, Office of Student Financial Assistance, \"Florida Bright Futures Scholarship Program: FAS/FMS Initial Eligibility Requirements\" (last updated August 2025; applies to 2025-26 and 2026-27 graduates)",
+      "source_url": "https://www.floridastudentfinancialaidsg.org/PDF/FAS-FMS.pdf",
+      "common": [
+        "Submit the Florida Financial Aid Application (FFAA) no later than August 31 after high school graduation.",
+        "Graduate from a Florida high school with a standard diploma.",
+        "Complete the 16 college-preparatory courses: 4 English, 4 math (Algebra I or higher), 3 natural science (2 with lab), 3 social science, 2 world language in the same language."
+      ],
+      "levels": [
+        {
+          "key": "FAS",
+          "name": "Florida Academic Scholars (FAS)",
+          "weighted_gpa": 3.5,
+          "sat": 1330,
+          "act": 29,
+          "clt": 95,
+          "volunteer_hours": 100,
+          "paid_hours": 100
+        },
+        {
+          "key": "FMS",
+          "name": "Florida Medallion Scholars (FMS)",
+          "weighted_gpa": 3.0,
+          "sat": 1190,
+          "act": 24,
+          "clt": 82,
+          "volunteer_hours": 75,
+          "paid_hours": 100
+        }
+      ],
+      "hours_rule": "Volunteer service hours, 100 paid work hours, or a combination totaling at least 100 hours.",
+      "changes": "Requirements can change with each legislative session; confirm on the official site."
+    }
+  },
+  "colleges": {
+    "132903": {
+      "page": "https://www.ucf.edu/financial-aid/types/scholarships/pegasus/",
+      "how": "Admitted first-year applicants are considered automatically; applying by the early action deadlines gets priority.",
+      "awards": [
+        {"name": "Provost Award", "for": "Florida residents with outstanding academic records; includes priority consideration for the Burnett Honors College."},
+        {"name": "Pegasus Scholarships", "for": "Entering students, based on academic performance; no separate application."},
+        {"name": "Burnett Honors College Enhancement Scholarship", "for": "First-year students who apply to the Burnett Honors College by its deadline."}
+      ]
+    },
+    "134130": {
+      "page": "https://admissions.ufl.edu/cost-and-aid/scholarships",
+      "how": "The admission application is the only application; selection is a holistic review of grades, test scores, activities, leadership, service and the essay.",
+      "awards": [
+        {"name": "Florida Merit Scholarship", "for": "Admitted Florida residents selected in the merit review."},
+        {"name": "Presidential Scholarship", "for": "Admitted first-year students selected in the merit review (several levels)."},
+        {"name": "John V. Lombardi Scholarship", "for": "A select group of incoming students showing curiosity, creativity, civic responsibility and leadership."},
+        {"name": "Machen Florida Opportunity Scholars", "for": "First-generation, low-income students (need-based)."}
+      ]
+    },
+    "134097": {
+      "page": "https://admissions.fsu.edu/first-year/scholarships",
+      "how": "Accepted students are considered automatically; early decision and early action applicants get priority. A test score is needed for admissions merit awards. Presidential Scholars has its own application.",
+      "awards": [
+        {"name": "Presidential Scholars", "for": "First-year students admitted to FSU and the Honors Program; separate application."},
+        {"name": "Vires Award", "for": "Admitted first-year students, based on academic profile; no separate application."},
+        {"name": "Mores Award", "for": "Admitted first-year students, based on academic profile; no separate application."},
+        {"name": "IB Diploma Award", "for": "Admitted students completing the IB Diploma."}
+      ]
+    },
+    "137351": {
+      "page": "https://www.usf.edu/admissions/freshmen/admissions-scholarships/",
+      "how": "Admitted students are considered automatically if they apply by the scholarship deadline; no separate application.",
+      "awards": [
+        {"name": "Presidential Award", "for": "USF's top merit award for Florida residents."},
+        {"name": "Directors Award", "for": "Admitted first-year students, based on academic record."},
+        {"name": "Scholars Gold Award", "for": "Admitted first-year students, based on academic record."}
+      ]
+    },
+    "133951": {
+      "page": "https://scholarships.fiu.edu/browse-scholarships/merit-scholarships/",
+      "how": "Admitted first-year students are considered automatically when the application and official SAT, ACT or CLT scores arrive by the early action deadline.",
+      "awards": [
+        {"name": "Presidential Merit Scholarship", "for": "FIU's top merit award; includes guaranteed admission to the Honors College."},
+        {"name": "FIU Merit Scholarships", "for": "Admitted first-year students, based on the academic record used for admission and residency."}
+      ]
+    },
+    "133669": {
+      "page": "https://www.fau.edu/admissions/freshman/scholarships/",
+      "how": "Merit awards are decided at admission for complete applications received by the scholarship deadline; meeting the published minimums doesn't guarantee an award.",
+      "awards": [
+        {"name": "FAU Freshman Merit Scholarships", "for": "Admitted first-year students, in tiers set by GPA and SAT, ACT or CLT score."},
+        {"name": "Flagler Scholarship (Wilkes Honors College)", "for": "Florida residents admitted to the Wilkes Honors College; full merit award with an on-campus living requirement."}
+      ]
+    },
+    "433660": {
+      "page": "https://www.fgcu.edu/admissionsandaid/undergraduateadmissions/scholarshipsandwaivers",
+      "how": "Applying for admission by the early action deadline gives automatic, competitive consideration; test scores are required.",
+      "awards": [
+        {"name": "FGCU Freshman Merit Awards", "for": "First-time-in-college students who apply early with test scores."},
+        {"name": "FGCU Foundation Scholarships", "for": "Students with academic merit or financial need; yearly scholarship application."}
+      ]
+    },
+    "136172": {
+      "page": "https://www.unf.edu/scholarships/programs.html",
+      "how": "Awarded automatically by qualifications and availability; students admitted by the priority date with SAT, ACT or CLT scores get priority.",
+      "awards": [
+        {"name": "President's Platinum Award", "for": "Florida residents meeting the top GPA and test-score tier."},
+        {"name": "Dean's Award", "for": "Florida residents meeting the published GPA and test-score tier."},
+        {"name": "UNF Foundation First Generation Scholarship", "for": "First-generation college students."}
+      ]
+    },
+    "138354": {
+      "page": "https://uwf.edu/go/scholarships/",
+      "how": "Completing the freshman application by the priority date gives automatic review for merit scholarships; awards can't be combined.",
+      "awards": [
+        {"name": "UWF Academic Merit Scholarships", "for": "First-year applicants complete by the priority date."},
+        {"name": "Argo 30 Guarantee", "for": "New Florida freshmen who qualify under the program's terms."},
+        {"name": "Argo Spirit", "for": "Pell Grant-eligible Florida residents; non-academic competition."}
+      ]
+    },
+    "133650": {
+      "page": "https://www.famu.edu/students/scholarships/index.php",
+      "how": "Apply to the university and to the FAMU Scholarship Program; awards are based on GPA and test scores.",
+      "awards": [
+        {"name": "Life-Gets-Better Scholarship", "for": "Incoming freshmen meeting the GPA and test thresholds who major in biology, chemistry, computer science, engineering, environmental science, math or physics."},
+        {"name": "Distinguished Scholar Award", "for": "Incoming freshmen meeting the thresholds in other majors."},
+        {"name": "Presidential Special Scholarship", "for": "Incoming freshmen with at least a 3.0 academic high school GPA."}
+      ]
+    },
+    "482936": {
+      "page": "https://floridapoly.edu/admissions/undergraduate-financial-aid/",
+      "how": "Merit awards are based on GPA and SAT, ACT or CLT scores at admission.",
+      "awards": [
+        {"name": "Presidential Scholarship", "for": "Admitted first-year students meeting the top GPA and test-score criteria."},
+        {"name": "Provost Scholarship", "for": "Admitted first-year students, by GPA and test score."},
+        {"name": "Phoenix Scholarship", "for": "Admitted first-year students, by GPA and test score."},
+        {"name": "Alexander Scholars", "for": "Motivated domestic undergraduates with strong high school records."}
+      ]
+    },
+    "262129": {
+      "page": "https://www.ncf.edu/admissions/first-year-students/scholarships/",
+      "how": "Applicants are considered for select institutional awards with no separate application; Foundation scholarships need their own application.",
+      "awards": [
+        {"name": "Presidential Honors Scholarship", "for": "First-year applicants, based on academics, activities and leadership."},
+        {"name": "New College Foundation Scholarships", "for": "Students who submit the yearly Foundation application."}
+      ]
+    },
+    "135726": {
+      "page": "https://admissions.miami.edu/undergraduate/financial-aid/scholarships/freshman/index.html",
+      "how": "Applicants are considered automatically when they apply; awards are made only at admission. Stamps requires Early Decision I or Early Action.",
+      "awards": [
+        {"name": "Stamps Scholarship", "for": "UM's top merit award; Early Decision I or Early Action applicants."},
+        {"name": "Isaac Bashevis Singer Scholarship", "for": "High-achieving first-year applicants; full tuition."},
+        {"name": "Foote Fellows Honors Program", "for": "The most academically accomplished incoming first-year students in each school."}
+      ]
+    },
+    "137847": {
+      "page": "https://www.ut.edu/admissions/financial-aid/scholarships-and-grants",
+      "how": "Applicants are evaluated automatically on unweighted GPA and course rigor; departmental awards need their own application.",
+      "awards": [
+        {"name": "Presidential Merit Scholarship", "for": "Admitted first-year students, by unweighted GPA and rigor."},
+        {"name": "Dean's Merit Scholarship", "for": "Admitted first-year students, by unweighted GPA and rigor."},
+        {"name": "International Baccalaureate Scholarship", "for": "Students completing IB coursework."},
+        {"name": "President's Leadership Fellows", "for": "Thirty first-year students with AP, IB, AICE or dual enrollment coursework, chosen by committee."}
+      ]
+    },
+    "133553": {
+      "page": "https://daytonabeach.erau.edu/financial-aid/scholarships",
+      "how": "Admitted students are considered automatically for institutional scholarships based on GPA, test scores and class rank.",
+      "awards": [
+        {"name": "Embry-Riddle Institutionally Funded Scholarships", "for": "Admitted students, based on the admission application."},
+        {"name": "Embry-Riddle FIRST Scholarship", "for": "Students on a FIRST Tech Challenge or FIRST Robotics Competition team; form and essay required."}
+      ]
+    },
+    "133881": {
+      "page": "https://www.fit.edu/admission/scholarships--aid/university-scholarships-and-grants/",
+      "how": "All applicants are considered automatically for a merit scholarship based on GPA and SAT, ACT or CLT scores.",
+      "awards": [
+        {"name": "Florida Tech Merit Scholarship", "for": "Admitted first-year students, by weighted GPA and test scores."},
+        {"name": "Florida Tech Distinguished Scholar Award", "for": "First-time freshmen who qualify for Bright Futures Florida Academic Scholars."},
+        {"name": "Robotics Scholarship", "for": "High school FIRST Robotics or VEX Robotics team members."}
+      ]
+    },
+    "136950": {
+      "page": "https://www.rollins.edu/scholarships-aid/scholarships/academic/",
+      "how": "All applicants are considered for merit awards, including test-optional applicants; Alfond requires Early Decision I or Early Action and an interview.",
+      "awards": [
+        {"name": "Alfond Scholars Program", "for": "Up to 10 first-year College of Liberal Arts students; full award; interview for finalists."},
+        {"name": "Dean's Scholarship", "for": "Admitted first-year students; considered automatically."},
+        {"name": "Alonzo Rollins Scholarship", "for": "Admitted first-year students; considered automatically."}
+      ]
+    },
+    "137546": {
+      "page": "https://www.stetson.edu/administration/financial-aid/scholarships/",
+      "how": "The admissions committee decides once the application is complete, using high school record, test scores and community service.",
+      "awards": [
+        {"name": "Presidential Scholarship", "for": "Admitted first-year students with the strongest records."},
+        {"name": "Dean's Scholarship", "for": "Admitted first-year students."},
+        {"name": "LaValle Creative Arts Scholarship", "for": "Students in studio art, digital arts, museum studies or theatre."},
+        {"name": "J. Ollie Edmunds Scholarship", "for": "Premier program; separate application."}
+      ]
+    },
+    "134079": {
+      "page": "https://www.flsouthern.edu/admissions/undergraduate/undergraduate-financial-aid/undergraduate-scholarships/undergraduate-merit-scholarships",
+      "how": "Applicants are considered automatically at admission, based on their academic record.",
+      "awards": [
+        {"name": "Henry and Annie Merner Pfeiffer Scholarship", "for": "Admitted first-year students with the strongest records."},
+        {"name": "E.T. Roux Scholarship", "for": "Admitted first-year students."}
+      ]
+    },
+    "138187": {
+      "page": "https://valenciacollege.edu/finaid/programs/scholarships/institutional-scholarships.php",
+      "how": "Valencia Foundation scholarships go to enrolled degree or certificate students through the Foundation's application portal.",
+      "awards": [
+        {"name": "Valencia Foundation Scholarships", "for": "Enrolled degree- or certificate-seeking Valencia students; need- or merit-based by scholarship."},
+        {"name": "Lift Scholars College Access Scholarship", "for": "Graduates of Jones High School (2026-2029) who meet the program's terms."}
+      ]
+    }
+  }
+}

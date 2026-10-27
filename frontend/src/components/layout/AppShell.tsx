@@ -58,7 +58,7 @@ export function BrandMark({ compact = false }: { compact?: boolean }) {
         alt=""
         width={36}
         height={36}
-        className="dark:rounded-full dark:bg-[#f7f7f5] dark:p-0.5 size-9 shrink-0 object-contain"
+        className="size-9 shrink-0 object-contain"
       />
       {!compact && (
         <span className="leading-tight">
@@ -78,7 +78,7 @@ function Avatar({ size = "md" }: { size?: "sm" | "md" }) {
   return (
     <span
       aria-hidden
-      className={`flex shrink-0 items-center justify-center rounded-full bg-surface-3 font-semibold text-ink ${
+      className={`flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-pink font-semibold text-white ${
         size === "sm" ? "size-8 text-xs" : "size-9 text-sm"
       }`}
     >
@@ -110,6 +110,16 @@ function SignOut({ compact = false }: { compact?: boolean }) {
   );
 }
 
+// Each destination gets its own color so the menu is easy to scan.
+const NAV_TONES: Record<string, string> = {
+  "/": "text-primary",
+  "/counselor": "text-violet",
+  "/discover": "text-sun",
+  "/explore": "text-teal",
+  "/plan": "text-pink",
+  "/profile": "text-sky",
+};
+
 function NavLink({
   item,
   pathname,
@@ -134,16 +144,16 @@ function NavLink({
         compact ? "size-11 justify-center" : "px-3 py-2.5"
       } ${
         active
-          ? "bg-primary-softer text-primary-ink"
+          ? "bg-gradient-to-r from-primary-softer to-pink-soft/60 font-semibold text-primary-ink"
           : "text-ink-muted hover:bg-surface-2 hover:text-ink"
       }`}
     >
       {active && !compact && (
-        <span aria-hidden className="absolute -left-4 top-2 bottom-2 w-1 rounded-r-full bg-primary" />
+        <span aria-hidden className="absolute -left-4 top-2 bottom-2 w-1 rounded-r-full bg-gradient-to-b from-primary to-pink" />
       )}
       <Icon
         aria-hidden
-        className={`size-[18px] shrink-0 ${active ? "text-primary" : "text-ink-soft group-hover:text-ink-muted"}`}
+        className={`size-[18px] shrink-0 ${NAV_TONES[item.href] ?? (active ? "text-primary" : "text-ink-soft group-hover:text-ink-muted")}`}
       />
       {compact ? <span className="sr-only">{item.label}</span> : item.label}
     </Link>
@@ -163,7 +173,7 @@ function Sidebar({
 
   return (
     <aside
-      className={`no-print fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-line bg-surface/80 backdrop-blur-xl transition-[width] duration-200 lg:flex ${
+      className={`no-print fixed inset-y-0 left-0 z-40 hidden flex-col border-r border-line bg-white transition-[width] duration-200 lg:flex ${
         collapsed ? "w-[76px] items-center px-3" : "w-[264px] px-4"
       }`}
     >
@@ -224,7 +234,7 @@ function Sidebar({
 
 function MobileTopBar({ onMenu }: { onMenu: () => void }) {
   return (
-    <header className="no-print sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line/70 bg-canvas/85 px-4 backdrop-blur-xl lg:hidden">
+    <header className="no-print sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line/70 bg-white/90 px-4 backdrop-blur-xl lg:hidden">
       <BrandMark />
       <button
         type="button"
@@ -256,7 +266,7 @@ function MobileTabBar({ pathname }: { pathname: string }) {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-semibold transition-colors ${
-                active ? "text-primary" : "text-ink-muted"
+                active ? "text-primary-ink" : "text-ink-muted"
               }`}
             >
               <span
@@ -264,7 +274,7 @@ function MobileTabBar({ pathname }: { pathname: string }) {
                   active ? "bg-primary-soft" : ""
                 }`}
               >
-                <Icon aria-hidden className="size-[19px]" />
+                <Icon aria-hidden className={`size-[19px] ${NAV_TONES[item.href] ?? ""}`} />
               </span>
               {item.shortLabel ?? item.label}
             </Link>

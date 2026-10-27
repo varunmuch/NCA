@@ -363,7 +363,7 @@ export function OnboardingFlow({ profile }: { profile: StudentProfile }) {
                 The interest quiz takes about 5 minutes and shows careers that match you, with real pay and schools.
               </p>
               <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-                <Button size="lg" loading={saving} onClick={() => finish("/discover?mode=general")} icon={<Compass aria-hidden className="size-[18px]" />}>
+                <Button size="lg" loading={saving} onClick={() => finish("/discover")} icon={<Compass aria-hidden className="size-[18px]" />}>
                   Take the quiz
                 </Button>
                 <Button size="lg" variant="secondary" disabled={saving} onClick={() => finish("/counselor?start=exploring")} icon={<MessageCircle aria-hidden className="size-[18px]" />}>

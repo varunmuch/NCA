@@ -402,7 +402,7 @@ def schema(found: dict) -> dict:
 UNBACKED_PRAISE = re.compile(
     r"\b(top[- ]tier|top[- ]ranked|highly ranked|prestigious|elite|renowned|world[- ]class|"
     r"best|excellent|outstanding|competitive|robust|strong|leading|cutting[- ]edge|well[- ]regarded|"
-    r"well[- ]known|reputable|respected|acclaimed|premier|notable)\b",
+    r"well[- ]known|known for|reputable|respected|acclaimed|premier|notable|great|supportive|vibrant|ideal|perfect)\b",
     re.IGNORECASE,
 )
 

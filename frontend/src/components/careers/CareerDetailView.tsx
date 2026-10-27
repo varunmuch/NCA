@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
   ArrowLeft,
   ExternalLink,
   GitCompare,
   GraduationCap,
-  Lightbulb,
   ListChecks,
   Map as MapIcon,
   MessageCircle,
@@ -15,17 +13,13 @@ import {
 } from "lucide-react";
 
 import { Badge, Card, SectionTitle } from "@/components/ui/Card";
-import { Button, ButtonLink } from "@/components/ui/Button";
-import { ErrorNotice, Skeleton } from "@/components/ui/Feedback";
-import { api } from "@/lib/api";
+import { ButtonLink } from "@/components/ui/Button";
 import { preparationLabel } from "@/lib/format";
-import type { CareerDetail, CareerInsights } from "@/types/cie";
+import type { CareerDetail } from "@/types/cie";
 
 import { CareerCard, FamilyIcon, SaveCareerButton } from "./CareerCard";
 import { CareerFacts } from "./CareerFacts";
-import { QuickPathCard } from "./QuickPathCard";
 import { SetGoalButton } from "./SetGoalButton";
-import { CareerRoadmap } from "./CareerRoadmap";
 
 function Chips({ items, tone = "neutral" }: { items: string[]; tone?: "neutral" | "primary" }) {
   return (
@@ -44,88 +38,7 @@ function Chips({ items, tone = "neutral" }: { items: string[]; tone?: "neutral" 
   );
 }
 
-function Insights({ slug }: { slug: string }) {
-  const [insights, setInsights] = useState<CareerInsights | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function load() {
-    setLoading(true);
-    setError("");
-
-    try {
-      setInsights(await api.careerInsights(slug));
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Couldn't load ideas right now.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <Card className="overflow-hidden">
-      <div className="bg-surface-2 p-6">
-        <div className="flex items-center gap-2">
-          <MessageCircle aria-hidden className="size-5 text-primary" />
-          <h2 className="text-lg font-bold">Make it personal</h2>
-          <Badge tone="primary">AI</Badge>
-        </div>
-        <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-          Your counselor can connect this career to what you&apos;ve shared, and suggest beginner-friendly ways to try it out.
-        </p>
-        {!insights && (
-          <Button className="mt-4" onClick={load} loading={loading} icon={<Lightbulb aria-hidden className="size-4" />}>
-            {loading ? "Thinking…" : "Get ideas for me"}
-          </Button>
-        )}
-      </div>
-
-      {loading && (
-        <div className="space-y-3 p-6" role="status" aria-label="Loading ideas">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-5/6" />
-          <Skeleton className="h-4 w-2/3" />
-        </div>
-      )}
-
-      {error && <ErrorNotice className="m-6" message={error} onRetry={load} />}
-
-      {insights && (
-        <div className="space-y-6 p-6 text-[15px] animate-[var(--animate-fade-up)]">
-          <div>
-            <h3 className="font-bold">A day in the life</h3>
-            <p className="mt-1.5 leading-relaxed text-ink-muted">{insights.day_to_day}</p>
-          </div>
-          <div className="rounded-2xl bg-accent-softer p-4">
-            <h3 className="font-bold text-accent-ink">How it connects to you</h3>
-            <p className="mt-1.5 leading-relaxed text-ink">{insights.connection_to_you}</p>
-          </div>
-          {[
-            ["Try it out in high school", insights.beginner_experiences],
-            ["Other ways in", insights.alternative_routes],
-            ["Questions to ask yourself", insights.questions_to_consider],
-          ].map(([title, items]) =>
-            (items as string[]).length ? (
-              <div key={title as string}>
-                <h3 className="font-bold">{title as string}</h3>
-                <ul className="mt-2 list-disc space-y-1.5 pl-5 text-ink-muted marker:text-primary/50">
-                  {(items as string[]).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            ) : null
-          )}
-          <p className="text-xs text-ink-muted">
-            AI-generated suggestions. Check programs and requirements with your school counselor.
-          </p>
-        </div>
-      )}
-    </Card>
-  );
-}
-
-export function CareerDetailView({ career, autoBuildRoadmap = false }: { career: CareerDetail; autoBuildRoadmap?: boolean }) {
+export function CareerDetailView({ career }: { career: CareerDetail }) {
   const prep = preparationLabel(career.job_zone);
   const askHref = `/counselor?ask=${encodeURIComponent(`I'm curious about ${career.title}. What's it really like, and could it be a good fit for me?`)}`;
 
@@ -157,11 +70,15 @@ export function CareerDetailView({ career, autoBuildRoadmap = false }: { career:
         <div className="flex flex-wrap gap-2">
           <SetGoalButton title={career.title} />
           <SaveCareerButton slug={career.slug} title={career.title} saved={Boolean(career.saved)} variant="button" />
-          <ButtonLink href="#roadmap" variant="secondary" icon={<MapIcon aria-hidden className="size-4" />}>
-            See my roadmap
+          <ButtonLink
+            href={`/plan?generate=1&goal=${encodeURIComponent(career.title)}`}
+            variant="secondary"
+            icon={<MapIcon aria-hidden className="size-4" />}
+          >
+            Build My Path for this
           </ButtonLink>
           <ButtonLink href={askHref} icon={<MessageCircle aria-hidden className="size-4" />}>
-            Discuss with my counselor
+            Ask my counselor
           </ButtonLink>
         </div>
       </header>
@@ -177,11 +94,7 @@ export function CareerDetailView({ career, autoBuildRoadmap = false }: { career:
         </p>
       )}
 
-      <QuickPathCard slug={career.slug} />
-
       {career.facts && <CareerFacts facts={career.facts} commonEducation={career.common_education} />}
-
-      <CareerRoadmap slug={career.slug} title={career.title} autoBuild={autoBuildRoadmap} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-6">
@@ -258,8 +171,6 @@ export function CareerDetailView({ career, autoBuildRoadmap = false }: { career:
               Paths differ from person to person. Community college, apprenticeships, certificates, and the military can all be ways in for many careers.
             </p>
           </Card>
-
-          <Insights slug={career.slug} />
         </div>
 
         <aside className="space-y-6">

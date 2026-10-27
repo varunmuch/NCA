@@ -29,7 +29,7 @@ from app.core.database import AsyncSessionLocal
 from app.core.llm import LLMError, chat_completion, chat_json, chat_stream, llm_calls
 from app.db.models import Conversation, Message
 from app.models.profile import StudentProfile
-from app.services import career_catalog, career_expansion, grounding, safety
+from app.services import agent, career_catalog, career_expansion, college_match, grounding, major_agent, record_updates, safety, student_record
 from app.services.career_path_service import generate_career_path
 from app.services.certification_service import generate_certification_guidance
 from app.services.context_service import build_context, context_block, grounding_corpus
@@ -45,7 +45,7 @@ from app.services.conversation_service import (
 from app.services.interview_service import generate_interview_prep
 from app.services.project_service import generate_project_roadmap
 from app.services.skill_gap_service import generate_skill_gap
-from app.services.student_service import FACT_CATEGORIES, add_facts
+from app.services.student_service import FACT_CATEGORIES, add_facts, get_profile_dict
 
 
 logger = logging.getLogger("cie.counselor")
@@ -188,6 +188,16 @@ Your voice:
 - If they say "I'm not sure", reassure them in one short sentence and offer an easy either/or choice instead.
 - Never repeat yourself, never ask for something you already know (check the student context), and move the conversation forward every turn.
 
+Use what you know about THIS student (never generic advice):
+- Their records are in the student context: transcript grades and the GPA the app calculated, advanced courses, resume activities, leadership, jobs, projects and service hours, test scores, their interest type (RIASEC), the major they want, the major and minor the quiz suggested, and earlier conversations. Tie every suggestion to one specific thing from them ("your A in AP Computer Science Principles", "leading your robotics team's code").
+- Majors: their own preferred major comes first. Suggest a minor from their interest type. If the quiz already suggested a major and minor, build on it.
+- Colleges and scholarships: name only the ones in the "Colleges and scholarships" section, with the reach, match or likely label it gives, and say the label is an estimate. Describe a college only by facts in that section; never call a college or program strong, top, great or prestigious. For a college question, up to 4 colleges in a short list is fine. Name scholarships only from that section and send them to the college's official page for amounts and deadlines.
+- Courses: suggest next year's classes that build on their strongest grades and their goal (an AP or honors course in that subject, dual enrollment), and kind help for a weaker subject. Never suggest a course their transcript shows they finished or are taking now; build on it instead ("after AP Computer Science A...").
+- The app can act for the student (update their record, add a checklist step, save a career, set a goal, rebuild My Path). When it has, your reply already starts by saying so; carry on from there and never ask them to do it themselves.
+- You can't send reminders, messages or notifications later, and you can't do things outside this conversation; never promise to.
+- Resume: if their resume is missing or thin, encourage them to add everything they've done (clubs, sports, jobs, babysitting, volunteering with hours, projects, awards). It all counts.
+- Grades and scores set realistic targets (reach, match, likely); they never rule a student out or decide what they can become.
+
 Suggesting careers:
 - Discover before recommending. Until the student has shared at least two things about themselves (interests, favorite subjects, activities, things they're good at), ask about them instead of naming careers.
 - Then suggest at most 2 careers in a reply, each with one reason that uses the student's own words. Use the careers' names as written in the candidates list when one fits.
@@ -199,7 +209,6 @@ Facts:
 - Facts and figures (pay or salary, job growth or outlook, percentages, scholarship or program names, deadlines and dates, GPA or admission requirements, links) must come from the Sources section or from what the student told you. If they aren't there, say plainly that you don't have reliable information on that, and point to where to find it: their school counselor, bls.gov for pay and job outlook, studentaid.gov for FAFSA and financial aid, careeronestop.org for scholarships. Never guess, estimate, or round a number, date, or name. Don't mention figures the student didn't ask about.
 - When Sources give pay, job outlook, or education, you may share them: copy the figures exactly, say pay is the median (half earn more, half less) from the year shown, and that pay varies with place and experience. BLS has no "starting salary"; if asked, give the range the source shows instead.
 - If the student asks about their resume or transcript and the documents section shows it is not uploaded, not analyzed, or failed, say so plainly instead of guessing its contents. Never invent facts about the student or their documents.
-- Grades and transcripts show what a student has studied, not what they're capable of. Never use grades to rule a student out.
 - For big decisions (a college, a major, a program, money), encourage talking with a school counselor and a parent or guardian.
 - Stay focused on school, careers, skills, and planning. If asked something unrelated, kindly steer back in one sentence.
 
@@ -565,6 +574,68 @@ async def _module_reply(action: str, question: str, context: dict) -> dict:
     }
 
 
+async def _carry_out(student_id: str, requests: list[dict], record_changes: list[dict]) -> list[dict]:
+    """Keep majors and My Path in step with any record change, then do what the student asked."""
+
+    done: list[dict] = []
+    started: list[str] = []
+
+    if record_changes:
+        reason = "your " + ", ".join(f"{change['label'].lower()} changed to {change['new']}" for change in record_changes)
+        started = await agent.on_record_change(student_id, {change["field"] for change in record_changes}, reason)
+
+    for request in requests:
+        kind, value = request["action"], request["value"]
+
+        try:
+            if kind == "add_step":
+                done.append(await agent.add_step(student_id, value))
+            elif kind == "save_career":
+                result = await agent.save_career(student_id, value)
+                done.append(result or {"kind": kind, "text": f"couldn't find a career matching \"{value}\" to save", "href": "/explore"})
+            elif kind == "set_goal":
+                result = await agent.set_goal(student_id, value)
+                done.append(result or {"kind": kind, "text": f"couldn't find a career matching \"{value}\" to make your goal", "href": "/explore"})
+            elif kind == "update_plan":
+                # Folds into a refresh that's already starting, if any.
+                agent.queue(student_id, "refresh_plan", f"you asked: \"{value}\"" if value else "you asked for an update")
+
+                if not any("My Path" in item for item in started):
+                    started.append("updating My Path")
+            elif kind == "refresh_majors":
+                if not any("major" in item for item in started):
+                    more = await agent.on_record_change(student_id, {"quiz"}, "you asked for new suggestions")
+                    started += more or []
+
+                    if not more:
+                        done.append({"kind": kind, "text": "need your interest quiz first to suggest majors and minors", "href": "/discover"})
+        except Exception:
+            logger.exception("Agent action %s failed", kind)
+
+    if started:
+        done.append(
+            {
+                "kind": "refresh",
+                "text": "started " + " ".join(started) + " in the background (about a minute; it'll show on Home)",
+                "href": "/",
+                "running": True,
+            }
+        )
+
+    return done
+
+
+def _actions_sentence(actions: list[dict]) -> str:
+    parts = [action["text"] for action in actions]
+
+    if not parts:
+        return ""
+
+    joined = parts[0] if len(parts) == 1 else ", ".join(parts[:-1]) + " and " + parts[-1]
+
+    return f" I {joined}."
+
+
 async def run_turn_stream(
     student_id: str,
     *,
@@ -615,8 +686,42 @@ async def run_turn_stream(
         "user_message": message_to_dict(user_message),
     }
 
+    # Agentic step: numbers the student tells us about themselves (service
+    # hours, SAT/ACT, the major they want) update their record first, so this
+    # reply and every page use them.
+    record_changes: list[dict] = []
+    agent_actions: list[dict] = []
+    opening = ""
+
+    if not retry and action not in MODULE_ACTIONS:
+        try:
+            record = await student_record.build_record(student_id, await get_profile_dict(student_id))
+            updates, requests = await record_updates.extract(text, record)
+
+            if updates:
+                current = record_updates.current_values(record)
+                await major_agent.save_answers(student_id, updates)
+                record_changes = record_updates.describe(updates, current)
+                after = await student_record.build_record(student_id, await get_profile_dict(student_id))
+                opening = record_updates.acknowledgment(record_changes, record, after)
+
+            agent_actions = await _carry_out(student_id, requests, record_changes)
+
+            if agent_actions:
+                opening = (opening + _actions_sentence(agent_actions)).strip() + " "
+        except Exception:
+            logger.exception("Record update failed; answering without it")
+
+        timer.lap("record_update")
+
     context = await build_context(student_id, conversation, text)
     timer.lap("context")
+
+    if opening:
+        # The app opens the reply with the exact update; the model carries on.
+        context["record_text"] += (
+            "\n- Your reply starts with sentences the app wrote about what it just did for them. Continue right after them: never repeat or contradict them, never say anything else was done, and answer the rest of their message (if there's nothing else, add one useful next idea in a sentence or two)."
+        )
 
     # Agentic step: a career the student says they want gets a page now
     # (validated against official job titles), started before the reply.
@@ -643,8 +748,12 @@ async def run_turn_stream(
             output = await _module_reply(action, text, context)
             timer.lap("model")
         else:
-            parts: list[str] = []
+            parts: list[str] = [opening] if opening else []
             generation: dict = {}
+
+            if opening:
+                timer.lap("first_token")
+                yield {"event": "delta", "text": opening}
 
             async for piece in chat_stream(
                 counselor_messages(context, context["name"]),
@@ -652,6 +761,7 @@ async def run_turn_stream(
                 temperature=0.5,
                 name="counselor_reply",
                 outcome=generation,
+                prefix=opening,
             ):
                 if not parts:
                     timer.lap("first_token")
@@ -703,6 +813,9 @@ async def run_turn_stream(
                 ),
             )
 
+            # Facts about colleges come from official data; unbacked praise goes.
+            output["reply"] = college_match.strip_college_praise(output["reply"]).strip() or output["reply"]
+
             if crisis:
                 # No buttons pulling toward plans or careers in a crisis turn.
                 output["suggested_actions"] = []
@@ -752,6 +865,12 @@ async def run_turn_stream(
 
     if output.get("open_career"):
         metadata["open_career"] = output["open_career"]
+
+    if record_changes:
+        metadata["record_updates"] = record_changes
+
+    if agent_actions:
+        metadata["agent_actions"] = agent_actions
 
     if "module" in output:
         metadata["module"] = output["module"]

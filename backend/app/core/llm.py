@@ -124,6 +124,7 @@ async def chat_stream(
     temperature: float = 0.3,
     name: str = "stream",
     outcome: dict | None = None,
+    prefix: str = "",
 ) -> AsyncIterator[str]:
     """
     Yield the reply's text as vLLM generates it (plain text, no schema).
@@ -134,7 +135,9 @@ async def chat_stream(
     gets "finish" ("stop", or "length" if it was still cut after that).
     """
 
-    produced = ""
+    # With a prefix, the model continues a reply the app already started
+    # (the prefix itself is not yielded again).
+    produced = prefix
     finish = None
 
     for round_number in range(MAX_CONTINUATIONS + 1):
@@ -147,7 +150,7 @@ async def chat_stream(
             "stream_options": {"include_usage": True},
         }
 
-        if round_number:
+        if round_number or prefix:
             # Pick up exactly where the reply stopped.
             payload["messages"] = [*messages, {"role": "assistant", "content": produced}]
             payload["continue_final_message"] = True

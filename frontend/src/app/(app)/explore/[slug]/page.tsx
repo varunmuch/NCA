@@ -39,19 +39,15 @@ export async function generateMetadata({
 
 export default async function CareerPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ build?: string }>;
 }) {
   const { slug } = await params;
-  const { build } = await searchParams;
   const career = await loadCareer(slug);
 
   if (!career) {
     notFound();
   }
 
-  // ?build=roadmap comes from the counselor's "Build my roadmap" button.
-  return <CareerDetailView career={career} autoBuildRoadmap={build === "roadmap"} />;
+  return <CareerDetailView career={career} />;
 }

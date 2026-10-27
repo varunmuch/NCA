@@ -436,45 +436,9 @@ def result_payload(profile: dict) -> dict | None:
             "training": training[2] if training and training[1] else "",
         },
         "taken_at": profile.get("interest_quiz_at") or None,
-        **_matches_for_goal(profile, scores, details),
-    }
-
-
-def _matches_for_goal(profile: dict, scores: dict, details: dict) -> dict:
-    """
-    With a career goal, matches stay in that field: a student who wants to be
-    a software engineer sees software careers first, ranked by fit, and other
-    fields only in a separate, folded list.
-    """
-
-    from app.services import field_quiz  # imported here to avoid a cycle
-
-    anchor = field_quiz.anchor_for(profile)
-
-    if not anchor:
-        return {"careers": match_careers(scores, details), "goal": None, "other_careers": []}
-
-    field = field_quiz.goal_field_slugs(anchor)
-    ranked = match_careers(scores, details, limit=None)
-    in_field = [match for match in ranked if match["slug"] in field]
-    anchor_career = career_catalog.get_career(anchor) or {}
-
-    # The goal is always listed, first, even if its own page isn't in the ranking.
-    if anchor not in {match["slug"] for match in in_field} and anchor_career:
-        in_field.insert(0, {**career_catalog.summary(anchor_career), "match_score": None, "match_parts": {}, "match_reasons": ["Your career goal"]})
-    else:
-        in_field.sort(key=lambda match: match["slug"] != anchor)
-
-    # A title page's own occupation (Software Developers for Software Engineer) comes next.
-    parent = anchor_career.get("variant_of")
-
-    if parent:
-        in_field.sort(key=lambda match: (match["slug"] != anchor, match["slug"] != parent))
-
-    return {
-        "careers": in_field[:8],
-        "goal": {"slug": anchor, "title": anchor_career.get("title", "")},
-        "other_careers": [match for match in ranked if match["slug"] not in field][:6],
+        "careers": match_careers(scores, details),
+        "goal": None,
+        "other_careers": [],
     }
 
 

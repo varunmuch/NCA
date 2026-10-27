@@ -83,8 +83,33 @@ export type MessageMetadata = {
   grounding?: { removed: { kind: string; text: string }[] };
   // The career page the counselor opened for a career the student named.
   open_career?: { slug: string; title: string; created: boolean; note: string };
+  // Record fields the counselor updated from what the student said.
+  record_updates?: RecordUpdate[];
+  // Things the counselor did or started for the student this turn.
+  agent_actions?: AgentAction[];
   // Set only in the browser while a reply is still arriving.
   streaming?: boolean;
+};
+
+export type AgentAction = { kind: string; text: string; href?: string; running?: boolean };
+
+export type AgentActivityItem = {
+  id: number;
+  kind: string;
+  status: "running" | "done" | "failed";
+  title: string;
+  reason: string;
+  detail: string;
+  href: string;
+  created_at: string | null;
+  finished_at: string | null;
+};
+
+export type RecordUpdate = {
+  field: "service_hours" | "paid_hours" | "sat" | "act" | "intended_major";
+  label: string;
+  old: number | string | null;
+  new: number | string;
 };
 
 export type ChatMessage = {
@@ -350,6 +375,10 @@ export type PathwayCollege = {
   central_florida: boolean;
   programs: { title: string; credential: string; earnings_median: number | null; earnings_years: string; cip4: string }[];
   why: string;
+  // Added from the student's record when the plan is built.
+  fit?: CollegeFit;
+  admissions?: CollegeCard["admissions"];
+  scholarships?: CollegeScholarships | null;
 };
 
 export type PathwayCertification = {
@@ -375,6 +404,8 @@ export type Pathway = {
   certifications: PathwayCertification[];
   education_survey: EducationSurvey | null;
   sources: Record<string, { name?: string; url?: string; retrieved?: string }>;
+  major_minor?: { major: FieldRef; minor: FieldRef; why_major: string; why_minor: string };
+  bright_futures?: BrightFutures | null;
 };
 
 export type PlanSummary = {
@@ -462,6 +493,23 @@ export type HomeSummary = {
   this_week?: { id: number; title: string; due_date: string | null; status: string } | null;
   // What the student did since their previous visit (from their own records).
   since_last_time?: { since: string; items: string[] } | null;
+  record?: HomeRecord;
+};
+
+export type HomeRecord = {
+  gpa_unweighted: number | null;
+  gpa_weighted: number | null;
+  advanced_courses: number;
+  strong_areas: string[];
+  tests: { sat: number | null; act: number | null };
+  service_hours: number | null;
+  riasec: string | null;
+  major: string;
+  minor: string;
+  bright_futures: { summary: string; levels: { name: string; status: "on_track" | "not_yet" | "unknown" }[] };
+  resume_done: number;
+  resume_total: number;
+  missing: { key: string; label: string; why: string }[];
 };
 
 export type RoadmapSummary = {
@@ -490,9 +538,139 @@ export type InterestQuizResult = {
   preferences?: { settings: string[]; subjects: string[]; training: string };
   taken_at: string | null;
   careers: CareerSummary[];
-  // With a career goal, careers stay in its field; other matches are listed apart.
   goal?: { slug: string; title: string } | null;
   other_careers?: CareerSummary[];
+  // Major and minor sets from the agentic end of the quiz.
+  majors?: MajorMinorResult | null;
+};
+
+export type CollegeFit = {
+  label: "Reach" | "Match" | "Likely";
+  // Estimated admission chance (%); null for open admission.
+  chance: number | null;
+  reason: string;
+  explanation: string[];
+  estimate: boolean;
+  confidence: "high" | "medium" | "low";
+};
+
+export type CollegeScholarships = {
+  page: string;
+  how: string;
+  awards: { name: string; for: string }[];
+  retrieved: string;
+};
+
+export type CollegeCard = {
+  id: string;
+  name: string;
+  city: string;
+  ownership: string;
+  kind: string;
+  url: string;
+  net_price: number | null;
+  graduation_rate: number | null;
+  students: number | null;
+  admissions: {
+    admit_rate?: number | null;
+    sat_25?: number | null;
+    sat_75?: number | null;
+    act_25?: number | null;
+    act_75?: number | null;
+    test_policy?: string;
+    price_calculator_url?: string;
+  };
+  programs: { title: string; credential: string; cip4?: string }[];
+  fit: CollegeFit;
+  scholarships: CollegeScholarships | null;
+  why?: string;
+};
+
+export type BrightFutures = {
+  name: string;
+  url: string;
+  source: string;
+  common: string[];
+  changes: string;
+  summary: string;
+  levels: {
+    key: string;
+    name: string;
+    status: "on_track" | "not_yet" | "unknown";
+    checks: { item: string; status: "met" | "not_yet" | "unknown"; note: string }[];
+  }[];
+};
+
+export type FieldRef = { cip4: string; cip: string; title: string };
+
+export type MajorMinorOption = {
+  major: FieldRef;
+  minor: FieldRef;
+  why_major: string;
+  why_minor: string;
+  preferred?: boolean;
+  interest_fit?: number;
+  florida_colleges?: number;
+  careers: { slug: string; title: string }[];
+  colleges?: CollegeCard[];
+};
+
+export type MajorMinorResult = {
+  generated_at: string;
+  summary: string;
+  options: MajorMinorOption[];
+  based_on: { transcript: boolean; resume: boolean; quiz: boolean; tests: boolean; preference: string };
+  bright_futures?: BrightFutures;
+};
+
+export type QuizField =
+  | { id: string; kind: "text" | "number"; label: string; hint?: string; value?: string; optional: boolean }
+  | { id: string; kind: "tests"; label: string; hint?: string; optional: boolean }
+  | { id: string; kind: "choice"; label: string; options: string[]; optional: boolean };
+
+export type QuizFollowUps = {
+  fields: QuizField[];
+  knows: { transcript: boolean; resume: boolean; gpa: number | null; service_hours: number | null; tests: { sat: number | null; act: number | null } };
+};
+
+export type AcademicAnswers = {
+  intended_major?: string;
+  sat?: number | string;
+  act?: number | string;
+  test_plan?: string;
+  service_hours?: number | string;
+  interests?: string;
+  follow_ups?: Record<string, string>;
+};
+
+export type TranscriptCourse = { name: string; term: string; grade: string; points: number | null; level: string; area: string };
+
+export type StudentRecord = {
+  academics: {
+    institution: string;
+    grade_or_year: string;
+    courses: TranscriptCourse[];
+    in_progress: string[];
+    gpa_unweighted: number | null;
+    gpa_weighted: number | null;
+    gpa_bright_futures: number | null;
+    graded_courses: number;
+    rigor: Record<string, number>;
+    areas: { area: string; gpa: number; courses: number }[];
+    strong_areas: string[];
+    weak_areas: string[];
+    trend: string;
+  } | null;
+  tests: { sat: number | null; act: number | null; plan: string };
+  service_hours: number | null;
+  service_hours_source: string;
+  resume: Record<string, string[] | string | number | null> | null;
+  resume_checklist: { key: string; label: string; hint: string; count: number; done: boolean }[];
+  riasec: { code: string; top: string[]; labels: string[] } | null;
+  intended_major: string;
+  bright_futures: BrightFutures;
+  missing: { key: string; label: string; why: string }[];
+  major_minor: MajorMinorResult | null;
 };
 
 export type QuizChoice = { key: string; text: string };
@@ -507,25 +685,6 @@ export type InterestQuiz = {
   subjects: { options: string[]; max: number };
   training: { key: string; label: string; description: string }[];
   result: InterestQuizResult | null;
-};
-
-// The focused quiz: only careers in the student's goal field.
-export type FieldQuizCareer = PlanCareer & { match_score: number; match_reasons: string[]; is_goal: boolean };
-
-export type FieldQuizResult = {
-  goal: string;
-  anchor: { slug: string; title: string };
-  careers: FieldQuizCareer[];
-  taken_at: string | null;
-};
-
-export type FieldQuiz = {
-  mode: "field";
-  field: { goal: string; anchor: { slug: string; title: string }; family_label: string; careers: string[] };
-  activities: { items: { id: string; text: string }[]; scale: string[] };
-  tradeoffs: { id: string; a: QuizChoice; b: QuizChoice }[];
-  training: { key: string; label: string; description: string }[];
-  result: FieldQuizResult | null;
 };
 
 export type InterestQuizAnswers = {

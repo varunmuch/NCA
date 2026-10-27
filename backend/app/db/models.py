@@ -849,3 +849,49 @@ class AuthToken(Base):
         DateTime(timezone=True),
         default=datetime.utcnow,
     )
+
+
+class AgentActivity(Base):
+    """
+    Things the counselor did on its own or in the background for a student:
+    refreshed their majors, rebuilt My Path, added a step, saved a career.
+    Shown on Home and in the chat so nothing happens out of sight.
+    """
+
+    __tablename__ = "agent_activity"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger,
+        primary_key=True,
+        autoincrement=True,
+    )
+
+    student_id: Mapped[str] = mapped_column(
+        ForeignKey("students.id", ondelete="CASCADE"),
+        index=True,
+    )
+
+    # refresh_majors, refresh_plan, build_plan, add_step, save_career, set_goal
+    kind: Mapped[str] = mapped_column(String(32))
+
+    # "running", "done" or "failed".
+    status: Mapped[str] = mapped_column(String(16), default="done")
+
+    title: Mapped[str] = mapped_column(String(255))
+
+    # Why it happened, in the student's terms ("your SAT changed").
+    reason: Mapped[str] = mapped_column(String(255), default="")
+
+    detail: Mapped[str] = mapped_column(Text, default="")
+
+    href: Mapped[str] = mapped_column(String(255), default="")
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=datetime.utcnow,
+    )
+
+    finished_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )

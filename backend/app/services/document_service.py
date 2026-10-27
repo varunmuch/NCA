@@ -372,6 +372,9 @@ RESUME_SCHEMA = {
         "volunteering": _string_list(8),
         "awards": _string_list(10),
         "work_experience": _string_list(8),
+        "leadership": _string_list(8),
+        # Total community service hours the resume states; 0 when it doesn't say.
+        "service_hours": {"type": "integer", "minimum": 0, "maximum": 5000},
     },
     "required": [
         "summary",
@@ -382,6 +385,8 @@ RESUME_SCHEMA = {
         "volunteering",
         "awards",
         "work_experience",
+        "leadership",
+        "service_hours",
     ],
 }
 
@@ -446,9 +451,14 @@ async def _extract_structured(doc_type: str, text: str) -> dict:
     else:
         instructions = (
             "Extract this student's resume details: education, projects, "
-            "activities and clubs, skills, volunteering, awards and "
-            "achievements, and work or internship experience. summary: two "
-            "neutral sentences describing the resume."
+            "activities and clubs (with the role and years when listed), "
+            "skills, volunteering (with hours when listed), awards and "
+            "achievements, work or internship experience, and leadership "
+            "roles (officer, captain, founder, lead, mentor). service_hours: "
+            "the total community service or volunteer hours the resume "
+            "states, adding the listed hours if there's no total; 0 if no "
+            "hours are written. summary: two neutral sentences describing "
+            "the resume."
         )
         schema = RESUME_SCHEMA
 
@@ -606,6 +616,16 @@ async def process_document(document_id: int) -> None:
         source_type="document",
         source_id=str(document_id),
     )
+
+    # A new transcript or resume changes what fits: the counselor refreshes
+    # the major suggestions and My Path on its own, in the background.
+    if extraction:
+        from app.services import agent  # avoids an import cycle
+
+        try:
+            await agent.on_record_change(student_id, {record.doc_type}, f"you uploaded a new {record.doc_type}")
+        except Exception:
+            logger.exception("Couldn't start the refresh after document %s", document_id)
 
 
 async def _mark_failed(document_id: int, message: str) -> None:

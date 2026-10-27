@@ -1,12 +1,10 @@
 import {
   Compass,
-  FileText,
   GraduationCap,
   Lightbulb,
   House,
   LifeBuoy,
   Map,
-  MessagesSquare,
   Settings,
   MessageCircle,
   UserRound,
@@ -20,18 +18,18 @@ export type NavItem = {
   icon: LucideIcon;
 };
 
+// The flow: build your profile (grades, resume, quiz), talk it through,
+// explore, then one plan.
 export const primaryNav: NavItem[] = [
   { href: "/", label: "Home", icon: House },
+  { href: "/profile", label: "My Profile", shortLabel: "Profile", icon: UserRound },
   { href: "/counselor", label: "AI Counselor", shortLabel: "Counselor", icon: MessageCircle },
-  { href: "/discover", label: "Interest Quiz", shortLabel: "Quiz", icon: Lightbulb },
   { href: "/explore", label: "Explore Careers", shortLabel: "Explore", icon: Compass },
   { href: "/plan", label: "My Path", shortLabel: "Path", icon: Map },
-  { href: "/profile", label: "My Profile", shortLabel: "Profile", icon: UserRound },
 ];
 
 export const secondaryNav: NavItem[] = [
-  { href: "/conversations", label: "Conversations", icon: MessagesSquare },
-  { href: "/documents", label: "My Documents", icon: FileText },
+  { href: "/discover", label: "Interest Quiz", icon: Lightbulb },
   { href: "/settings", label: "Settings", icon: Settings },
   { href: "/help", label: "Help", icon: LifeBuoy },
 ];
@@ -44,7 +42,7 @@ export function moreNav(isStaff: boolean): NavItem[] {
 }
 
 // Five destinations fit a phone's bottom bar; the rest live in the menu.
-const MOBILE_TABS = ["/", "/counselor", "/discover", "/explore", "/plan"];
+const MOBILE_TABS = ["/", "/profile", "/counselor", "/explore", "/plan"];
 
 export const mobileTabs = primaryNav.filter((item) => MOBILE_TABS.includes(item.href));
 
