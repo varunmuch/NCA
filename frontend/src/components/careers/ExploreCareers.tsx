@@ -18,11 +18,13 @@ import { Select } from "@/components/ui/Field";
 import { api } from "@/lib/api";
 import type { CareerSummary, CareersMeta } from "@/types/cie";
 
-import { CareerCard, FamilyIcon } from "./CareerCard";
+import { CareerCard, FamilyIcon, familyStyle } from "./CareerCard";
 
 const MAX_COMPARE = 3;
 
 // Everyday starting points; the search understands words like these.
+const TRY_TONES = ["bg-sky-soft text-sky", "bg-pink-soft text-pink", "bg-teal-soft text-teal", "bg-violet-soft text-violet", "bg-sunny-soft text-sun-ink"];
+
 const SUGGESTED_SEARCHES = ["animals", "computers", "helping kids", "design", "money", "outdoors", "hospital", "building things"];
 
 export function ExploreCareers() {
@@ -167,8 +169,10 @@ export function ExploreCareers() {
       {!filtering && forYou && forYou.length > 0 && (
         <section aria-labelledby="for-you">
           <div className="flex items-center gap-2">
-            <MessageCircle aria-hidden className="size-5 text-primary" />
-            <h2 id="for-you" className="text-lg font-bold">
+            <span aria-hidden className="flex size-8 -rotate-6 items-center justify-center rounded-lg border-2 border-black/5 bg-sunny">
+              <MessageCircle className="size-4 text-ink" />
+            </span>
+            <h2 id="for-you" className="font-display text-xl font-semibold">
               Picked for you
             </h2>
           </div>
@@ -203,7 +207,7 @@ export function ExploreCareers() {
           Browse all careers
         </h2>
 
-        <div className="rounded-[var(--radius-card)] border border-line bg-surface p-4 shadow-[var(--shadow-card)] sm:p-5">
+        <div className="sticker rounded-[var(--radius-card)] bg-sunny-soft p-4 sm:p-5">
           <div className="relative">
             <Search aria-hidden className="pointer-events-none absolute left-3.5 top-1/2 size-5 -translate-y-1/2 text-ink-soft" />
             <label htmlFor="career-search" className="sr-only">
@@ -225,7 +229,7 @@ export function ExploreCareers() {
               }}
               placeholder="Search a job, a subject, or something you enjoy"
               autoComplete="off"
-              className="h-12 w-full rounded-full border border-line-strong bg-surface pl-11 pr-20 text-ink placeholder:text-ink-soft focus:border-primary focus:outline-none focus:shadow-[var(--shadow-focus)] [&::-webkit-search-cancel-button]:hidden"
+              className="h-12 w-full rounded-full border-2 border-black/5 bg-white pl-11 pr-20 text-ink placeholder:text-ink-soft focus:border-primary focus:outline-none focus:shadow-[var(--shadow-focus)] [&::-webkit-search-cancel-button]:hidden"
             />
             {query ? (
               <button
@@ -250,7 +254,7 @@ export function ExploreCareers() {
           {!q && (
             <div className="mt-3 flex flex-wrap items-center gap-1.5">
               <span className="mr-1 text-xs font-semibold text-ink-muted">Try</span>
-              {SUGGESTED_SEARCHES.map((term) => (
+              {SUGGESTED_SEARCHES.map((term, index) => (
                 <button
                   key={term}
                   type="button"
@@ -258,7 +262,7 @@ export function ExploreCareers() {
                     setQuery(term);
                     setParam("q", term);
                   }}
-                  className="rounded-full border border-line px-3 py-1 text-sm text-ink-muted hover:border-ink-soft hover:text-ink"
+                  className={`rounded-full border-2 border-black/5 px-3 py-1 text-sm font-semibold shadow-[var(--shadow-raised)] transition-transform hover:-translate-y-0.5 ${TRY_TONES[index % TRY_TONES.length]}`}
                 >
                   {term}
                 </button>
@@ -316,7 +320,7 @@ export function ExploreCareers() {
                 key={item.key}
                 type="button"
                 onClick={() => setParam("family", item.key)}
-                className="flex shrink-0 items-center gap-2 rounded-full border border-line bg-surface py-1.5 pl-1.5 pr-3.5 text-sm font-semibold text-ink transition-colors hover:border-primary/30 hover:bg-primary-softer"
+                className={`flex shrink-0 items-center gap-2 rounded-full border-2 border-black/5 py-1 pl-1 pr-3.5 text-sm font-semibold text-ink shadow-[var(--shadow-raised)] transition-transform hover:-translate-y-0.5 ${familyStyle(item.key).chip}`}
               >
                 <FamilyIcon family={item.key} size="sm" />
                 {item.label}

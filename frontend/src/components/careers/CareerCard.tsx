@@ -24,25 +24,35 @@ import { useToast } from "@/components/ui/Toast";
 import { api } from "@/lib/api";
 import type { CareerSummary } from "@/types/cie";
 
-type FamilyStyle = { icon: LucideIcon; tile: string };
+// Each career family has its own color: a soft tile, a solid stripe, a text color.
+type FamilyStyle = { icon: LucideIcon; tile: string; band: string; text: string; chip: string };
 
-// One neutral tone for every family; the icon tells them apart.
+const COLORS = {
+  sky: { tile: "bg-sky-soft text-sky", band: "bg-sky", text: "text-sky", chip: "bg-sky-soft text-sky" },
+  orange: { tile: "bg-violet-soft text-violet", band: "bg-violet", text: "text-violet", chip: "bg-violet-soft text-violet" },
+  teal: { tile: "bg-teal-soft text-teal", band: "bg-teal", text: "text-teal", chip: "bg-teal-soft text-teal" },
+  green: { tile: "bg-accent-soft text-accent", band: "bg-accent", text: "text-accent-ink", chip: "bg-accent-soft text-accent-ink" },
+  red: { tile: "bg-pink-soft text-pink", band: "bg-pink", text: "text-pink", chip: "bg-pink-soft text-pink" },
+  yellow: { tile: "bg-sunny-soft text-sun-ink", band: "bg-sunny", text: "text-sun-ink", chip: "bg-sunny-soft text-sun-ink" },
+  navy: { tile: "bg-primary-soft text-primary", band: "bg-primary", text: "text-primary", chip: "bg-primary-soft text-primary" },
+};
+
 const FAMILY_STYLES: Record<string, FamilyStyle> = {
-  technology: { icon: Cpu, tile: "bg-surface-2 text-ink-muted" },
-  engineering: { icon: DraftingCompass, tile: "bg-surface-2 text-ink-muted" },
-  science: { icon: FlaskConical, tile: "bg-surface-2 text-ink-muted" },
-  environment: { icon: Leaf, tile: "bg-surface-2 text-ink-muted" },
-  health: { icon: HeartPulse, tile: "bg-surface-2 text-ink-muted" },
-  arts: { icon: Palette, tile: "bg-surface-2 text-ink-muted" },
-  education: { icon: GraduationCap, tile: "bg-surface-2 text-ink-muted" },
-  hospitality: { icon: ChefHat, tile: "bg-surface-2 text-ink-muted" },
-  business: { icon: Briefcase, tile: "bg-surface-2 text-ink-muted" },
-  law: { icon: Scale, tile: "bg-surface-2 text-ink-muted" },
-  trades: { icon: Wrench, tile: "bg-surface-2 text-ink-muted" },
+  technology: { icon: Cpu, ...COLORS.sky },
+  engineering: { icon: DraftingCompass, ...COLORS.orange },
+  science: { icon: FlaskConical, ...COLORS.teal },
+  environment: { icon: Leaf, ...COLORS.green },
+  health: { icon: HeartPulse, ...COLORS.red },
+  arts: { icon: Palette, ...COLORS.yellow },
+  education: { icon: GraduationCap, ...COLORS.navy },
+  hospitality: { icon: ChefHat, ...COLORS.orange },
+  business: { icon: Briefcase, ...COLORS.yellow },
+  law: { icon: Scale, ...COLORS.navy },
+  trades: { icon: Wrench, ...COLORS.red },
 };
 
 export function familyStyle(family: string): FamilyStyle {
-  return FAMILY_STYLES[family] ?? { icon: Briefcase, tile: "bg-surface-2 text-ink-muted" };
+  return FAMILY_STYLES[family] ?? { icon: Briefcase, ...COLORS.navy };
 }
 
 export function FamilyIcon({ family, size = "md" }: { family: string; size?: "sm" | "md" | "lg" }) {
@@ -51,7 +61,7 @@ export function FamilyIcon({ family, size = "md" }: { family: string; size?: "sm
   const glyph = size === "lg" ? "size-7" : size === "sm" ? "size-4" : "size-5";
 
   return (
-    <span aria-hidden className={`flex shrink-0 items-center justify-center ${box} ${tile}`}>
+    <span aria-hidden className={`flex shrink-0 items-center justify-center border-2 border-black/5 ${box} ${tile}`}>
       <Icon className={glyph} />
     </span>
   );
@@ -171,15 +181,17 @@ export function CareerCard({
   onCompareToggle?: () => void;
 }) {
   const hint = query ? career.match_hint : null;
+  const style = familyStyle(career.family);
 
   return (
-    <article className="group relative flex h-full flex-col rounded-[var(--radius-card)] border border-line bg-surface p-5 shadow-[var(--shadow-card)] transition-[box-shadow,transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-[var(--shadow-raised)]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border-2 border-line bg-surface p-5 pt-6 transition-[box-shadow,transform,border-color] duration-200 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-raised)]">
+      <span aria-hidden className={`absolute inset-x-0 top-0 h-2 ${style.band}`} />
       <div className="flex items-start justify-between gap-3">
         <FamilyIcon family={career.family} />
         <SaveCareerButton slug={career.slug} title={career.title} saved={Boolean(career.saved)} />
       </div>
 
-      <p className="mt-4 text-xs font-semibold text-ink-muted">
+      <p className={`mt-4 text-xs font-bold uppercase tracking-wide ${style.text}`}>
         {career.family_label}
       </p>
       <h3 className="mt-1 text-[17px] font-bold leading-snug text-ink">
@@ -210,7 +222,7 @@ export function CareerCard({
       <div className="mt-auto flex items-center justify-between gap-2 pt-4">
         <div className="flex flex-wrap gap-1.5">
           {career.subjects.slice(0, 2).map((subject) => (
-            <span key={subject} className="rounded-full bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-ink-muted">
+            <span key={subject} className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${style.chip}`}>
               {subject}
             </span>
           ))}

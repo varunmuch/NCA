@@ -262,7 +262,7 @@ export function TradeoffsPart({
               onClick={() => choose(key)}
               aria-pressed={chosen === key}
               className={`flex min-h-36 flex-col justify-between rounded-[var(--radius-card)] border-2 p-5 text-left transition-colors ${
-                chosen === key ? "border-ink bg-ink text-canvas" : "border-line bg-surface text-ink hover:border-ink-soft"
+                chosen === key ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-ink-soft"
               }`}
             >
               <span className={`text-xs font-semibold ${chosen === key ? "text-canvas/60" : "text-ink-soft"}`}>
@@ -338,7 +338,7 @@ function ChoicePart({
               onClick={() => toggle(option.key)}
               className={`flex items-center gap-3 border text-left transition-colors disabled:opacity-40 ${
                 layout === "tiles" ? "rounded-xl px-4 py-3.5 text-[15px]" : "rounded-full px-4 py-2 text-sm"
-              } ${on ? "border-ink bg-ink text-canvas" : "border-line bg-surface text-ink hover:border-ink-soft"}`}
+              } ${on ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-ink-soft"}`}
             >
               {layout === "tiles" && (
                 <span
@@ -403,7 +403,7 @@ export function TrainingPart({
               aria-checked={on}
               onClick={() => onChange(option.key)}
               className={`flex w-full items-center gap-4 rounded-xl border px-4 py-3.5 text-left transition-colors ${
-                on ? "border-ink bg-ink text-canvas" : "border-line bg-surface text-ink hover:border-ink-soft"
+                on ? "border-primary bg-primary text-white" : "border-line bg-surface text-ink hover:border-ink-soft"
               }`}
             >
               <span className={`flex size-5 shrink-0 items-center justify-center rounded-full border-2 ${on ? "border-canvas" : "border-line-strong"}`}>
@@ -517,7 +517,7 @@ function Results({ result, onRetake, onFindMajors }: { result: InterestQuizResul
               <span
                 key={letter}
                 className={`flex size-16 items-center justify-center rounded-2xl text-3xl font-bold sm:size-20 sm:text-4xl ${
-                  index === 0 ? "bg-ink text-canvas" : "border-2 border-ink text-ink"
+                  index === 0 ? "bg-primary text-white" : "border-2 border-primary text-primary"
                 }`}
               >
                 {letter}
@@ -577,7 +577,7 @@ function Results({ result, onRetake, onFindMajors }: { result: InterestQuizResul
           </h2>
           <div className="mt-3 grid gap-4 md:grid-cols-3">
             {result.shape.map((note) => (
-              <div key={note.key} className="border-l-2 border-ink pl-4">
+              <div key={note.key} className="border-l-4 border-sunny pl-4">
                 <p className="font-semibold text-ink">{note.title}</p>
                 <p className="mt-1 text-sm leading-relaxed text-ink-muted">{note.body}</p>
               </div>
@@ -604,7 +604,7 @@ function Results({ result, onRetake, onFindMajors }: { result: InterestQuizResul
             </Button>
           </>
         ) : (
-          <div className="rounded-[var(--radius-card)] border border-primary/20 bg-gradient-to-br from-primary-softer to-pink-soft p-6">
+          <div className="rounded-[var(--radius-card)] border border-primary/20 bg-primary-softer p-6">
             <p className="font-semibold text-ink">One more step: a few questions about you</p>
             <p className="mt-1 text-sm text-ink-muted">We&apos;ll read your transcript and resume, ask only what&apos;s missing, and pick three major and minor sets with colleges and scholarships.</p>
             <Button className="mt-4" onClick={onFindMajors} icon={<ArrowRight aria-hidden className="size-4" />}>
@@ -674,7 +674,7 @@ function Intro({ onStart, hasResult, onCancel }: { onStart: () => void; hasResul
   );
 }
 
-export function InterestQuiz() {
+export function InterestQuiz({ retake = false }: { retake?: boolean } = {}) {
   const toast = useToast();
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [error, setError] = useState("");
@@ -699,14 +699,14 @@ export function InterestQuiz() {
 
         setQuiz(loaded);
         setResult(loaded.result);
-        setPart(loaded.result ? "result" : "intro");
+        setPart(loaded.result && !retake ? "result" : "intro");
       })
       .catch((caught) => !cancelled && setError(caught instanceof Error ? caught.message : "Couldn't load the quiz."));
 
     return () => {
       cancelled = true;
     };
-  }, [attempt]);
+  }, [attempt, retake]);
 
   if (error) {
     return <ErrorNotice message={error} onRetry={() => setAttempt((value) => value + 1)} />;

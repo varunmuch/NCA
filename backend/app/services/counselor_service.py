@@ -27,12 +27,12 @@ from sqlalchemy import select
 
 from app.core.database import AsyncSessionLocal
 from app.core.llm import LLMError, chat_completion, chat_json, chat_stream, llm_calls
-from app.db.models import Conversation, Message
+from app.db.models import Conversation, Message, SavedCareer
 from app.models.profile import StudentProfile
-from app.services import agent, career_catalog, career_expansion, college_match, grounding, major_agent, record_updates, safety, student_record
+from app.services import agent, career_catalog, career_expansion, college_match, info_needs, grounding, major_agent, record_updates, safety, school_courses, service_hours, student_record
 from app.services.career_path_service import generate_career_path
 from app.services.certification_service import generate_certification_guidance
-from app.services.context_service import build_context, context_block, grounding_corpus
+from app.services.context_service import build_context, context_block, grounding_corpus, target_majors
 from app.services.conversation_service import (
     DEFAULT_TITLE,
     add_message,
@@ -165,8 +165,10 @@ EXTRAS_SCHEMA = {
             "items": {"type": "string", "maxLength": 4},
             "maxItems": 4,
         },
+        "plan_change": {"type": "string", "maxLength": 200},
     },
     "required": [
+        "plan_change",
         "source_ids",
         "quick_replies",
         "suggested_actions",
@@ -192,11 +194,14 @@ Use what you know about THIS student (never generic advice):
 - Their records are in the student context: transcript grades and the GPA the app calculated, advanced courses, resume activities, leadership, jobs, projects and service hours, test scores, their interest type (RIASEC), the major they want, the major and minor the quiz suggested, and earlier conversations. Tie every suggestion to one specific thing from them ("your A in AP Computer Science Principles", "leading your robotics team's code").
 - Majors: their own preferred major comes first. Suggest a minor from their interest type. If the quiz already suggested a major and minor, build on it.
 - Colleges and scholarships: name only the ones in the "Colleges and scholarships" section, with the reach, match or likely label it gives, and say the label is an estimate. Describe a college only by facts in that section; never call a college or program strong, top, great or prestigious. For a college question, up to 4 colleges in a short list is fine. Name scholarships only from that section and send them to the college's official page for amounts and deadlines.
-- Courses: suggest next year's classes that build on their strongest grades and their goal (an AP or honors course in that subject, dual enrollment), and kind help for a weaker subject. Never suggest a course their transcript shows they finished or are taking now; build on it instead ("after AP Computer Science A...").
-- The app can act for the student (update their record, add a checklist step, save a career, set a goal, rebuild My Path). When it has, your reply already starts by saying so; carry on from there and never ask them to do it themselves.
-- You can't send reminders, messages or notifications later, and you can't do things outside this conversation; never promise to.
+- Courses: you are their counselor, so never tell them to ask a counselor or the school about classes. Suggest only NeoCity Academy classes from the School classes list, by their exact name, and use its description, grades and order (a class's "after"). If the school doesn't teach something, suggest dual enrollment or FLVS. Suggest next year's classes that build on their strongest grades and their goal (an AP or honors course in that subject, dual enrollment), and kind help for a weaker subject. Never suggest a course their transcript shows they finished or are taking now; build on it instead ("after AP Computer Science A...").
+- The app can act for the student (update their record, add, check off or remove a checklist step, save or unsave a career, set a goal or a target college, change profile details, rebuild My Path with a change like swapping a college). When it has, your reply already starts by saying so; carry on from there and never ask them to do it themselves or send them to another page to do it.
+- When asked why something is in their plan (a college, a class, a step), explain from the plan section: what it was picked from and what about them it fits. Say plainly that the app picked plan colleges, not the student, and offer to swap one.
+- The app can also open any page for them (the interest quiz, including starting it over, their profile, documents, My Path, colleges, Explore, a career page, settings). Never say you can't open pages or that they have to find something themselves.
+- Only say you did something (opened, changed, saved, added, updated) when your reply starts with the app's sentence saying it was done. If it doesn't, nothing was done: offer to do it instead ("Want me to open the quiz?").
+- You can't send reminders, messages or notifications later, and you can't do things outside this app; never promise to.
 - Resume: if their resume is missing or thin, encourage them to add everything they've done (clubs, sports, jobs, babysitting, volunteering with hours, projects, awards). It all counts.
-- Grades and scores set realistic targets (reach, match, likely); they never rule a student out or decide what they can become.
+- Be honest and realistic about grades: they matter a lot. They're one of the biggest factors in college admissions and scholarships (Bright Futures needs a weighted GPA, selective colleges expect strong grades in core subjects). Say plainly what their grades mean for their goal, kindly and specifically: if a subject their goal needs is weak, say so, and give what it would take (raise that grade, take the next course and do well, a stronger SAT/ACT) or another realistic route (start at a state college and transfer). Don't sugarcoat and don't crush: honest, then a plan.
 
 Suggesting careers:
 - Discover before recommending. Until the student has shared at least two things about themselves (interests, favorite subjects, activities, things they're good at), ask about them instead of naming careers.
@@ -245,7 +250,8 @@ EXTRAS_PROMPT = """You add the interactive parts around a career counselor's rep
 - facts_to_remember: only facts the student stated about themselves in their LATEST message (grade, subjects they like, interests, hobbies, skills, activities, careers they are curious about, goals, constraints). evidence must be an exact quote from that message. Never your own guesses. [] if none.
 - conversation_title: a 3-6 word title for this conversation.
 - source_ids: ids of the Sources (like "S1") whose facts the reply uses. [] if it uses none.
-- careers_mentioned: job titles the student named in their LATEST message as something they want to do or are curious about, in their words (like "software engineer", "marine biologist"). [] if none."""
+- careers_mentioned: job titles the student named in their LATEST message as something they want to do or are curious about, in their words (like "software engineer", "marine biologist"). [] if none.
+- plan_change: only when the reply recommends ONE decided change to the student's My Path (swap or add a class, swap a college, change a step) that hasn't been made yet, that change as one short instruction ("Replace AP Chemistry with AP Physics 1 in 11th grade"). "" when the reply lays out options, asks them to choose, or nothing in the plan should change."""
 
 
 def _quote_in_message(evidence: str, message: str) -> bool:
@@ -379,6 +385,7 @@ def _validate_output(
         "facts": facts,
         "title": output.get("conversation_title", "").strip(),
         "careers_mentioned": [str(phrase).strip()[:60] for phrase in output.get("careers_mentioned") or [] if str(phrase).strip()][:3],
+        "plan_change": str(output.get("plan_change") or "").strip()[:200],
         "sources": [{"id": source["id"], "title": source["title"], "url": source["url"]} for source in cited],
         "grounding": {"removed": [{"kind": claim["kind"], "text": claim["text"]} for claim in removed]},
     }
@@ -399,6 +406,10 @@ def counselor_messages(context: dict, student_name: str) -> list[dict]:
         + context_block(context)
         + "\n\n## Career catalog candidates (slug: title), best fit first\n"
         + context["candidates_text"]
+        + "\n\n## Community service places near NeoCity (suggest these by name for service hours)\n"
+        + service_hours.places_text()
+        + "\n\n## School classes (NeoCity Academy offers exactly these)\n"
+        + school_courses.catalog_text(with_description=True)
         + "\n\n## Sources (career facts you may state; nothing else is verified)\n"
         + (context.get("sources_text") or "(none)")
         + _career_page_note(context.get("career_page"))
@@ -574,34 +585,180 @@ async def _module_reply(action: str, question: str, context: dict) -> dict:
     }
 
 
-async def _carry_out(student_id: str, requests: list[dict], record_changes: list[dict]) -> list[dict]:
-    """Keep majors and My Path in step with any record change, then do what the student asked."""
+PAGES = [
+    (r"^/$", "Home (their next step, career path, profile and plan cards)"),
+    (r"^/plan/", "their My Path plan (the plan's colleges, classes and steps are in the plan section)"),
+    (r"^/plan", "My Path (their plans)"),
+    (r"^/profile", "My Profile (grades, scores, resume checklist, documents)"),
+    (r"^/discover", "the interest quiz and their major and minor results"),
+    (r"^/explore/([\w-]+)", "the career page for {0}"),
+    (r"^/explore", "Explore Careers"),
+]
+
+
+def page_description(page: str) -> str:
+    for pattern, text in PAGES:
+        match = re.match(pattern, page)
+
+        if match:
+            if match.groups():
+                career = career_catalog.get_career(match.group(1)) or {}
+                return text.format(career.get("title", match.group(1)))
+
+            return text
+
+    return page[:100]
+
+
+async def _recent_careers(student_id: str, conversation_id: str | None) -> list[str]:
+    """Careers that came up lately (cards in this chat, then saved ones), for "which one?" options."""
+
+    titles: list[str] = []
+
+    if conversation_id:
+        async with AsyncSessionLocal() as db:
+            rows = (
+                await db.execute(
+                    select(Message.metadata_json)
+                    .where(Message.conversation_id == conversation_id, Message.role == "assistant")
+                    .order_by(Message.id.desc())
+                    .limit(6)
+                )
+            ).scalars().all()
+
+        for metadata in rows:
+            metadata = metadata or {}
+            titles += [item.get("title", "") for item in metadata.get("career_suggestions") or []]
+            titles.append((metadata.get("open_career") or {}).get("title", ""))
+
+    async with AsyncSessionLocal() as db:
+        saved = (await db.execute(select(SavedCareer.career_slug).where(SavedCareer.student_id == student_id))).scalars().all()
+
+    titles += [career["title"] for slug in saved if (career := career_catalog.get_career(slug))]
+
+    return [title for title in dict.fromkeys(titles) if title][:4]
+
+
+# Pages the counselor can open, by the words students use.
+OPEN_PAGES = {
+    "retake_quiz": ("/discover?retake=1", "the interest quiz, ready to start again"),
+    "quiz": ("/discover", "the interest quiz"),
+    "profile": ("/profile", "your profile"),
+    "documents": ("/profile#documents", "your documents"),
+    "plan": ("/plan", "My Path"),
+    "colleges": ("/plan", "My Path (Major, colleges & scholarships)"),
+    "community_hours": ("/plan", "your community hours"),
+    "explore": ("/explore", "Explore Careers"),
+    "settings": ("/settings", "Settings"),
+    "home": ("/", "Home"),
+}
+
+
+async def _page_for(value: str, student_id: str = "") -> tuple[str, str]:
+    key = value.strip().lower().replace(" ", "_")
+
+    # Community hours is a tab in the student's newest plan.
+    if student_id and ("hours" in key or "volunteer" in key or "service" in key):
+        from app.services import plan_service
+
+        latest = await plan_service.latest_plan(student_id)
+        return (f"/plan/{latest['id']}?tab=hours", "your community hours") if latest and latest.get("id") else ("/plan", "My Path")
+
+    if key.startswith("career:"):
+        career = await agent._resolve_career(value.split(":", 1)[1])
+        return (f"/explore/{career['slug']}", f"the {career['title']} page") if career else ("", "")
+
+    for name, (href, label) in OPEN_PAGES.items():
+        if key == name or name in key:
+            return href, label
+
+    if "retake" in key:
+        return OPEN_PAGES["retake_quiz"]
+
+    return "", ""
+
+
+async def _carry_out(student_id: str, requests: list[dict], record_changes: list[dict], conversation_id: str | None = None) -> list[dict]:
+    """Keep majors and My Path in step with any record change, then do what the student asked (or ask what they mean)."""
 
     done: list[dict] = []
     started: list[str] = []
 
-    if record_changes:
-        reason = "your " + ", ".join(f"{change['label'].lower()} changed to {change['new']}" for change in record_changes)
-        started = await agent.on_record_change(student_id, {change["field"] for change in record_changes}, reason)
+    async def ask_which(kind: str, value: str) -> dict:
+        options = await _recent_careers(student_id, conversation_id)
+        verb = "save" if kind == "save_career" else "make your goal"
+        question = (
+            f"I couldn't tell which career \"{value}\" is" if value else "Which career did you mean"
+        ) + f" — which one should I {verb}?"
+
+        return {
+            "kind": "ask",
+            "text": question,
+            "options": [f"{'Save' if kind == 'save_career' else 'Make my goal:'} {title}" for title in options],
+        }
+
+    # A test plan alone doesn't change colleges or My Path.
+    meaningful = [change for change in record_changes if change["field"] != "test_plan"]
+
+    if meaningful:
+        reason = "your " + ", ".join(f"{change['label'].lower()} changed to {change['new']}" for change in meaningful)
+        started = await agent.on_record_change(student_id, {change["field"] for change in meaningful}, reason)
 
     for request in requests:
         kind, value = request["action"], request["value"]
 
         try:
             if kind == "add_step":
-                done.append(await agent.add_step(student_id, value))
-            elif kind == "save_career":
-                result = await agent.save_career(student_id, value)
-                done.append(result or {"kind": kind, "text": f"couldn't find a career matching \"{value}\" to save", "href": "/explore"})
-            elif kind == "set_goal":
-                result = await agent.set_goal(student_id, value)
-                done.append(result or {"kind": kind, "text": f"couldn't find a career matching \"{value}\" to make your goal", "href": "/explore"})
+                if value:
+                    done.append(await agent.add_step(student_id, value))
+                else:
+                    done.append({"kind": "ask", "text": "What should I add to your checklist?", "options": []})
+            elif kind in ("save_career", "set_goal"):
+                action_fn = agent.save_career if kind == "save_career" else agent.set_goal
+                result = await action_fn(student_id, value) if value else None
+                done.append(result or await ask_which(kind, value))
             elif kind == "update_plan":
                 # Folds into a refresh that's already starting, if any.
                 agent.queue(student_id, "refresh_plan", f"you asked: \"{value}\"" if value else "you asked for an update")
 
                 if not any("My Path" in item for item in started):
                     started.append("updating My Path")
+            elif kind in ("complete_step", "remove_step", "unsave_career"):
+                function = {"complete_step": agent.complete_step, "remove_step": agent.remove_step, "unsave_career": agent.unsave_career}[kind]
+                result = await function(student_id, value) if value else None
+                noun = "saved career" if kind == "unsave_career" else "step"
+                done.append(result or {"kind": "ask", "text": f"Which {noun} do you mean? I couldn't match \"{value}\"." if value else f"Which {noun} do you mean?", "options": []})
+            elif kind == "update_profile":
+                field, _, new_value = value.partition(":")
+                result = await agent.update_profile(student_id, field.strip(), new_value.strip())
+                done.extend([result] if result else [])
+            elif kind == "open_page":
+                href, label = await _page_for(value, student_id)
+
+                if href:
+                    done.append({"kind": "open_page", "text": f"opened {label} for you", "href": href, "navigate": True})
+                else:
+                    done.append({"kind": "ask", "text": "Which page should I open?", "options": ["Open the quiz", "Open my profile", "Open My Path"]})
+            elif kind == "change_minor":
+                result = await agent.change_minor(student_id, value)
+                done.append(result or {"kind": "ask", "text": "Which minor would you like instead?" if not value else f"I couldn't find a minor matching \"{value}\". Which one do you mean?", "options": []})
+            elif kind == "log_service_hours":
+                parsed = service_hours.parse_log_value(value)
+
+                if parsed:
+                    entry = await service_hours.add_entry(student_id, parsed[0], parsed[1])
+                    hours_href, _ = await _page_for("community_hours", student_id)
+                    await agent.log(student_id, "service_hours", f"Logged {entry['hours']:g} service hours at {entry['place']}", href=hours_href)
+                    done.append({"kind": "log_service_hours", "text": f"logged {entry['hours']:g} service hours at {entry['place']} (see My Path, Community hours)", "href": hours_href})
+                    more = await agent.on_record_change(student_id, {"service_hours"}, f"you logged {entry['hours']:g} service hours")
+                    started += [item for item in more or [] if item not in started]
+                else:
+                    done.append({"kind": "ask", "text": "How many hours did you do, and where?", "options": []})
+            elif kind == "set_target_college":
+                result = await agent.set_target_college(student_id, value) if value else None
+                done.append(result or {"kind": "ask", "text": f"I couldn't find \"{value}\" among Florida colleges. Which college do you mean?" if value else "Which college do you mean?", "options": []})
+            elif kind == "show_colleges":
+                done.append({"kind": "show_colleges", "text": "", "hidden": True})
             elif kind == "refresh_majors":
                 if not any("major" in item for item in started):
                     more = await agent.on_record_change(student_id, {"quiz"}, "you asked for new suggestions")
@@ -626,14 +783,34 @@ async def _carry_out(student_id: str, requests: list[dict], record_changes: list
 
 
 def _actions_sentence(actions: list[dict]) -> str:
-    parts = [action["text"] for action in actions]
+    parts = [action["text"] for action in actions if action["kind"] != "ask" and not action.get("hidden")]
+    questions = [action["text"] for action in actions if action["kind"] == "ask"]
+    sentence = ""
 
-    if not parts:
-        return ""
+    if parts:
+        joined = parts[0] if len(parts) == 1 else ", ".join(parts[:-1]) + " and " + parts[-1]
+        sentence = f" I {joined}."
 
-    joined = parts[0] if len(parts) == 1 else ", ".join(parts[:-1]) + " and " + parts[-1]
+    return sentence + "".join(f" {question}" for question in questions)
 
-    return f" I {joined}."
+
+async def _asked_before(conversation_id: str | None) -> set[str]:
+    """What the counselor already asked for in this conversation."""
+
+    if not conversation_id:
+        return set()
+
+    async with AsyncSessionLocal() as db:
+        rows = (
+            await db.execute(
+                select(Message.metadata_json)
+                .where(Message.conversation_id == conversation_id, Message.role == "assistant")
+                .order_by(Message.id.desc())
+                .limit(12)
+            )
+        ).scalars().all()
+
+    return {key for metadata in rows for key in ((metadata or {}).get("info_request") or {}).get("keys", [])}
 
 
 async def run_turn_stream(
@@ -643,6 +820,7 @@ async def run_turn_stream(
     text: str,
     action: str | None = None,
     retry: bool = False,
+    page: str | None = None,
 ) -> AsyncIterator[dict]:
     """
     One counselor turn as events:
@@ -691,12 +869,16 @@ async def run_turn_stream(
     # reply and every page use them.
     record_changes: list[dict] = []
     agent_actions: list[dict] = []
+    info_request: dict | None = None
     opening = ""
 
     if not retry and action not in MODULE_ACTIONS:
         try:
             record = await student_record.build_record(student_id, await get_profile_dict(student_id))
             updates, requests = await record_updates.extract(text, record)
+
+            if any(request["action"] == "log_service_hours" for request in requests):
+                updates.pop("service_hours", None)
 
             if updates:
                 current = record_updates.current_values(record)
@@ -705,10 +887,17 @@ async def run_turn_stream(
                 after = await student_record.build_record(student_id, await get_profile_dict(student_id))
                 opening = record_updates.acknowledgment(record_changes, record, after)
 
-            agent_actions = await _carry_out(student_id, requests, record_changes)
+            agent_actions = await _carry_out(student_id, requests, record_changes, conversation.id)
 
             if agent_actions:
                 opening = (opening + _actions_sentence(agent_actions)).strip() + " "
+
+            # Ask for what this question needs and the record lacks, once per conversation.
+            latest = after if updates else record
+            info_request = info_needs.needs_for(text, latest, await _asked_before(conversation.id))
+
+            if info_request:
+                opening = (opening + info_request["question"] + " You can add it below, and I'll use it right away.").strip() + " "
         except Exception:
             logger.exception("Record update failed; answering without it")
 
@@ -717,10 +906,20 @@ async def run_turn_stream(
     context = await build_context(student_id, conversation, text)
     timer.lap("context")
 
+    # The floating counselor knows the page it was opened on.
+    if page:
+        context["record_text"] += "\n- The student is chatting from this page of the app: " + page_description(page)
+
     if opening:
         # The app opens the reply with the exact update; the model carries on.
         context["record_text"] += (
-            "\n- Your reply starts with sentences the app wrote about what it just did for them. Continue right after them: never repeat or contradict them, never say anything else was done, and answer the rest of their message (if there's nothing else, add one useful next idea in a sentence or two)."
+            "\n- Your reply starts with sentences the app wrote about what it just did for them or what it needs from them. Continue right after them: never repeat or contradict them, never say anything else was done, and answer the rest of their message (if there's nothing else, add one useful next idea in a sentence or two)."
+            + (
+                " The app is asking them for missing information with a form below your reply: help with what you can without it, never guess their scores, grades or hours, and don't ask for it again."
+                if info_request
+                else ""
+            )
+            + (" The app asked which career they mean: don't pick one for them." if any(item["kind"] == "ask" for item in agent_actions) else "")
         )
 
     # Agentic step: a career the student says they want gets a page now
@@ -869,8 +1068,44 @@ async def run_turn_stream(
     if record_changes:
         metadata["record_updates"] = record_changes
 
+    # A change the counselor recommended: one tap to make it (a new version of My Path).
+    if output.get("plan_change") and not agent_actions and not record_changes:
+        metadata["proposed_change"] = output["plan_change"]
+
     if agent_actions:
-        metadata["agent_actions"] = agent_actions
+        metadata["agent_actions"] = [item for item in agent_actions if item["kind"] != "ask" and not item.get("hidden")]
+
+        # The page the student asked for opens as soon as the reply arrives.
+        navigate = next((item["href"] for item in agent_actions if item.get("navigate")), None)
+
+        if navigate:
+            metadata["navigate"] = navigate
+
+        # A "which one?" question gets tappable answers.
+        options = [option for item in agent_actions if item["kind"] in ("ask", "change_minor") for option in item.get("options", [])]
+
+        if options:
+            metadata["quick_replies"] = options[:4]
+            metadata["follow_up_question"] = ""
+
+    if info_request:
+        metadata["info_request"] = info_request
+        # The form is the answer; generic tap-replies would compete with it.
+        metadata["quick_replies"] = []
+        metadata["follow_up_question"] = ""
+
+    # College questions get the colleges right in the chat, with chances and scholarships.
+    if not info_request and (
+        any(item["kind"] == "show_colleges" for item in agent_actions) or info_needs.TOPICS[0][0].search(text)
+    ):
+        try:
+            record = context.get("record") or {}
+            majors = target_majors(record, context["profile"])
+
+            if majors:
+                metadata["colleges"] = college_match.colleges_for_majors(majors, record, limit=5)
+        except Exception:
+            logger.exception("College cards failed")
 
     if "module" in output:
         metadata["module"] = output["module"]

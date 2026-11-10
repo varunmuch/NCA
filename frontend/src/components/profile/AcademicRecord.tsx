@@ -45,7 +45,7 @@ function ProfileStrength({ record }: { record: StudentRecord }) {
   const done = steps.filter((step) => step.done).length;
 
   return (
-    <section className="rounded-[var(--radius-hero)] border border-line bg-gradient-to-br from-primary-softer via-white to-teal-soft p-6">
+    <section className="rounded-[var(--radius-hero)] border border-line bg-primary-softer p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-primary">Profile strength</p>
@@ -56,7 +56,7 @@ function ProfileStrength({ record }: { record: StudentRecord }) {
         <p className="max-w-sm text-sm text-ink-muted">Your counselor, quiz and plan read these first. The more that&apos;s here, the less generic the advice.</p>
       </div>
       <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/80">
-        <div className="h-full rounded-full bg-gradient-to-r from-primary via-pink to-teal transition-all" style={{ width: `${(done / steps.length) * 100}%` }} />
+        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(done / steps.length) * 100}%` }} />
       </div>
       <ul className="mt-4 flex flex-wrap gap-2">
         {steps.map((step) => (

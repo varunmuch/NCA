@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 /**
  * A career that isn't in the list gets its own page from official job data,
- * the counselor points to it, and "Build My Path" starts the plan for it.
+ * the counselor points to it, and offers to build My Path for it in the chat.
  * Makes one real counselor call; the page it creates is shared, as intended.
  */
 
@@ -15,11 +15,10 @@ test("saying 'I want to become an AI Engineer' offers an AI Engineer page and My
   await composer.press("Enter");
 
   // The reply ends with the page and its buttons.
-  const build = page.getByRole("link", { name: "Build My Path" });
+  const build = page.getByRole("button", { name: "Build My Path" }).first();
   await expect(build).toBeVisible({ timeout: 60_000 });
   const open = page.getByRole("link", { name: "Open AI Engineer" });
   await expect(open).toBeVisible();
-  await expect(build).toHaveAttribute("href", /\/plan\?generate=1&goal=AI%20Engineer/);
 
   await open.click();
   await expect(page.getByRole("heading", { level: 1, name: "AI Engineer" })).toBeVisible();

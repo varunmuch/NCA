@@ -6,14 +6,14 @@ type Variant = "primary" | "secondary" | "soft" | "ghost" | "accent" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]";
+  "inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out disabled:pointer-events-none disabled:opacity-55 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-primary text-on-primary hover:bg-primary-hover",
+    "bg-primary text-on-primary shadow-[0_6px_16px_rgb(37_99_235/0.3)] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_10px_22px_rgb(37_99_235/0.35)] active:translate-y-0",
   accent: "bg-accent text-on-accent hover:bg-accent-hover",
   secondary:
-    "border border-line-strong bg-surface text-ink hover:border-ink-soft hover:bg-surface-2",
+    "border-2 border-line bg-surface text-ink shadow-[var(--shadow-card)] hover:-translate-y-0.5 hover:border-sunny hover:bg-sunny-soft active:translate-y-0",
   soft: "bg-primary-soft text-primary-ink hover:bg-primary-soft/70",
   ghost: "text-ink-muted hover:bg-surface-2 hover:text-ink",
   danger: "border border-danger/25 bg-surface text-danger hover:bg-danger-soft",
@@ -55,6 +55,7 @@ export function Button({
     <button
       type={type}
       className={buttonClass(variant, size, className)}
+      data-variant={variant}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...props}
@@ -84,7 +85,7 @@ export function ButtonLink({
   ...props
 }: ButtonLinkProps) {
   return (
-    <Link className={buttonClass(variant, size, className)} {...props}>
+    <Link className={buttonClass(variant, size, className)} data-variant={variant} {...props}>
       {icon}
       {children}
     </Link>
@@ -93,17 +94,20 @@ export function ButtonLink({
 
 export function IconButton({
   label,
+  onDark = false,
   className = "",
   children,
   type = "button",
   ...props
-}: ComponentProps<"button"> & { label: string }) {
+}: ComponentProps<"button"> & { label: string; onDark?: boolean }) {
   return (
     <button
       type={type}
       aria-label={label}
       title={label}
-      className={`inline-flex size-10 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-2 hover:text-ink focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] disabled:opacity-50 ${className}`}
+      className={`inline-flex size-10 shrink-0 items-center justify-center rounded-full transition-colors ${
+        onDark ? "text-white/80 hover:bg-white/15 hover:text-white" : "text-ink-muted hover:bg-surface-2 hover:text-ink"
+      } focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] disabled:opacity-50 ${className}`}
       {...props}
     >
       {children}

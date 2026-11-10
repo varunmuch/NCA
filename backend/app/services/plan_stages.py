@@ -78,7 +78,8 @@ def stage_for(grade_level: str | None) -> dict | None:
 def stage_text(grade_level: str | None, today: date | None = None) -> str:
     """The stage guidance for a prompt, including the current month."""
 
-    month = (today or date.today()).strftime("%B")
+    # Month and year, so the model never guesses an old year.
+    month = (today or date.today()).strftime("%B %Y")
     stage = stage_for(grade_level)
 
     if stage is None:

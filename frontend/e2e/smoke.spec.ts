@@ -24,7 +24,7 @@ test("sign-in rejects a wrong password and accepts the right one", async ({ brow
 
   await signIn(page);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(/Good (morning|afternoon|evening)/);
-  await expect(page.getByText(/^(Your next step|Your step this week)$/)).toBeVisible();
+  await expect(page.getByText("Your next step", { exact: true })).toBeVisible();
   await context.close();
 });
 
@@ -127,6 +127,24 @@ test("plan shows the next 3 steps and they can be checked off", async ({ page })
   await expect(page.getByRole("heading", { name: "Your next 3 steps this month" })).toBeVisible();
 });
 
+test("community hours: see places, log hours, remove them", async ({ page }) => {
+  await page.goto("/plan");
+  await page.locator('a[href^="/plan/"]').first().click();
+  await page.getByRole("tab", { name: "Community hours" }).click();
+
+  await expect(page.getByRole("heading", { name: "Places to earn hours near NeoCity" })).toBeVisible();
+  const total = page.locator("#hours-total + p");
+  const before = Number((await total.innerText()).match(/\d+/)?.[0]);
+
+  await page.getByRole("button", { name: "Log hours here" }).first().click();
+  await page.getByRole("spinbutton", { name: "Hours" }).fill("3");
+  await page.getByRole("button", { name: "Add hours" }).click();
+  await expect(total).toContainText(String(before + 3));
+
+  await page.getByRole("button", { name: /^Remove 3 hours/ }).first().click();
+  await expect(total).toContainText(String(before));
+});
+
 test("the counselor acts on a request and says what it did", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "Adds a checklist step; runs once.");
 
@@ -142,4 +160,56 @@ test("the counselor acts on a request and says what it did", async ({ page }, in
   // Home lists it as something the counselor did.
   await page.goto("/");
   await expect(page.getByText(/Added to your checklist: visit the UCF campus/i)).toBeVisible();
+});
+
+test("the floating counselor explains the plan from the page it's on", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "One real counselor call.");
+
+  await page.goto("/plan");
+  await page.locator('a[href^="/plan/"]').first().click();
+  await page.getByRole("button", { name: "Chat with your counselor" }).click();
+
+  const widget = page.getByRole("region", { name: "Chat with your counselor" });
+  await expect(widget.getByText(/Looking at My Path/)).toBeVisible();
+  await widget.getByRole("button", { name: "Why are these colleges in my plan?" }).click();
+  await expect(widget.locator(".prose-chat").last()).toContainText(/\w+/, { timeout: 60_000 });
+  await page.screenshot({ path: "e2e/screenshots/widget.png" });
+
+  // The full counselor page has no bubble.
+  await page.goto("/counselor");
+  await expect(page.getByRole("button", { name: "Chat with your counselor" })).toHaveCount(0);
+});
+
+test("scrolling up while a reply streams keeps your place", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "One real counselor call.");
+  test.setTimeout(120_000);
+
+  await page.goto("/explore");
+  await page.getByRole("button", { name: "Chat with your counselor" }).click();
+  const widget = page.getByRole("region", { name: "Chat with your counselor" });
+  const box = widget.getByRole("textbox").first();
+  await box.fill("Explain in detail, with many paragraphs, how I can become a software engineer from 9th grade through college.");
+  await box.press("Enter");
+
+  const scroller = widget.locator("[tabindex='-1'].overflow-y-auto");
+  await expect.poll(() => scroller.evaluate((el) => el.scrollHeight - el.clientHeight), { timeout: 60_000 }).toBeGreaterThan(250);
+  await scroller.hover();
+  await page.mouse.wheel(0, -200);
+  await page.waitForTimeout(300);
+  const held = await scroller.evaluate((el) => el.scrollTop);
+  await page.waitForTimeout(3000);
+  expect(Math.abs((await scroller.evaluate((el) => el.scrollTop)) - held)).toBeLessThan(5);
+});
+
+test("asking the counselor to open the quiz takes you there", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "One real counselor call.");
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Chat with your counselor" }).click();
+  const widget = page.getByRole("region", { name: "Chat with your counselor" });
+  await widget.getByLabel("Message your counselor").fill("Can you open the quiz for me? I want to retake it");
+  await widget.getByLabel("Message your counselor").press("Enter");
+
+  await page.waitForURL(/\/discover/, { timeout: 60_000 });
+  await expect(page.getByRole("button", { name: "Start" })).toBeVisible();
 });

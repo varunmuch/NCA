@@ -19,7 +19,7 @@ const LEVEL_TEXT = { on_track: "On track", not_yet: "Not yet", unknown: "Needs i
 /** Florida Bright Futures: each level's requirements checked against the student's record. */
 export function BrightFuturesCard({ data }: { data: BrightFutures }) {
   return (
-    <section aria-labelledby="bright-futures-title" className="rounded-[var(--radius-card)] border border-sun/25 bg-gradient-to-br from-sun-soft/70 to-white p-5 sm:p-6">
+    <section aria-labelledby="bright-futures-title" className="rounded-[var(--radius-card)] border border-sun/25 bg-sun-soft p-5 sm:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 id="bright-futures-title" className="font-semibold text-ink">
           {data.name}

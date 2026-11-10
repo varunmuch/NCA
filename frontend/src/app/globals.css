@@ -10,50 +10,60 @@
  */
 @theme {
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-display: var(--font-fredoka), ui-rounded, system-ui, sans-serif;
 
   --color-canvas: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-2: #f5f6fb;
-  --color-surface-3: #eaecf5;
+  --color-surface-2: #f7f6f3;
+  --color-surface-3: #eeece7;
 
-  --color-ink: #1a1b2e;
-  --color-ink-muted: #545772;
-  --color-ink-soft: #6c6f88;
+  --color-ink: #17171c;
+  --color-ink-muted: #55534e;
+  --color-ink-soft: #6b6862;
 
-  --color-line: #e7e8f2;
-  --color-line-strong: #d3d5e4;
+  --color-line: #e8e6e1;
+  --color-line-strong: #cfccc4;
 
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
-  --color-primary-soft: #e8e7fd;
-  --color-primary-softer: #f3f2ff;
-  --color-primary-ink: #3730a3;
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4fc4;
+  --color-primary-soft: #e0eaff;
+  --color-primary-softer: #f0f5ff;
+  --color-primary-ink: #1e40af;
   --color-on-primary: #ffffff;
   --color-on-accent: #ffffff;
 
-  --color-accent: #059669;
-  --color-accent-hover: #047857;
-  --color-accent-soft: #d9f5ea;
-  --color-accent-softer: #effbf6;
-  --color-accent-ink: #065f46;
+  --color-accent: #15803d;
+  --color-accent-hover: #116932;
+  --color-accent-soft: #dcf5e3;
+  --color-accent-softer: #f0fbf3;
+  --color-accent-ink: #14532d;
 
   --color-warm: #8a8f96;
-  --color-warm-soft: #f5f6fb;
+  --color-warm-soft: #f7f6f3;
   --color-warm-ink: #4f545b;
 
-  --color-sun: #d97706;
-  --color-sun-soft: #fef3dc;
-  --color-sun-ink: #92400e;
+  --color-sun: #a16207;
+  --color-sun-soft: #fff3cc;
+  --color-sun-ink: #7a4a03;
 
-  --color-pink: #db2777;
-  --color-pink-soft: #fde7f1;
-  --color-teal: #0d9488;
-  --color-teal-soft: #d9f5f2;
-  --color-sky: #0284c7;
+  --color-pink: #d63b33;
+  --color-pink-soft: #fde6e4;
+  --color-teal: #0f8c7e;
+  --color-teal-soft: #d7f3ee;
+  --color-sky: #0369a1;
   --color-sky-soft: #e0f2fe;
-  --color-violet: #7c3aed;
-  --color-violet-soft: #efe7fe;
+  --color-violet: #c2570c;
+  --color-violet-soft: #ffebd9;
+
+  /* Navy is the brand color (sidebar, banners, buttons); its partner is
+     sunny yellow. A brighter blue stays for charts and highlights. */
+  --color-navy: #14286b;
+  --color-navy-2: #1d3685;
+  --color-cobalt: #2450d6;
+
+  /* Bright fill for stickers and highlights (text on it is ink). */
+  --color-sunny: #ffc93c;
+  --color-sunny-soft: #fff6d6;
 
   --color-danger: #c81e1e;
   --color-danger-soft: #fdecec;
@@ -62,9 +72,11 @@
   --radius-card: 0.75rem;
   --radius-hero: 1rem;
 
-  --shadow-card: 0 1px 3px rgb(79 70 229 / 0.06), 0 1px 2px rgb(26 27 46 / 0.04);
-  --shadow-raised: 0 8px 24px rgb(79 70 229 / 0.12);
-  --shadow-focus: 0 0 0 3px rgb(79 70 229 / 0.3);
+  /* Soft, friendly depth. */
+  --shadow-card: 0 2px 10px rgb(20 40 107 / 0.07);
+  --shadow-raised: 0 12px 30px rgb(20 40 107 / 0.14);
+  --shadow-sticker: 0 12px 30px rgb(20 40 107 / 0.14);
+  --shadow-focus: 0 0 0 3px rgb(255 201 60 / 0.6);
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -163,8 +175,38 @@ select {
 }
 
 .font-display {
-  font-variation-settings: "SOFT" 50, "opsz" 72;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
+}
+
+/* Friendly cards: rounded, soft floating shadow, no outline. */
+.sticker {
+  box-shadow: var(--shadow-sticker);
+}
+
+.press {
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.press:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgb(20 40 107 / 0.18);
+}
+
+.press:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgb(20 40 107 / 0.12);
+}
+
+/* A little wiggle for playful bits (the counselor button). */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+}
+
+.wiggle:hover {
+  animation: wiggle 600ms ease-in-out;
 }
 
 .skeleton {
@@ -276,8 +318,7 @@ select {
   justify-content: center;
   border-radius: 22px;
   color: #fff;
-  border: 1px solid rgb(255 255 255 / 0.45);
-  box-shadow: inset 0 0 24px rgb(255 255 255 / 0.25);
+  box-shadow: inset 0 0 0 3px rgb(255 255 255 / 0.25);
 }
 
 .cube-face svg {
@@ -286,12 +327,12 @@ select {
   filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.18));
 }
 
-.cube-face:nth-child(1) { transform: rotateY(0deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #6366f1, #4338ca); }
-.cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #f472b6, #db2777); }
-.cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #2dd4bf, #0d9488); }
-.cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #fbbf24, #ea580c); }
-.cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #38bdf8, #0369a1); }
-.cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--cube) / 2)); background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+.cube-face:nth-child(1) { transform: rotateY(0deg) translateZ(calc(var(--cube) / 2)); background: #2450d6; }
+.cube-face:nth-child(2) { transform: rotateY(90deg) translateZ(calc(var(--cube) / 2)); background: #f0564a; }
+.cube-face:nth-child(3) { transform: rotateY(180deg) translateZ(calc(var(--cube) / 2)); background: #14a37f; }
+.cube-face:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--cube) / 2)); background: #ffc93c; }
+.cube-face:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--cube) / 2)); background: #ff8a1f; }
+.cube-face:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--cube) / 2)); background: #38a3f5; }
 
 .orbit-3d {
   position: absolute;
@@ -305,7 +346,7 @@ select {
   position: absolute;
   inset: var(--gap, 4%);
   border-radius: 9999px;
-  border: 2px dashed rgb(99 102 241 / 0.35);
+  border: 2px dashed rgb(255 255 255 / 0.45);
 }
 
 .orbit-3d .spin {
@@ -323,8 +364,8 @@ select {
   height: var(--size, 18px);
   margin: calc(var(--size, 18px) / -2) 0 0 calc(var(--size, 18px) / -2);
   border-radius: 9999px;
-  background: radial-gradient(circle at 32% 30%, #fff 0 8%, var(--c1) 30%, var(--c2) 100%);
-  box-shadow: 0 6px 14px rgb(26 27 46 / 0.18);
+  background: var(--c1);
+  box-shadow: inset -3px -3px 0 rgb(0 0 0 / 0.15);
   animation: planet-face var(--speed, 12s) linear infinite;
 }
 
@@ -336,7 +377,7 @@ select {
   height: 10%;
   transform: translateX(-50%);
   border-radius: 9999px;
-  background: radial-gradient(closest-side, rgb(79 70 229 / 0.22), transparent);
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.35), transparent);
   animation: shadow-breathe 6s ease-in-out infinite;
 }
 
@@ -364,4 +405,173 @@ select {
 @keyframes shadow-breathe {
   0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(0.9); }
   50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+}
+
+/* Career path on Home: the road draws in, stations pop up, the pin bounces. */
+.journey .journey-done {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: journey-draw 1.6s var(--ease-out-soft) 0.3s forwards;
+}
+
+.journey .journey-ahead {
+  stroke-dasharray: 14 12;
+  animation: journey-march 1.2s linear infinite;
+}
+
+.journey .journey-station {
+  opacity: 0;
+  animation: journey-pop 0.5s var(--ease-out-soft) forwards;
+}
+
+.journey .journey-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: journey-pulse 1.8s ease-out infinite;
+}
+
+.journey .journey-pin {
+  animation: journey-bounce 2.2s ease-in-out 1.2s infinite;
+}
+
+@keyframes journey-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes journey-march {
+  to { stroke-dashoffset: -26; }
+}
+
+@keyframes journey-pop {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes journey-pulse {
+  0% { transform: scale(0.7); opacity: 0.45; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes journey-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Reduced motion: show the finished road without moving parts. */
+@media (prefers-reduced-motion: reduce) {
+  .journey .journey-done { stroke-dashoffset: 0; }
+  .journey .journey-station { opacity: 1; }
+}
+
+/* On navy banners: primary buttons turn yellow so they stand out. */
+.on-navy [data-variant="primary"] {
+  background: var(--color-sunny);
+  color: var(--color-ink);
+}
+
+.on-navy [data-variant="ghost"],
+.on-navy [data-variant="danger"] {
+  color: #fff;
+}
+
+/* Career path scenery: clouds drift, the sun turns slowly. */
+.journey .journey-cloud {
+  animation: journey-drift 14s ease-in-out infinite alternate;
+}
+
+.journey .journey-cloud-slow {
+  animation-duration: 20s;
+}
+
+.journey .journey-sun {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: journey-sun 6s ease-in-out infinite;
+}
+
+@keyframes journey-drift {
+  from { transform: translateX(-18px); }
+  to { transform: translateX(18px); }
+}
+
+@keyframes journey-sun {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* Living scenery on the career path. */
+.journey .journey-tree {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: journey-sway 3.2s ease-in-out infinite alternate;
+}
+
+.journey .journey-flag {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+  animation: journey-flag 0.9s ease-in-out infinite alternate;
+}
+
+.journey .journey-window {
+  animation: journey-twinkle 3.6s ease-in-out infinite;
+}
+
+.journey .journey-rays {
+  transform-origin: 70px 52px;
+  animation: journey-spin 18s linear infinite;
+}
+
+.journey .journey-bird {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: journey-flap 0.5s ease-in-out infinite alternate;
+}
+
+.journey .journey-sparkle {
+  animation: journey-spin 8s linear infinite;
+}
+
+.journey .journey-bus {
+  animation: journey-idle 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes journey-sway {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(4deg); }
+}
+
+@keyframes journey-flag {
+  from { transform: scaleX(0.75) skewY(-6deg); }
+  to { transform: scaleX(1.05) skewY(6deg); }
+}
+
+@keyframes journey-twinkle {
+  0%, 100% { opacity: 1; }
+  45% { opacity: 1; }
+  50% { opacity: 0.25; }
+  60% { opacity: 1; }
+}
+
+@keyframes journey-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes journey-flap {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0.4); }
+}
+
+@keyframes journey-idle {
+  from { transform: translateY(0); }
+  to { transform: translateY(-1.5px); }
+}
+
+/* Career path: the back layers drift toward the mouse; stars twinkle at night. */
+.journey .journey-layer {
+  transform: translateX(calc(var(--mx, 0) * var(--depth, 0px) * -1));
+  transition: transform 400ms ease-out;
+}
+
+.journey .journey-star {
+  animation: journey-twinkle 2.4s ease-in-out infinite;
 }

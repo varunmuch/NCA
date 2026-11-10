@@ -35,7 +35,7 @@ Give exactly 3 sets, each a major and a minor from the lists below (use the 4-di
 - why_major: one or two sentences naming specific evidence from the records: a course and grade, the GPA in a subject area, an activity, award, job or project. Use only facts in the records.
 - why_minor: one sentence linking the minor to their interest type (say the type by name, like Investigative or Social) and, when possible, to something they do.
 - summary: two sentences on what the records show about them overall. Mention their GPA only if it's in the records.
-- Grades show where the student is strongest; never use them to discourage a goal. If grades in the preferred major's subjects are low, say what would help (a course to take, tutoring), kindly.
+- Be realistic: grades matter a lot for getting into a major. If grades in the preferred major's key subjects are low, say so honestly and kindly, and what it would take (a course to take and do well in, tutoring), or a realistic alternative.
 - Never write salaries, admission chances, rankings, or college names. Plain text, no Markdown, no field names. Address the student as "you"."""
 
 
@@ -239,6 +239,42 @@ def _recommend_schema(major_codes: list[str], minor_codes: list[str]) -> dict:
     }
 
 
+def _sets_from_rankings(record: dict, majors: list[dict], minors: list[dict], preferred: dict | None) -> dict:
+    """Three major + minor sets from the rankings alone (when the model can't answer)."""
+
+    code = (record.get("riasec") or {}).get("code", "")
+    picked_majors = ([preferred] if preferred else []) + [major for major in majors if not preferred or major["cip4"] != preferred["cip4"]]
+    options = []
+    used_minors: set[str] = set()
+
+    for major in picked_majors[:3]:
+        major_words = college_match._words(major["title"])
+        minor = next(
+            (item for item in minors if item["cip4"] != major["cip4"] and item["cip4"] not in used_minors and not college_match._words(item["title"]) <= major_words),
+            None,
+        )
+
+        if not minor:
+            continue
+
+        used_minors.add(minor["cip4"])
+        strong = ", ".join((record.get("academics") or {}).get("strong_areas") or [])
+        options.append(
+            {
+                "major": major["cip4"],
+                "minor": minor["cip4"],
+                "why_major": (
+                    f"You told us you want to study {record['intended_major']}."
+                    if preferred and major["cip4"] == preferred["cip4"]
+                    else f"It fits your interests{f' and your strongest subjects ({strong})' if strong else ''}."
+                ),
+                "why_minor": f"It matches your {code} interest type." if code else "It matches your interests.",
+            }
+        )
+
+    return {"summary": "", "options": options}
+
+
 def _field(major: dict) -> dict:
     return {"cip4": major["cip4"], "cip": major["cip"], "title": major["title"]}
 
@@ -274,13 +310,19 @@ async def recommend(student_id: str) -> dict:
         request += "\nTheir answers to your follow-up questions: " + "; ".join(f"{question} -> {answer}" for question, answer in told.items())
 
     system = RECOMMEND_PROMPT + "\n\n## The student's records\n" + _record_block(record, facts) + "\n\n" + "\n".join(lines)
-    raw = await chat_json(
-        [{"role": "system", "content": system}, {"role": "user", "content": request}],
-        schema=_recommend_schema([major["cip4"] for major in majors], [minor["cip4"] for minor in minors]),
-        schema_name="major_minor",
-        max_tokens=1400,
-        temperature=0.4,
-    )
+    try:
+        raw = await chat_json(
+            [{"role": "system", "content": system}, {"role": "user", "content": request}],
+            schema=_recommend_schema([major["cip4"] for major in majors], [minor["cip4"] for minor in minors]),
+            schema_name="major_minor",
+            max_tokens=1400,
+            temperature=0.4,
+        )
+    except LLMError:
+        # The model sometimes runs on past its limit; the quiz still finishes,
+        # with sets built in code from the same rankings.
+        logger.warning("Major and minor sets built without the model")
+        raw = _sets_from_rankings(record, majors, minors, preferred)
 
     corpus = student_record.record_text(record) + "\n" + "\n".join(f"{q} {a}" for q, a in told.items())
 

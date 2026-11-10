@@ -197,7 +197,7 @@ Rules:
 - picked_resources: choose the resources from the list below that best fit this student and career, and say why each fits them. Include at least two scholarships or fellowships when any fit. Only pick resources limited to a gender, ethnicity, or income level when the context clearly says the student qualifies.
 - headline: one short, motivating sentence in "you" form, without the student's name (e.g. "You can start building toward nursing this week.").
 - first_step: the single best thing to do today.
-- Do not invent salaries, statistics, deadlines, award amounts, or program names. Never use grades to rule anything out.
+- Do not invent salaries, statistics, deadlines, award amounts, or program names. Be realistic about what grades mean for the goal.
 - Write in clear, encouraging language a 9th grader understands. Always address the student as "you"."""
 
 

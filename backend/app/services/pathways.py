@@ -14,7 +14,7 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
-from app.services import career_catalog, careeronestop
+from app.services import career_catalog, careeronestop, school_courses
 
 logger = logging.getLogger(__name__)
 
@@ -294,15 +294,27 @@ async def certifications(code: str) -> list[dict]:
 
 
 def course_options(slug: str) -> list[str]:
-    """AP courses the College Board lists for this career, then core courses."""
+    """
+    NeoCity Academy's classes, the ones that fit this career first. Falls
+    back to the College Board AP list and generic core courses only if the
+    school catalog is missing.
+    """
 
     facts = career_catalog.career_facts(slug) or {}
     ap = list(facts.get("ap_courses") or [])
+
+    if school_courses.offered():
+        return school_courses.for_career(ap)
 
     return ap + [course for course in CORE_COURSES if course not in ap]
 
 
 def course_kind(course: str) -> str:
+    level = school_courses.kind(course)
+
+    if level:
+        return level
+
     if course.startswith("AP "):
         return "AP"
 
@@ -336,8 +348,12 @@ async def candidates(slug: str) -> dict:
 def candidates_text(found: dict) -> str:
     """The candidate lists as the model sees them (ids and names only)."""
 
-    lines = ["## Courses (pick by exact name)"]
-    lines += [f"- {course}" for course in found["courses"]]
+    lines = ["## Courses NeoCity Academy offers (pick by exact name; best fit for this career first)"]
+
+    if school_courses.offered():
+        lines.append(school_courses.catalog_text(found["courses"]))
+    else:
+        lines += [f"- {course}" for course in found["courses"]]
 
     lines.append("\n## College majors (cip: title)")
     lines += [
@@ -458,6 +474,7 @@ def attach(raw: dict, found: dict, clean) -> dict:
         for item, course in unique(raw.get("courses"), "course", allowed_courses)
     ]
     courses.sort(key=lambda item: GRADES.index(item["grade"]) if item["grade"] in GRADES else len(GRADES))
+    school_courses.describe(courses)
 
     picked_colleges = [
         {**by_college[college_id], "why": _own_reason(clean(item.get("why", "")), by_college[college_id], found["colleges"])}

@@ -80,6 +80,9 @@ class StudentProfile(BaseModel):
     academic_profile: dict = Field(default_factory=dict)
     # The quiz's major and minor suggestions (major_agent.py).
     major_minor: dict = Field(default_factory=dict)
+    # A college the student chose as their target ({"id", "name"}); empty
+    # until they name one. The app never picks it for them.
+    target_college: dict = Field(default_factory=dict)
     interest_quiz_at: str = ""
     # Home visits, for "Since last time" (ISO times, set by home_service).
     home_seen_at: str = ""

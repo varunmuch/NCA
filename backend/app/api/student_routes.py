@@ -43,7 +43,7 @@ from app.models.progress import (
 )
 from app.services import account_service
 from app.services import career_catalog
-from app.services import agent, career_expansion, field_quiz, interest_quiz, major_agent, student_record
+from app.services import agent, career_expansion, field_quiz, greeting, interest_quiz, major_agent, service_hours, student_record
 from app.services import conversation_service as conversations
 from app.services import document_service as documents
 from app.services import plan_service as plans
@@ -232,6 +232,57 @@ async def update_academic_profile(payload: AcademicAnswers, student_id: str = St
     return await get_record(student_id)
 
 
+class ServiceEntry(BaseModel):
+    hours: float
+    place: str = ""
+    date: str = ""
+    note: str = ""
+
+
+@router.get("/me/service-hours")
+async def get_service_hours(student_id: str = Student):
+    """Hours so far, the Bright Futures targets, the log, and places near NeoCity to earn more."""
+
+    return await service_hours.summary(student_id)
+
+
+@router.post("/me/service-hours")
+async def log_service_hours(payload: ServiceEntry, student_id: str = Student):
+    try:
+        entry = await service_hours.add_entry(student_id, payload.hours, payload.place, payload.date, payload.note)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    latest = await plans.latest_plan(student_id)
+    href = f"/plan/{latest['id']}?tab=hours" if latest and latest.get("id") else "/plan"
+    await agent.log(student_id, "service_hours", f"Logged {entry['hours']:g} service hours at {entry['place']}", href=href)
+    await agent.on_record_change(student_id, {"service_hours"}, f"you logged {entry['hours']:g} service hours")
+
+    return await service_hours.summary(student_id)
+
+
+@router.delete("/me/service-hours/{entry_id}")
+async def delete_service_hours(entry_id: str, student_id: str = Student):
+    entry = await service_hours.remove_entry(student_id, entry_id)
+
+    if entry is None:
+        raise HTTPException(status_code=404, detail="Entry not found.")
+
+    await agent.on_record_change(student_id, {"service_hours"}, f"you removed {entry['hours']:g} service hours")
+
+    return await service_hours.summary(student_id)
+
+
+@router.get("/me/greeting")
+async def knight_greeting(student_id: str = Student):
+    """The knight's cheerful hello when the app opens (cached for a few hours)."""
+
+    latest = await plans.latest_plan(student_id)
+    steps = (latest or {}).get("next_three_actions") or []
+
+    return await greeting.greeting(student_id, next_step=steps[0] if steps else "")
+
+
 @router.get("/me/agent-activity")
 async def agent_activity(student_id: str = Student):
     """What the counselor did on its own or is doing now (Home and chat show this)."""
@@ -363,6 +414,8 @@ class CounselorMessage(BaseModel):
     conversation_id: str | None = None
     text: str = Field(min_length=1, max_length=4000)
     action: str | None = None
+    # The page the student is on (the floating counselor sends it).
+    page: str | None = Field(default=None, max_length=200)
 
 
 class RenameConversation(BaseModel):
@@ -435,6 +488,7 @@ async def stream_counselor_message(payload: CounselorMessage, student_id: str = 
             conversation_id=payload.conversation_id,
             text=payload.text.strip(),
             action=payload.action,
+            page=payload.page,
         ):
             if event["event"] == "start":
                 started["conversation_id"] = event["conversation_id"]
@@ -980,6 +1034,11 @@ async def create_plan_stream(payload: PlanGenerate, student_id: str = Student):
 async def get_plan(plan_id: str, student_id: str = Student):
     detail = await plans.get_plan_detail(student_id, plan_id)
     pathway = (detail.get("content") or {}).get("pathway")
+
+    # Steps link to the real programs they name.
+    if detail.get("content"):
+        plans.relink_opportunities(detail["content"])
+        plans.replace_counselor_referrals(detail["content"])
 
     # Chances and Bright Futures follow today's record (new scores, a new transcript).
     if pathway:

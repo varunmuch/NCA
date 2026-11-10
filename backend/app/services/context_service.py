@@ -14,7 +14,7 @@ from sqlalchemy import select
 from app.core.database import AsyncSessionLocal
 from app.core.llm import estimate_tokens, untrusted_block
 from app.db.models import CareerPlan, Conversation, Message, ProgressTask, SavedCareer
-from app.services import career_catalog, college_match, student_record
+from app.services import career_catalog, college_match, school_courses, service_hours, student_record
 from app.services.conversation_service import message_as_model_text
 from app.services.document_service import document_overview, search_chunks
 from app.services.student_service import (
@@ -28,7 +28,7 @@ from app.services.student_service import (
 BUDGET_PROFILE = 1200
 BUDGET_DOCUMENTS = 2500
 BUDGET_PAST_CONVERSATIONS = 800
-BUDGET_PLAN_PROGRESS = 500
+BUDGET_PLAN_PROGRESS = 1100
 BUDGET_CANDIDATES = 400
 BUDGET_SOURCES = 1200
 MAX_SOURCES = 5
@@ -199,6 +199,28 @@ async def _plan_and_progress(student_id: str) -> str:
 
         if actions:
             lines.append("Plan next actions: " + "; ".join(actions))
+
+        # What the plan picked and why, so the counselor can explain or change it.
+        pathway = content.get("pathway") or {}
+
+        if pathway.get("colleges"):
+            lines.append(
+                "Plan colleges (picked by the app from Florida colleges with a bachelor's in their major, mixing reach, match and likely "
+                "by their scores and GPA, favoring public schools near NeoCity; the student did not choose them): "
+                + "; ".join(
+                    f"{college['name']} ({(college.get('fit') or {}).get('label', '')}"
+                    + (f", about {college['fit']['chance']}% estimated chance" if (college.get("fit") or {}).get("chance") is not None else "")
+                    + ")"
+                    + (f": {college['why']}" if college.get("why") else "")
+                    for college in pathway["colleges"][:7]
+                )
+            )
+
+        if pathway.get("majors"):
+            lines.append("Plan majors: " + ", ".join(major["title"] for major in pathway["majors"][:3]))
+
+        if pathway.get("courses"):
+            lines.append("Plan classes: " + ", ".join(f"{course['course']} ({course['grade']})" for course in pathway["courses"][:8]))
 
     open_tasks = [title for title, status in tasks if status != "done"]
     done_tasks = [title for title, status in tasks if status == "done"]
@@ -482,6 +504,8 @@ def grounding_corpus(context: dict, student_message: str) -> str:
             context.get("college_text", ""),
             context["documents_text"],
             context["candidates_text"],
+            school_courses.catalog_text(with_description=True),
+            service_hours.places_text(),
             *student_turns,
             student_message,
         ]

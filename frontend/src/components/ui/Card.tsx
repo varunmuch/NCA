@@ -64,21 +64,25 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="max-w-2xl">
+    <header className="on-navy sticker relative flex flex-col gap-4 overflow-hidden rounded-[var(--radius-hero)] bg-navy px-6 py-6 text-white sm:flex-row sm:items-end sm:justify-between sm:px-8 sm:py-7">
+      <span aria-hidden className="absolute right-8 top-6 size-4 rotate-12 rounded-sm bg-sunny" />
+      <span aria-hidden className="absolute right-20 top-12 size-2.5 rounded-full bg-pink" />
+      <span aria-hidden className="absolute bottom-5 right-14 h-2 w-5 -rotate-12 rounded-full bg-teal" />
+      <div className="relative max-w-2xl">
         {eyebrow && (
-          <p className="text-sm font-medium text-ink-muted">
+          <p className="inline-flex items-center gap-1.5 rounded-full border-2 border-black/5 bg-sunny px-3 py-0.5 text-xs font-bold text-ink">
+            <span aria-hidden className="size-1.5 rounded-full bg-ink" />
             {eyebrow}
           </p>
         )}
-        <h1 className="font-display mt-1 text-[2rem] font-semibold leading-[1.15] text-ink sm:text-[2.5rem]">
+        <h1 className="font-display mt-2 text-[2rem] font-semibold leading-[1.15] text-white sm:text-[2.5rem]">
           {title}
         </h1>
         {description && (
-          <p className="mt-2 text-base leading-relaxed text-ink-muted">{description}</p>
+          <p className="mt-2 text-base leading-relaxed text-white/80">{description}</p>
         )}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="relative flex flex-wrap gap-2">{actions}</div>}
     </header>
   );
 }

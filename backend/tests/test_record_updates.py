@@ -67,7 +67,7 @@ def test_requested_actions_need_evidence_in_the_message():
     ]
 
 
-def test_plan_update_needs_no_value_but_a_step_does():
+def test_plan_update_and_step_without_subject_are_kept():
     message = "Can you update my plan? Also add to my plan"
     raw = {
         "actions": [
@@ -76,4 +76,15 @@ def test_plan_update_needs_no_value_but_a_step_does():
         ]
     }
 
-    assert ru.validate_actions(raw, message) == [{"action": "update_plan", "value": ""}]
+    # The step without a subject is kept, so the counselor can ask what to add.
+    assert ru.validate_actions(raw, message) == [{"action": "update_plan", "value": ""}, {"action": "add_step", "value": ""}]
+
+
+def test_a_vague_subject_becomes_a_question():
+    raw = {"actions": [{"action": "save_career", "value": "that one", "evidence": "save that one"}]}
+    assert ru.validate_actions(raw, "Can you save that one?") == [{"action": "save_career", "value": ""}]
+
+
+def test_a_plan_change_is_not_a_checklist_step():
+    raw = {"actions": [{"action": "add_step", "value": "Add more AP classes", "evidence": "Add more AP classes"}]}
+    assert ru.validate_actions(raw, "Add more AP classes") == []

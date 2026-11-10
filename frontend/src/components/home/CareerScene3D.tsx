@@ -11,8 +11,8 @@ const ORBITS: Orbit[] = [
     speed: "14s",
     lean: "-14deg",
     planets: [
-      { size: "20px", c1: "#f472b6", c2: "#be185d", delay: "0s" },
-      { size: "14px", c1: "#fbbf24", c2: "#d97706", delay: "-7s" },
+      { size: "20px", c1: "#f0564a", c2: "#f0564a", delay: "0s" },
+      { size: "14px", c1: "#ffc93c", c2: "#ffc93c", delay: "-7s" },
     ],
   },
   {
@@ -20,8 +20,8 @@ const ORBITS: Orbit[] = [
     speed: "9s",
     lean: "18deg",
     planets: [
-      { size: "16px", c1: "#2dd4bf", c2: "#0f766e", delay: "-2s" },
-      { size: "12px", c1: "#38bdf8", c2: "#0369a1", delay: "-6.5s" },
+      { size: "16px", c1: "#14a37f", c2: "#14a37f", delay: "-2s" },
+      { size: "12px", c1: "#38a3f5", c2: "#38a3f5", delay: "-6.5s" },
     ],
   },
 ];

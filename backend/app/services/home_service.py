@@ -402,6 +402,32 @@ def _record_summary(record: dict) -> dict:
     }
 
 
+async def _journey_map(student_id: str, profile: dict, record: dict, plan: dict | None) -> dict:
+    """The career path on Home: where they are, the college they're aiming for, the goal."""
+
+    from app.services import college_match
+
+    # Only a college the student chose; the plan's picks are suggestions.
+    college = None
+    target = profile.get("target_college") or {}
+
+    if target.get("id"):
+        official = college_match.college(target["id"])
+        fit = college_match.fit_label(official, record) if official else {}
+        college = {"name": target.get("name", ""), "chance": fit.get("chance"), "label": fit.get("label")}
+
+    options = (record.get("major_minor") or {}).get("options") or []
+    tasks = plan.get("next_three_actions") if plan else []
+
+    return {
+        "grade": profile.get("grade_level", ""),
+        "major": options[0]["major"]["title"] if options else record.get("intended_major", ""),
+        "college": college,
+        "goal": profile.get("career_aspiration", "") or (plan or {}).get("career_direction", ""),
+        "plan_steps": len(tasks or []),
+    }
+
+
 async def home_summary(student_id: str) -> dict:
     profile = await get_profile_dict(student_id)
     record = await student_record.build_record(student_id, profile)
@@ -440,6 +466,7 @@ async def home_summary(student_id: str) -> dict:
             profile, conversations, pending, plan, journey, roadmaps, await _saved_slugs(student_id), record
         ),
         "record": _record_summary(record),
+        "journey": await _journey_map(student_id, profile, record, plan),
         "roadmaps": roadmaps,
         "latest_conversation": latest_conversation,
         "careers": await _careers_worth_exploring(student_id, profile),

@@ -20,7 +20,7 @@ const FAQ = [
   },
   {
     q: "Will my grades decide what careers I see?",
-    a: "No. Grades show what you've studied, not what you're capable of. Your counselor never uses grades to rule a career out.",
+    a: "Grades matter, a lot. They're one of the biggest things colleges and scholarships like Bright Futures look at, so your counselor uses them to show which colleges are a reach, a match or likely, and what you'd need to get there. You'll still see every career that fits your interests, and if your grades in a subject are low for a goal, your counselor will tell you honestly and help you plan how to raise them or find another route in.",
   },
   {
     q: "Where does the career information come from?",

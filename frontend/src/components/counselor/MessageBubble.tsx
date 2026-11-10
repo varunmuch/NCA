@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   BookOpen,
   Check,
+  CircleHelp,
   Compass,
   FileUp,
   Layers,
@@ -22,12 +23,13 @@ import {
 } from "lucide-react";
 
 import { SetGoalButton } from "@/components/careers/SetGoalButton";
+import { CollegeList } from "@/components/college/CollegeList";
 
 import { FamilyIcon } from "@/components/careers/CareerCard";
 import { Markdown } from "@/components/ui/Markdown";
 import { api } from "@/lib/api";
 import { formatTime } from "@/lib/format";
-import type { AgentAction, CareerSuggestion, ChatMessage, CounselorAction, MessageMetadata, RecordUpdate, StudentFact } from "@/types/cie";
+import type { AgentAction, CareerSuggestion, InfoRequest, ChatMessage, CounselorAction, MessageMetadata, RecordUpdate, StudentFact } from "@/types/cie";
 
 import { ModuleResult } from "./ModuleResult";
 
@@ -54,19 +56,20 @@ export function CounselorAvatar({ size = "md" }: { size?: "sm" | "md" | "lg" }) 
 }
 
 /** The page the counselor opened for the career the student named. */
-function OpenCareer({ page }: { page: NonNullable<MessageMetadata["open_career"]> }) {
+function OpenCareer({ page, onSend }: { page: NonNullable<MessageMetadata["open_career"]>; onSend?: (text: string) => void }) {
   return (
     <div className="mt-4 rounded-xl border border-line bg-surface p-4">
       <p className="text-sm text-ink-muted">{page.created ? "New career page" : "Career page"}</p>
       <p className="mt-0.5 text-lg font-semibold text-ink">{page.title}</p>
       {page.note && <p className="mt-1 text-sm leading-relaxed text-ink-muted">{page.note}</p>}
       <div className="mt-3 flex flex-wrap gap-2">
-        <Link
-          href={`/plan?generate=1&goal=${encodeURIComponent(page.title)}`}
+        <button
+          type="button"
+          onClick={() => onSend?.(`Make ${page.title} my goal and build My Path for it`)}
           className="inline-flex h-9 items-center rounded-full bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
         >
           Build My Path
-        </Link>
+        </button>
         <Link
           href={`/explore/${page.slug}`}
           className="inline-flex h-9 items-center rounded-full border border-line-strong px-4 text-sm font-semibold text-ink hover:bg-surface-2"
@@ -115,8 +118,130 @@ function CareerSuggestions({ items }: { items: CareerSuggestion[] }) {
   );
 }
 
+/** The counselor asks for what it needs: a quick form, or a link to add it. */
+function InfoRequestCard({ request, onSend, disabled }: { request: InfoRequest; onSend: (text: string) => void; disabled: boolean }) {
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [sent, setSent] = useState(false);
+  const parts = [
+    values.sat && `I got ${values.sat} on the SAT`,
+    values.act && `I got ${values.act} on the ACT`,
+    values.service_hours && `I have ${values.service_hours} volunteer hours`,
+  ].filter(Boolean);
+
+  if (sent) {
+    return null;
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-sun/30 bg-sun-soft/50 p-3.5">
+      <p className="flex items-center gap-1.5 text-xs font-semibold text-sun-ink">
+        <CircleHelp aria-hidden className="size-3.5" /> I need a little more from you
+      </p>
+      {request.fields.length > 0 && (
+        <form
+          className="mt-2.5 flex flex-wrap items-end gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+
+            if (parts.length) {
+              setSent(true);
+              onSend(parts.join(" and ") + ".");
+            }
+          }}
+        >
+          {request.fields.map((field) => (
+            <label key={field.id} className="text-xs font-medium text-ink">
+              {field.label}
+              <input
+                inputMode="numeric"
+                value={values[field.id] ?? ""}
+                onChange={(event) => setValues({ ...values, [field.id]: event.target.value.replace(/\D/g, "").slice(0, 4) })}
+                placeholder={field.placeholder}
+                className="mt-1 block w-28 rounded-lg border border-line-strong bg-surface px-2.5 py-1.5 text-sm text-ink focus:border-primary focus:outline-none"
+              />
+            </label>
+          ))}
+          <button
+            type="submit"
+            disabled={disabled || parts.length === 0}
+            className="h-9 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50"
+          >
+            Send
+          </button>
+          {request.keys.includes("tests") && (
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => {
+                setSent(true);
+                onSend("I haven't taken the SAT or ACT yet.");
+              }}
+              className="h-9 rounded-full border border-line-strong bg-surface px-3.5 text-sm font-medium text-ink-muted hover:text-ink disabled:opacity-50"
+            >
+              Haven&apos;t taken one yet
+            </button>
+          )}
+        </form>
+      )}
+      {request.links.length > 0 && (
+        <div className="mt-2.5 flex flex-wrap gap-2">
+          {request.links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-sun/40 bg-surface px-3.5 text-sm font-semibold text-sun-ink hover:bg-sun-soft"
+            >
+              {link.label} <ArrowUpRight aria-hidden className="size-3.5" />
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** What the counselor did or started for the student this turn. */
 function AgentActions({ actions }: { actions: AgentAction[] }) {
+  const [finished, setFinished] = useState<{ title: string; href: string } | null>(null);
+  const running = actions.some((action) => action.running);
+
+  // Follow a background job right here, so nobody has to leave the chat.
+  useEffect(() => {
+    if (!running) {
+      return;
+    }
+
+    let cancelled = false;
+    let timer: number | undefined;
+
+    const check = () =>
+      api
+        .agentActivity()
+        .then((data) => {
+          if (cancelled) {
+            return;
+          }
+
+          if (data.running) {
+            timer = window.setTimeout(check, 4000);
+          } else {
+            const latest = data.items.find((item) => item.kind === "refresh_plan" || item.kind === "refresh_majors");
+
+            if (latest) {
+              setFinished({ title: latest.title, href: latest.href });
+            }
+          }
+        })
+        .catch(() => undefined);
+
+    void check();
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [running]);
+
   return (
     <div className="mt-4 rounded-xl border border-primary/20 bg-primary-softer p-3.5">
       <p className="flex items-center gap-1.5 text-xs font-semibold text-primary">
@@ -125,7 +250,7 @@ function AgentActions({ actions }: { actions: AgentAction[] }) {
       <ul className="mt-2 space-y-1.5 text-sm">
         {actions.map((action) => (
           <li key={action.text} className="flex items-start gap-2 text-ink">
-            {action.running ? (
+            {action.running && !finished ? (
               <Loader2 aria-hidden className="mt-0.5 size-4 shrink-0 animate-spin text-primary" />
             ) : (
               <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />
@@ -143,6 +268,19 @@ function AgentActions({ actions }: { actions: AgentAction[] }) {
             </span>
           </li>
         ))}
+        {finished && (
+          <li className="flex items-start gap-2 font-semibold text-accent-ink" role="status">
+            <Check aria-hidden className="mt-0.5 size-4 shrink-0" />
+            <span>
+              {finished.title}.{" "}
+              {finished.href && (
+                <Link href={finished.href} className="text-primary hover:underline">
+                  Open
+                </Link>
+              )}
+            </span>
+          </li>
+        )}
       </ul>
     </div>
   );
@@ -272,6 +410,7 @@ export function MessageBubble({
   onAction,
   onRetry,
   disabled,
+  compact = false,
 }: {
   message: ChatMessage;
   isLast: boolean;
@@ -279,6 +418,8 @@ export function MessageBubble({
   onAction: (action: CounselorAction) => void;
   onRetry: () => void;
   disabled: boolean;
+  // The floating counselor: no avatar column, tighter padding.
+  compact?: boolean;
 }) {
   const { metadata } = message;
 
@@ -286,7 +427,7 @@ export function MessageBubble({
     return (
       <div className="flex justify-end animate-[var(--animate-fade-up)]">
         <div className="max-w-[85%] sm:max-w-[75%]">
-          <div className="whitespace-pre-wrap rounded-2xl rounded-tr-md bg-gradient-to-br from-primary to-violet px-4 py-2.5 text-[15px] leading-relaxed text-white shadow-[var(--shadow-raised)]">
+          <div className="whitespace-pre-wrap rounded-2xl rounded-tr-md bg-primary px-4 py-2.5 text-[15px] leading-relaxed text-white shadow-[var(--shadow-raised)]">
             {message.content}
           </div>
           {message.created_at && (
@@ -324,10 +465,12 @@ export function MessageBubble({
   // replaces the streamed one must not flash.
   return (
     <div className="flex items-start gap-2.5 sm:gap-3">
-      <span className="mt-0.5 hidden size-9 shrink-0 items-center justify-center rounded-full bg-white shadow-[var(--shadow-card)] ring-2 ring-primary/15 sm:flex">
-        <CounselorAvatar />
-      </span>
-      <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md border border-line bg-surface px-4 py-3.5 shadow-[var(--shadow-card)] sm:px-5">
+      {!compact && (
+        <span className="mt-0.5 hidden size-9 shrink-0 items-center justify-center rounded-full bg-white shadow-[var(--shadow-card)] ring-2 ring-primary/15 sm:flex">
+          <CounselorAvatar />
+        </span>
+      )}
+      <div className={`min-w-0 flex-1 rounded-2xl rounded-tl-md border border-line bg-surface shadow-[var(--shadow-card)] ${compact ? "px-3.5 py-3 text-[15px]" : "px-4 py-3.5 sm:px-5"}`}>
         {metadata.streaming && (
           <span className="sr-only" aria-live="polite">
             Your counselor is writing
@@ -346,14 +489,14 @@ export function MessageBubble({
           </div>
         )}
 
-        {!metadata.streaming && metadata.open_career && <OpenCareer page={metadata.open_career} />}
+        {!metadata.streaming && metadata.open_career && <OpenCareer page={metadata.open_career} onSend={onQuickReply} />}
 
         {suggestions.filter((item) => item.slug !== metadata.open_career?.slug).length > 0 && (
           <CareerSuggestions items={suggestions.filter((item) => item.slug !== metadata.open_career?.slug)} />
         )}
 
         {metadata.follow_up_question && (
-          <div className="mt-4 rounded-2xl bg-gradient-to-br from-primary-softer to-pink-soft px-4 py-3">
+          <div className="mt-4 rounded-2xl bg-primary-softer px-4 py-3">
             <p className="font-semibold leading-relaxed text-primary-ink">{metadata.follow_up_question}</p>
             {quickReplies.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
@@ -411,6 +554,42 @@ export function MessageBubble({
         {!metadata.streaming && (metadata.record_updates?.length ?? 0) > 0 && <RecordUpdates updates={metadata.record_updates!} />}
 
         {!metadata.streaming && (metadata.agent_actions?.length ?? 0) > 0 && <AgentActions actions={metadata.agent_actions!} />}
+
+        {!metadata.streaming && (metadata.colleges?.length ?? 0) > 0 && (
+          <div className="mt-4 rounded-xl border border-line bg-surface px-4 pb-2 pt-3">
+            <p className="text-sm font-semibold text-ink">Colleges for you, with your estimated chances</p>
+            <CollegeList colleges={metadata.colleges!} note={false} />
+          </div>
+        )}
+
+        {!metadata.streaming && isLast && metadata.proposed_change && (
+          <div className="mt-4 rounded-xl border border-primary/25 bg-primary-softer p-3.5">
+            <p className="text-xs font-semibold text-primary">Want me to change My Path?</p>
+            <p className="mt-1 text-sm text-ink">{metadata.proposed_change}</p>
+            <div className="mt-2.5 flex flex-wrap gap-2">
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={() => onQuickReply(`Yes, update My Path: ${metadata.proposed_change}`)}
+                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover disabled:opacity-50"
+              >
+                <Check aria-hidden className="size-4" /> Yes, make a new version
+              </button>
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={() => onQuickReply("Not yet, let's keep talking about it.")}
+                className="inline-flex h-9 items-center rounded-full border border-line-strong bg-surface px-4 text-sm font-medium text-ink-muted hover:text-ink disabled:opacity-50"
+              >
+                Not yet
+              </button>
+            </div>
+          </div>
+        )}
+
+        {!metadata.streaming && isLast && metadata.info_request && (
+          <InfoRequestCard request={metadata.info_request} onSend={onQuickReply} disabled={disabled} />
+        )}
 
         {facts.length > 0 && <ProposedFacts facts={facts} />}
 

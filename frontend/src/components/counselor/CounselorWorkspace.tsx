@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+
+import { useStickToBottom } from "@/lib/use-stick-to-bottom";
 import {
   ArrowDown,
   ArrowLeft,
@@ -53,7 +55,7 @@ function Intro({
 }) {
   return (
     <div className="pb-6 pt-6 sm:pt-10">
-      <div className="rounded-[var(--radius-hero)] border border-line bg-gradient-to-br from-primary-softer via-white to-pink-soft p-6 sm:p-8">
+      <div className="rounded-[var(--radius-hero)] border border-line bg-primary-softer p-6 sm:p-8">
         <div className="flex items-center gap-3">
           <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow-[var(--shadow-card)] ring-2 ring-primary/15">
             <CounselorAvatar size="lg" />
@@ -73,7 +75,7 @@ function Intro({
           <button
             type="button"
             onClick={() => onStart("exploring")}
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-violet px-5 py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-raised)] transition hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-[var(--shadow-raised)] transition hover:brightness-110"
           >
             <Compass aria-hidden className="size-4" />
             I&apos;m still figuring it out
@@ -196,7 +198,7 @@ export function CounselorWorkspace({
   const { me } = useStudent();
   const composerRef = useRef<ComposerHandle>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const nearBottom = useRef(true);
+  const { follow, jumpToLatest, showJump } = useStickToBottom(scrollRef);
 
   const [conversationId, setConversationId] = useState<string | null>(initialId);
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
@@ -212,7 +214,6 @@ export function CounselorWorkspace({
   const [historyOpen, setHistoryOpen] = useState(false);
   const [contextOpen, setContextOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [showJump, setShowJump] = useState(false);
 
   const name = me.display_name;
   const aspiration = me.profile.career_aspiration;
@@ -302,34 +303,10 @@ export function CounselorWorkspace({
     };
   }, []);
 
-  // Follow new messages only when the student is already at the bottom,
-  // so scrolling back to reread is never interrupted.
+  // Follow the reply as it streams, unless the student scrolled up to reread.
   useLayoutEffect(() => {
-    const element = scrollRef.current;
-
-    if (!element) {
-      return;
-    }
-
-    const last = messages[messages.length - 1];
-
-    if (nearBottom.current || last?.role === "user") {
-      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      element.scrollTo({ top: element.scrollHeight, behavior: reduce ? "auto" : "smooth" });
-    }
-  }, [messages, sending]);
-
-  function onScroll() {
-    const element = scrollRef.current;
-
-    if (!element) {
-      return;
-    }
-
-    const distance = element.scrollHeight - element.scrollTop - element.clientHeight;
-    nearBottom.current = distance < 120;
-    setShowJump(distance > 400);
-  }
+    follow(messages[messages.length - 1]?.role === "user");
+  }, [messages, sending, follow]);
 
   function adoptConversation(id: string, newTitle?: string) {
     if (!conversationId) {
@@ -431,7 +408,7 @@ export function CounselorWorkspace({
       created_at: nowIso(),
     };
 
-    nearBottom.current = true;
+    follow(true);
     stopReveal();
     setMessages((current) => [...current.filter((message) => !message.metadata.error), optimistic]);
     setSending(true);
@@ -464,6 +441,12 @@ export function CounselorWorkspace({
       // Let the visible text catch up before the saved reply replaces it.
       await revealDone();
       setMessages((current) => [...withoutDraft(current), result.assistant_message]);
+
+      // "Open the quiz": take them there once the reply is on screen.
+      if (result.assistant_message.metadata.navigate) {
+        const target = result.assistant_message.metadata.navigate;
+        window.setTimeout(() => router.push(target), 900);
+      }
 
       if (result.error) {
         toast(result.error, "error");
@@ -515,18 +498,19 @@ export function CounselorWorkspace({
 
   function onAction(action: CounselorAction) {
     switch (action) {
+      // The counselor does these itself, right here in the chat.
       case "build_plan":
       case "career_roadmap":
-        router.push("/plan?generate=1");
+        void send("Build My Path for me");
         break;
       case "explore_careers":
-        router.push("/explore");
+        void send("Which careers fit me? Show me a few.");
         break;
       case "upload_document":
         setUploadOpen(true);
         break;
       case "update_profile":
-        router.push("/profile");
+        void send("I'd like to update my profile.");
         break;
       default:
         void send(ACTION_META[action].prompt ?? ACTION_META[action].label, action);
@@ -612,7 +596,6 @@ export function CounselorWorkspace({
     <div className="flex h-dvh">
       <section className="relative flex min-w-0 flex-1 flex-col">
         <header className="relative flex h-14 shrink-0 items-center gap-1 border-b border-line bg-white px-2 sm:px-4">
-          <span aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-pink to-sun" />
           <Link
             href="/"
             aria-label="Back to Home"
@@ -624,7 +607,9 @@ export function CounselorWorkspace({
             <History aria-hidden className="size-5" />
           </IconButton>
           <div className="flex min-w-0 flex-1 items-center gap-2 px-1">
-            <CounselorAvatar size="sm" />
+            <span className="flex size-8 -rotate-6 items-center justify-center rounded-xl border-2 border-black/5 bg-sunny">
+              <CounselorAvatar size="sm" />
+            </span>
             <p className="truncate text-[15px] font-semibold text-ink">{title || "Counselor"}</p>
           </div>
           <IconButton label="What the counselor knows about you" onClick={() => setContextOpen(true)}>
@@ -637,8 +622,8 @@ export function CounselorWorkspace({
 
         <div
           ref={scrollRef}
-          onScroll={onScroll}
-          className="min-h-0 flex-1 overflow-y-auto bg-[radial-gradient(circle_at_1px_1px,var(--color-line)_1px,transparent_0)] [background-size:22px_22px]"
+          tabIndex={-1}
+          className="min-h-0 flex-1 overflow-y-auto outline-none bg-[radial-gradient(circle_at_1px_1px,var(--color-line)_1px,transparent_0)] [background-size:22px_22px]"
         >
           <div className="mx-auto w-full max-w-[860px] px-3 py-6 sm:px-6">
             {loading && (
@@ -700,10 +685,7 @@ export function CounselorWorkspace({
         {showJump && (
           <button
             type="button"
-            onClick={() => {
-              nearBottom.current = true;
-              scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-            }}
+            onClick={jumpToLatest}
             className="absolute bottom-32 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm font-semibold text-ink shadow-[var(--shadow-raised)]"
           >
             <ArrowDown aria-hidden className="size-4" /> Latest

@@ -208,7 +208,9 @@ def _simple_plan(story: list, content: dict, task_status: dict[str, str]) -> Non
     for index, step in enumerate(content.get("next_steps") or []):
         done = index < len(task_ids) and task_status.get(str(task_ids[index])) == "done"
         title = ("Done: " if done else "") + step.get("title", "")
-        steps.append({"title": title, "why": step.get("why", "")})
+        resource = step.get("resource") or {}
+        detail = " ".join(part for part in [step.get("why", ""), step.get("how", ""), f"{resource['title']}: {resource['url']}" if resource else ""] if part)
+        steps.append({"title": title, "why": detail})
 
     _section(story, "My next 3 steps this month", _titled_items(steps, "title", "why"))
 
@@ -239,7 +241,17 @@ def _simple_plan(story: list, content: dict, task_status: dict[str, str]) -> Non
     _pathway(story, content.get("pathway"))
 
     for period in content.get("this_year") or []:
-        _section(story, period.get("period", "This year"), [_bullets(period.get("steps") or [])])
+        # Steps are text (older plans) or {text, how, resource}.
+        lines = []
+
+        for step in period.get("steps") or []:
+            if isinstance(step, dict):
+                resource = step.get("resource") or {}
+                lines.append(" ".join(part for part in [step.get("text", ""), step.get("how", ""), f"({resource['title']}: {resource['url']})" if resource else ""] if part))
+            else:
+                lines.append(step)
+
+        _section(story, period.get("period", "This year"), [_bullets(lines)])
 
     _section(story, "The rest of high school", _titled_items(content.get("high_school") or [], "grade", "focus"))
     _section(story, "After high school", _titled_items(content.get("after_high_school") or [], "route", "description"))

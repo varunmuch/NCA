@@ -48,7 +48,7 @@ export function AgentActivity() {
   }
 
   return (
-    <section aria-labelledby="agent-activity-title" className="rounded-[var(--radius-card)] border border-primary/20 bg-gradient-to-br from-primary-softer to-white p-5 sm:p-6">
+    <section aria-labelledby="agent-activity-title" className="rounded-[var(--radius-card)] border border-primary/20 bg-primary-softer p-5 sm:p-6">
       <div className="flex items-center justify-between gap-3">
         <h2 id="agent-activity-title" className="flex items-center gap-2 font-semibold text-ink">
           <Zap aria-hidden className="size-4 text-primary" />

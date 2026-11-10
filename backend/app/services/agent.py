@@ -175,8 +175,13 @@ async def _refresh_plan(student_id: str, reason: str) -> None:
             plan = await plan_service.revise_plan(
                 student_id,
                 current["id"],
-                instruction=f"Update the plan because {reason}. Keep what still fits; change what this affects.",
-                career_goal=current.get("career_goal", ""),
+                # A request in the student's words goes straight through ("replace UCF with USF").
+                instruction=(
+                    reason[len('you asked: "'):-1]
+                    if reason.startswith('you asked: "') and reason.endswith('"')
+                    else f"Update the plan because {reason}. Keep what still fits; change what this affects."
+                ),
+                act_on_request=False,
             )
             # A plan the student saved stays their working plan: the update is
             # saved too (checked-off steps carry over; older versions stay in history).
@@ -406,4 +411,236 @@ async def set_goal(student_id: str, name: str) -> dict | None:
         "kind": "set_goal",
         "text": f"made {career['title']} your goal" + (f" and started {' '.join(started)}" if started else ""),
         "href": href,
+    }
+
+
+def _closest(target: str, options: list[tuple[int, str]]) -> tuple[int, str] | None:
+    """The option whose words best overlap the target (for "check off the PSAT step")."""
+
+    import re
+
+    words = {word for word in re.findall(r"[a-z0-9]+", target.lower()) if len(word) > 2}
+    best, best_score = None, 0.0
+
+    for option_id, title in options:
+        option_words = {word for word in re.findall(r"[a-z0-9]+", title.lower()) if len(word) > 2}
+
+        if not option_words:
+            continue
+
+        score = len(words & option_words) / len(words | option_words)
+
+        if score > best_score:
+            best, best_score = (option_id, title), score
+
+    return best if best_score >= 0.2 else None
+
+
+async def _open_tasks(student_id: str, include_done: bool = False) -> list[ProgressTask]:
+    async with AsyncSessionLocal() as db:
+        query = select(ProgressTask).where(ProgressTask.student_id == student_id)
+
+        if not include_done:
+            query = query.where(ProgressTask.status != "done")
+
+        return list((await db.execute(query)).scalars().all())
+
+
+async def complete_step(student_id: str, text: str) -> dict | None:
+    tasks = await _open_tasks(student_id)
+    match = _closest(text, [(task.id, task.title) for task in tasks])
+
+    if not match:
+        return None
+
+    async with AsyncSessionLocal() as db:
+        task = await db.get(ProgressTask, match[0])
+        task.status = "done"
+        task.updated_at = datetime.utcnow()
+        await db.commit()
+
+    await log(student_id, "complete_step", f"Checked off: {match[1]}", href="/plan")
+
+    return {"kind": "complete_step", "text": f"checked off \"{match[1]}\"", "href": "/plan"}
+
+
+async def remove_step(student_id: str, text: str) -> dict | None:
+    tasks = await _open_tasks(student_id, include_done=True)
+    match = _closest(text, [(task.id, task.title) for task in tasks])
+
+    if not match:
+        return None
+
+    async with AsyncSessionLocal() as db:
+        task = await db.get(ProgressTask, match[0])
+        await db.delete(task)
+        await db.commit()
+
+    await log(student_id, "remove_step", f"Removed from your checklist: {match[1]}", href="/plan")
+
+    return {"kind": "remove_step", "text": f"removed \"{match[1]}\" from your checklist", "href": "/plan"}
+
+
+async def unsave_career(student_id: str, name: str) -> dict | None:
+    from sqlalchemy import delete
+
+    from app.services import career_catalog
+
+    async with AsyncSessionLocal() as db:
+        saved = (await db.execute(select(SavedCareer.career_slug).where(SavedCareer.student_id == student_id))).scalars().all()
+
+    options = [(index, career["title"]) for index, slug in enumerate(saved) if (career := career_catalog.get_career(slug))]
+    match = _closest(name, options)
+
+    if not match:
+        return None
+
+    slug = saved[match[0]]
+
+    async with AsyncSessionLocal() as db:
+        await db.execute(delete(SavedCareer).where(SavedCareer.student_id == student_id, SavedCareer.career_slug == slug))
+        await db.commit()
+
+    await log(student_id, "unsave_career", f"Removed {match[1]} from your saved careers", href="/explore")
+
+    return {"kind": "unsave_career", "text": f"removed {match[1]} from your saved careers", "href": "/explore"}
+
+
+PROFILE_FIELDS = {
+    "preferred_name": ("name", False),
+    "grade_level": ("grade", False),
+    "school": ("school", False),
+    "interests": ("interests", True),
+    "favorite_subjects": ("favorite subjects", True),
+    "hobbies": ("hobbies", True),
+}
+
+
+async def update_profile(student_id: str, field: str, value: str) -> dict | None:
+    """A profile detail the student asked to change ("call me Sam", "I'm in 11th grade now")."""
+
+    from app.services.student_service import get_profile_dict, normalize_grade, save_profile_dict
+
+    if field not in PROFILE_FIELDS or not value.strip():
+        return None
+
+    label, is_list = PROFILE_FIELDS[field]
+    value = value.strip()[:100]
+
+    if field == "grade_level":
+        value = normalize_grade(value.split()[0] if value.split()[0].isdigit() else value)
+
+    if is_list:
+        current = list((await get_profile_dict(student_id)).get(field) or [])
+        added = [item.strip() for item in value.split(",") if item.strip() and item.strip().lower() not in {c.lower() for c in current}]
+        await save_profile_dict(student_id, {field: current + added})
+        text = f"added {', '.join(added)} to your {label}" if added else f"already had that in your {label}"
+    else:
+        await save_profile_dict(student_id, {field: value})
+        text = f"changed your {label} to {value}"
+
+    await log(student_id, "update_profile", text[0].upper() + text[1:], href="/profile")
+
+    return {"kind": "update_profile", "text": text, "href": "/profile"}
+
+
+
+async def set_target_college(student_id: str, name: str) -> dict | None:
+    """The college the student says they're aiming for (only ever their choice)."""
+
+    from app.services import college_match, plan_revision
+    from app.services.student_service import save_profile_dict
+
+    match = next((item for item in college_match.colleges() if plan_revision._matches(item["name"], [name])), None)
+
+    if match is None:
+        return None
+
+    await save_profile_dict(student_id, {"target_college": {"id": match["id"], "name": match["name"]}})
+    await log(student_id, "set_target", f"Set {match['name']} as your target college", href="/")
+
+    return {"kind": "set_target", "text": f"set {match['name']} as your target college", "href": "/"}
+
+
+def _minor_choices(record: dict, first: dict) -> list[dict]:
+    """
+    Minors that fit both the interest type and the major: interest fit, plus
+    shared school subjects with the major and the student's strongest grades.
+    """
+
+    from app.services import college_match
+
+    catalog = college_match.majors_catalog()
+    major = catalog.get(first["major"]["cip4"]) or {}
+    major_subjects = set(major.get("subjects") or [])
+    strong = set()
+
+    for area in (record.get("academics") or {}).get("strong_areas") or []:
+        strong |= college_match.AREA_TO_SUBJECTS.get(area, set())
+
+    taken = college_match._words(first["major"]["title"]) | college_match._words(first["minor"]["title"])
+    candidates = college_match.rank_minors(record, exclude={first["major"]["cip4"], first["minor"]["cip4"]}, limit=60)
+    scored = []
+
+    for item in candidates:
+        if college_match._words(item["title"]) & taken or item["florida_bachelors"] < 3:
+            continue
+
+        subjects = set(item.get("subjects") or [])
+        related = len(subjects & major_subjects) / max(1, len(subjects)) if subjects else 0
+        strength = len(subjects & strong) / max(1, len(subjects)) if subjects else 0
+        scored.append((0.45 * item["interest_fit"] / 100 + 0.35 * related + 0.2 * strength, item))
+
+    scored.sort(key=lambda pair: -pair[0])
+
+    return [item for _, item in scored[:5]]
+
+
+async def change_minor(student_id: str, wanted: str = "") -> dict | None:
+    """A different minor: the one they name, or the next best fit for their interest type."""
+
+    from app.services import college_match, student_record
+    from app.services.student_service import get_profile_dict, save_profile_dict
+
+    profile = await get_profile_dict(student_id)
+    result = dict(profile.get("major_minor") or {})
+    options = [dict(option) for option in result.get("options") or []]
+
+    if not options:
+        return None
+
+    record = await student_record.build_record(student_id, profile)
+    first = options[0]
+    old = first["minor"]["title"]
+    scores = (record.get("riasec") or {}).get("scores") or {}
+
+    if wanted.strip():
+        target = college_match.find_major(wanted)
+    else:
+        ranked = _minor_choices(record, first)
+        target = ranked[0] if ranked else None
+
+    if not target or target["cip4"] == first["minor"]["cip4"]:
+        return None
+
+    alternatives = [item["title"] for item in _minor_choices(record, first) if item["cip4"] != target["cip4"]][:2]
+
+    fit = round(100 * college_match.interest_fit(scores, target)) if scores else None
+    code = (record.get("riasec") or {}).get("code", "")
+    first["minor"] = {"cip4": target["cip4"], "cip": target["cip"], "title": target["title"]}
+    first["why_minor"] = (
+        f"You asked for a different minor. {target['title']} "
+        + (f"fits your {code} interest type ({fit}% match)" if fit is not None else "fits your interests")
+        + f" and adds a different skill set to {first['major']['title']}."
+    )
+    options[0] = first
+    result["options"] = options
+    await save_profile_dict(student_id, {"major_minor": result})
+    await log(student_id, "change_minor", f"Changed your minor from {old} to {target['title']}", href="/plan")
+
+    return {
+        "kind": "change_minor",
+        "text": f"changed your minor from {old} to {target['title']}",
+        "href": "/plan",
+        "options": [f"Make my minor {title}" for title in alternatives],
     }

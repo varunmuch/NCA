@@ -91,7 +91,7 @@ export const Composer = forwardRef<
         type="submit"
         disabled={disabled || !text.trim()}
         aria-label="Send message"
-        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-pink text-white transition-[filter,opacity] hover:brightness-110 disabled:from-surface-3 disabled:to-surface-3 disabled:text-ink-soft"
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-[filter,opacity] hover:brightness-110 disabled:from-surface-3 disabled:to-surface-3 disabled:text-ink-soft"
       >
         <SendHorizontal aria-hidden className="size-5" />
       </button>

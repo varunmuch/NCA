@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 
 import { Badge, Card } from "@/components/ui/Card";
+import { askCounselor } from "@/lib/counselor-events";
 import { Button, ButtonLink, buttonClass } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
 import { Field, Select, TextArea, TextInput } from "@/components/ui/Field";
@@ -33,15 +34,16 @@ import { InlineNote } from "@/components/ui/Feedback";
 import { useToast } from "@/components/ui/Toast";
 import { api } from "@/lib/api";
 import { formatDate } from "@/lib/format";
-import type { PlanDetail, PlanMilestone, PlanStep, ProgressStatus } from "@/types/cie";
+import type { PlanClarify, PlanDetail, PlanMilestone, PlanStep, ProgressStatus } from "@/types/cie";
 
 import { GeneratingPlan } from "./PlanGenerator";
 import { SimplePlan } from "./SimplePlan";
 
 const REVISION_IDEAS = [
-  "Make it more hands-on",
-  "Add more free or low-cost options",
-  "Focus on what I can do this semester",
+  "Show me cheaper colleges closer to home",
+  "Add more AP classes",
+  "Give me colleges I'm more likely to get into",
+  "Make my steps more hands-on",
   "Include more options for after high school",
 ];
 
@@ -108,7 +110,7 @@ function CheckButton({
   );
 }
 
-export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
+export function PlanWorkspace({ initial, initialTab }: { initial: PlanDetail; initialTab?: string }) {
   const router = useRouter();
   const toast = useToast();
   const [plan, setPlan] = useState(initial);
@@ -117,6 +119,7 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
   const [reviseOpen, setReviseOpen] = useState<"" | "revise" | "goal">("");
   const [instruction, setInstruction] = useState("");
   const [newGoal, setNewGoal] = useState("");
+  const [clarify, setClarify] = useState<PlanClarify["clarify"] | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [draftMilestones, setDraftMilestones] = useState<PlanMilestone[]>([]);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -149,9 +152,23 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
         instruction: instruction.trim(),
         career_goal: newGoal.trim(),
       });
+
+      // Too vague to act on: the counselor asks what to change.
+      if ("clarify" in next) {
+        setClarify(next.clarify);
+        setBusy("");
+        setReviseOpen("revise");
+        return;
+      }
+
+      setClarify(null);
       setInstruction("");
       setNewGoal("");
-      toast(`Version ${next.version} is ready. Review it, then save if you like it.`);
+      toast(
+        next.status === "saved"
+          ? `Updated My Path (version ${next.version}). See what changed at the top.`
+          : `Version ${next.version} is ready. See what changed, then save if you like it.`
+      );
       router.push(`/plan/${next.id}`);
     } catch (error) {
       toast(error instanceof Error ? error.message : "Couldn't revise the plan.", "error");
@@ -263,15 +280,14 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
         )}
       </div>
 
-      <header className="relative overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface p-6 sm:p-8">
+      <header className="on-navy sticker relative overflow-hidden rounded-[var(--radius-hero)] bg-navy p-6 text-white sm:p-8">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone={saved ? "accent" : "sun"}>{saved ? "Saved" : "Draft"}</Badge>
           <Badge>Version {plan.version}</Badge>
-          <span className="text-sm text-ink-muted">Created {formatDate(plan.created_at)}</span>
+          <span className="text-sm text-white/70">Created {formatDate(plan.created_at)}</span>
         </div>
-        <h1 className="font-display mt-3 text-[2rem] font-semibold leading-tight sm:text-[2.5rem]">{plan.title}</h1>
-        {plan.revision_note && <p className="mt-2 text-sm text-ink-muted">Revised: {plan.revision_note}</p>}
-        <p className="mt-4 max-w-3xl text-[17px] leading-relaxed text-ink">{content.career_direction}</p>
+        <h1 className="font-display mt-3 text-[2rem] font-semibold leading-tight text-white sm:text-[2.5rem]">{plan.title}</h1>
+        <p className="mt-4 max-w-3xl text-[17px] leading-relaxed text-white/85">{content.career_direction}</p>
 
         <div className="mt-6 flex flex-wrap gap-2">
           {!saved && (
@@ -279,8 +295,13 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
               Save plan
             </Button>
           )}
-          <Button variant={saved ? "primary" : "secondary"} onClick={() => setReviseOpen("revise")} icon={<RefreshCw aria-hidden className="size-4" />}>
-            Revise with AI
+          {/* Changes happen in conversation with the counselor, right here. */}
+          <Button
+            variant="primary"
+            onClick={() => askCounselor("I'd like to change something in My Path.")}
+            icon={<MessageCircle aria-hidden className="size-4" />}
+          >
+            Change it with your counselor
           </Button>
           <Button variant="secondary" onClick={() => setReviseOpen("goal")} icon={<Target aria-hidden className="size-4" />}>
             Change career goal
@@ -301,7 +322,7 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
       )}
 
       {isSimple ? (
-        <SimplePlan plan={plan} saved={saved} taskBusy={taskBusy} onToggle={toggleTask} onSaveSteps={saveSteps} />
+        <SimplePlan plan={plan} initialTab={initialTab} saved={saved} taskBusy={taskBusy} onToggle={toggleTask} onSaveSteps={saveSteps} />
       ) : (
         <>
       <section aria-labelledby="next-actions" className="rounded-[var(--radius-card)] bg-ink p-6 text-canvas shadow-[var(--shadow-raised)] sm:p-7">
@@ -503,7 +524,7 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
         open={Boolean(reviseOpen)}
         onClose={() => setReviseOpen("")}
         title={reviseOpen === "goal" ? "Change career goal" : "Revise with AI"}
-        description="Your counselor will create a new version. This one stays in your version history."
+        description="Say what to change: colleges, classes, steps, your major or goal. Your counselor changes exactly that and keeps the rest. This version stays in your history."
       >
         <div className="space-y-4">
           {reviseOpen === "goal" && (
@@ -511,10 +532,30 @@ export function PlanWorkspace({ initial }: { initial: PlanDetail }) {
               <TextInput id="new-goal" value={newGoal} onChange={(event) => setNewGoal(event.target.value)} autoFocus maxLength={200} />
             </Field>
           )}
+          {clarify && reviseOpen === "revise" && (
+            <div className="rounded-xl border border-sun/30 bg-sun-soft/50 p-3.5" role="status">
+              <p className="text-sm font-semibold text-ink">{clarify.question}</p>
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                {clarify.options.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => {
+                      setInstruction(option);
+                      setClarify(null);
+                    }}
+                    className="rounded-full border border-sun/40 bg-surface px-3 py-1.5 text-sm font-medium text-ink hover:bg-sun-soft"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <Field label={reviseOpen === "goal" ? "Anything else? (optional)" : "What should change?"} htmlFor="instruction">
             <TextArea id="instruction" rows={3} value={instruction} onChange={(event) => setInstruction(event.target.value)} maxLength={1000} />
           </Field>
-          {reviseOpen === "revise" && (
+          {reviseOpen === "revise" && !clarify && (
             <div className="flex flex-wrap gap-2">
               {REVISION_IDEAS.map((idea) => (
                 <button

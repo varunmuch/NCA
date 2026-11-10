@@ -10,10 +10,13 @@ export const metadata: Metadata = { title: "My Path" };
 
 export default async function PlanPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { id } = await params;
+  const { tab } = await searchParams;
   const identity = identityFromSession(await auth());
 
   if (!identity) {
@@ -32,5 +35,5 @@ export default async function PlanPage({
 
   const plan = (await response.json()) as PlanDetail;
 
-  return <PlanWorkspace key={plan.id} initial={plan} />;
+  return <PlanWorkspace key={plan.id} initial={plan} initialTab={tab} />;
 }

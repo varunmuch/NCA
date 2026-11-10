@@ -1,5 +1,7 @@
 import type {
+  ServiceHours,
   AcademicAnswers,
+  PlanClarify,
   AgentActivityItem,
   QuizFollowUps,
   StudentRecord,
@@ -205,7 +207,7 @@ export const api = {
    * every event; the promise resolves with the final done or error event.
    */
   streamMessage: async (
-    payload: { conversation_id?: string | null; text: string; action?: CounselorAction | null },
+    payload: { conversation_id?: string | null; text: string; action?: CounselorAction | null; page?: string },
     onEvent: (event: CounselorStreamEvent) => void
   ): Promise<CounselorTurnResponse> => {
     let response: Response;
@@ -354,7 +356,17 @@ export const api = {
 
   record: () => request<StudentRecord>("/me/record"),
 
+  greeting: () => request<{ message: string; action_label: string; action_prompt: string }>("/me/greeting"),
+
   agentActivity: () => request<{ items: AgentActivityItem[]; running: boolean }>("/me/agent-activity"),
+
+  serviceHours: () => request<ServiceHours>("/me/service-hours"),
+
+  logServiceHours: (entry: { hours: number; place: string; date: string; note?: string }) =>
+    request<ServiceHours>("/me/service-hours", { method: "POST", body: json(entry) }),
+
+  removeServiceHours: (id: string) =>
+    request<ServiceHours>(`/me/service-hours/${encodeURIComponent(id)}`, { method: "DELETE" }),
 
   updateAcademicProfile: (answers: AcademicAnswers) =>
     request<StudentRecord>("/me/academic-profile", { method: "PUT", body: json(answers) }),
@@ -451,7 +463,7 @@ export const api = {
     ),
 
   revisePlan: (id: string, payload: { instruction?: string; career_goal?: string }) =>
-    request<PlanDetail>(`/me/plans/${id}/revise`, { method: "POST", body: json(payload) }),
+    request<PlanDetail | PlanClarify>(`/me/plans/${id}/revise`, { method: "POST", body: json(payload) }),
 
   savePlan: (id: string) => request<PlanDetail>(`/me/plans/${id}/save`, { method: "POST" }),
 

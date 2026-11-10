@@ -155,7 +155,7 @@ Rules:
 - summary: 2 sentences: what they've already done that helps, and the most useful next step. Mention specific course names from the lists.
 - next_courses: up to 4 picks from "Not taken yet", in the order to take them, each with one sentence on why it helps this career and how it builds on a course they took.
 - tips: up to 2 short, practical tips, each one sentence. You may mention dual enrollment at Valencia College or Florida Virtual School, but never name a specific college course, program, or website.
-- Never comment on grades as good or bad, never rule anything out, and never invent course names, requirements or numbers.
+- Be honest about grades: say which ones are strong and which subjects need work for their goal, kindly, with what would help. Never invent course names, requirements or numbers.
 - Plain text only: no Markdown, no asterisks. Address the student as "you"."""
 
 RESUME_PROMPT = """You review a high school student's resume against the skills a career needs, and suggest improvements. The comparison is already done by the app; you explain it in warm, plain words for a 9th grader.

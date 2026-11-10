@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Check, Pencil, Plus, Trash2 } from "lucide-react";
+import { Check, ExternalLink, MessageCircle, Minus, Pencil, Plus, Sparkles, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
 import { TextInput } from "@/components/ui/Field";
+import { askCounselor } from "@/lib/counselor-events";
 import { surveyNote } from "@/lib/education";
-import type { PlanDetail, PlanStep } from "@/types/cie";
+import type { PlanDetail, PlanResource, PlanRevision, PlanStep } from "@/types/cie";
 
 import { BrightFuturesCard } from "@/components/college/BrightFuturesCard";
 
+import { CommunityHours } from "./CommunityHours";
 import { PlanPathway } from "./PlanPathway";
 
-type TabKey = "month" | "school" | "college" | "certs" | "careers";
+export type TabKey = "month" | "school" | "college" | "certs" | "careers" | "hours";
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: "month", label: "This month" },
@@ -22,10 +24,104 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "college", label: "Major, colleges & scholarships" },
   { key: "certs", label: "Certifications & skills" },
   { key: "careers", label: "Careers" },
+  { key: "hours", label: "Community hours" },
 ];
 
 function dollars(value: number) {
   return value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+}
+
+/** Hands a question to the floating counselor, right on this page. */
+export function AskButton({ question, children }: { question: string; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={() => askCounselor(question)}
+      className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-white px-3 py-1 text-xs font-semibold text-primary-ink hover:border-primary/50 hover:bg-primary-softer"
+    >
+      <MessageCircle aria-hidden className="size-3.5" />
+      {children}
+    </button>
+  );
+}
+
+/** A real program, competition or site a step points to, with its official link. */
+function ResourceChip({ resource }: { resource: PlanResource }) {
+  return (
+    <a
+      href={resource.url}
+      target="_blank"
+      rel="noreferrer"
+      title={resource.description}
+      className="mt-2 inline-flex max-w-full items-center gap-1.5 rounded-full border border-teal/30 bg-teal-soft px-3 py-1 text-xs font-semibold text-teal hover:border-teal"
+    >
+      <span className="truncate">{resource.title}</span>
+      <span className="font-normal text-teal/80">· {resource.kind}</span>
+      <ExternalLink aria-hidden className="size-3 shrink-0" />
+    </a>
+  );
+}
+
+/** How this version differs from the last one, listed by code. */
+function WhatChanged({ revision }: { revision: PlanRevision }) {
+  const extras = [
+    ...revision.record_updates.map((update) => `Updated your profile: ${update.label.toLowerCase()} ${update.old != null ? `${update.old} → ` : ""}${update.new}`),
+    ...revision.actions.map((action) => action.charAt(0).toUpperCase() + action.slice(1)),
+  ];
+
+  return (
+    <section aria-labelledby="what-changed" className="rounded-[var(--radius-card)] border border-primary/20 bg-primary-softer p-5 sm:p-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="what-changed" className="flex items-center gap-2 font-semibold text-ink">
+          <Sparkles aria-hidden className="size-4 text-primary" /> What changed in this version
+        </h2>
+        <span className="text-xs text-ink-muted">Compared with version {revision.previous_version}</span>
+      </div>
+      {revision.request && (
+        <p className="mt-1 text-sm text-ink-muted">
+          {revision.by === "agent" ? (
+            <>Updated automatically: {revision.request.replace(/^Update the plan because /, "").replace(/\. Keep what still fits.*$/, "")}</>
+          ) : (
+            <>You asked: &ldquo;{revision.request}&rdquo;</>
+          )}
+        </p>
+      )}
+      {revision.summary && <p className="mt-2 text-sm text-ink">{revision.summary}</p>}
+
+      {revision.changes.length > 0 ? (
+        <ul className="mt-4 grid gap-3 md:grid-cols-2">
+          {revision.changes.map((change) => (
+            <li key={change.part} className="rounded-xl border border-line bg-white/80 p-3.5 text-sm">
+              <p className="font-semibold text-ink">{change.part}</p>
+              {change.added.map((item) => (
+                <p key={`+${item}`} className="mt-1 flex gap-1.5 text-accent-ink">
+                  <Plus aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+                  {item}
+                </p>
+              ))}
+              {change.removed.map((item) => (
+                <p key={`-${item}`} className="mt-1 flex gap-1.5 text-ink-muted line-through decoration-ink-soft/60">
+                  <Minus aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+                  {item}
+                </p>
+              ))}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-3 text-sm text-ink-muted">Nothing in the lists changed. Try asking for something more specific, like cheaper colleges or more AP classes.</p>
+      )}
+
+      {(revision.applied.length > 0 || extras.length > 0) && (
+        <ul className="mt-3 space-y-1 text-xs text-ink-muted">
+          {revision.applied.length > 0 && <li>Applied: {revision.applied.join("; ")}.</li>}
+          {extras.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
 }
 
 /**
@@ -38,7 +134,9 @@ export function SimplePlan({
   taskBusy,
   onToggle,
   onSaveSteps,
+  initialTab,
 }: {
+  initialTab?: string;
   plan: PlanDetail;
   saved: boolean;
   taskBusy: number | null;
@@ -55,9 +153,10 @@ export function SimplePlan({
   const sources = [...new Set(careers.flatMap((career) => [career.pay_source, career.outlook_source]).filter(Boolean))];
 
   const pathway = content.pathway;
-  const [tab, setTab] = useState<TabKey>("month");
+  const [tab, setTab] = useState<TabKey>(TABS.some((item) => item.key === initialTab) ? (initialTab as TabKey) : "month");
   return (
     <div className="space-y-8">
+      {content.revision && <WhatChanged revision={content.revision} />}
       <div role="tablist" aria-label="Your path" className="-mx-1 flex gap-1 overflow-x-auto border-b border-line px-1">
         {TABS.filter((item) => item.key !== "careers" || careers.length > 0).map((item) => (
           <button
@@ -130,6 +229,13 @@ export function SimplePlan({
                     <div>
                       <p className={`font-semibold leading-snug ${isDone ? "text-ink-muted line-through" : "text-ink"}`}>{step.title}</p>
                       {step.why && <p className="mt-0.5 text-sm leading-relaxed text-ink-muted">{step.why}</p>}
+                      {step.how && (
+                        <p className="mt-1.5 rounded-lg bg-surface-2 px-3 py-2 text-sm leading-relaxed text-ink">
+                          <span className="font-semibold">How: </span>
+                          {step.how}
+                        </p>
+                      )}
+                      {step.resource && <ResourceChip resource={step.resource} />}
                     </div>
                   </li>
                 );
@@ -145,12 +251,20 @@ export function SimplePlan({
                   <div key={period.period}>
                     <h3 className="font-semibold text-ink">{period.period}</h3>
                     <ul className="mt-2 space-y-1.5 text-ink">
-                      {period.steps.map((item) => (
-                        <li key={item} className="flex gap-2.5">
-                          <span aria-hidden className="mt-2.5 size-1.5 shrink-0 rounded-full bg-ink-soft" />
-                          {item}
-                        </li>
-                      ))}
+                      {period.steps.map((item, index) => {
+                        const step = typeof item === "string" ? { text: item } : item;
+
+                        return (
+                          <li key={`${step.text}-${index}`} className="flex gap-2.5">
+                            <span aria-hidden className="mt-2 size-2 shrink-0 rounded-full bg-primary" />
+                            <div>
+                              <p className="text-ink">{step.text}</p>
+                              {"how" in step && step.how && <p className="mt-0.5 text-sm leading-relaxed text-ink-muted">{step.how}</p>}
+                              {"resource" in step && step.resource && <ResourceChip resource={step.resource} />}
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 ))}
@@ -183,16 +297,18 @@ export function SimplePlan({
         <div role="tabpanel" id="panel-college" aria-labelledby="tab-college" className="space-y-6">
           {pathway?.summary && <p className="leading-relaxed text-ink-muted">{pathway.summary}</p>}
           {pathway?.major_minor && (
-            <section className="grid gap-3 rounded-[var(--radius-card)] border border-line bg-gradient-to-br from-primary-softer via-white to-pink-soft p-5 sm:grid-cols-2 sm:p-6">
+            <section className="grid gap-3 rounded-[var(--radius-card)] border border-line bg-primary-softer p-5 sm:grid-cols-2 sm:p-6">
               <div>
                 <p className="text-xs font-semibold text-primary">Your major</p>
                 <p className="font-display text-xl font-semibold text-ink">{pathway.major_minor.major.title}</p>
                 <p className="mt-1 text-sm leading-relaxed text-ink-muted">{pathway.major_minor.why_major}</p>
+                <AskButton question={`Why is ${pathway.major_minor.major.title} my major? What else could fit?`}>Ask about my major</AskButton>
               </div>
               <div>
                 <p className="text-xs font-semibold text-pink">Your minor</p>
                 <p className="font-display text-xl font-semibold text-ink">{pathway.major_minor.minor.title}</p>
                 <p className="mt-1 text-sm leading-relaxed text-ink-muted">{pathway.major_minor.why_minor}</p>
+                <AskButton question={`I'm not sure about ${pathway.major_minor.minor.title} as my minor. What would fit me better?`}>Change my minor</AskButton>
               </div>
               <Link href="/discover" className="text-sm font-semibold text-primary hover:underline sm:col-span-2">
                 See all three major and minor options
@@ -233,6 +349,12 @@ export function SimplePlan({
               </ul>
             </section>
           )}
+        </div>
+      )}
+
+      {tab === "hours" && (
+        <div role="tabpanel" id="panel-hours" aria-labelledby="tab-hours">
+          <CommunityHours />
         </div>
       )}
 

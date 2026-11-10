@@ -10,7 +10,7 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { api } from "@/lib/api";
 import type { AcademicAnswers, MajorMinorResult, QuizField, QuizFollowUps } from "@/types/cie";
 
-const OPTION_TONES = ["from-primary to-violet", "from-pink to-sun", "from-teal to-sky"];
+const OPTION_TONES = ["bg-primary", "bg-pink", "bg-teal"];
 
 /** Three major + minor sets, each with its colleges and scholarships. */
 export function MajorMinorResults({ result }: { result: MajorMinorResult }) {
@@ -46,7 +46,7 @@ export function MajorMinorResults({ result }: { result: MajorMinorResult }) {
               index === active ? "border-transparent shadow-[var(--shadow-raised)] ring-2 ring-primary/40" : "border-line bg-surface hover:-translate-y-0.5 hover:border-primary/25"
             }`}
           >
-            <span aria-hidden className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${OPTION_TONES[index % OPTION_TONES.length]}`} />
+            <span aria-hidden className={`absolute inset-x-0 top-0 h-1.5 ${OPTION_TONES[index % OPTION_TONES.length]}`} />
             <span className="flex items-center gap-1.5 text-xs font-semibold text-ink-muted">
               Option {index + 1}
               {item.preferred && (

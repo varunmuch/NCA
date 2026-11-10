@@ -20,9 +20,12 @@ logger = logging.getLogger(__name__)
 # Cheap check before any model call: only messages that could carry an update.
 TRIGGER = re.compile(
     r"\b(hours?|hrs|volunteer\w*|service|sat|act|psat|scored?|got an? \d|major|majoring|majors|minor|study|"
-    r"plan|path|checklist|remind|add|save|bookmark|goal|want to (be|become)|update|redo|refresh)\b",
+    r"plan|path|checklist|remind|add|save|bookmark|goal|want to (be|become)|update|redo|refresh|"
+    r"finished|done|did|completed|check(ed)? off|remove|delete|unsave|call me|my name|grade|school|interested|subjects?|hobb\w+|colleges?|universit\w*|target|go to|replace|swap|instead|why|minor|don'?t want|yes|open|go to|take me|show me|navigate|retake|quiz|tab|page|upload|where)\b",
     re.IGNORECASE,
 )
+
+NOT_TAKEN = re.compile(r"\b(haven'?t|have not|didn'?t|did not|not yet|never)\b[^.]{0,30}\b(taken|take|done)?[^.]{0,20}\b(sat|act|psat)\b", re.IGNORECASE)
 
 # Things a student can ask the counselor to do (agent.py carries them out).
 ACTIONS = {
@@ -31,6 +34,15 @@ ACTIONS = {
     "set_goal": "a career to make their goal, when they say it is now their goal or ask to set it; value: the career",
     "update_plan": 'they ask to update, redo or build their plan or My Path; value: what should change, or ""',
     "refresh_majors": 'they ask for new major or minor suggestions; value: ""',
+    "complete_step": 'they say they finished or did a step, or ask to check it off; value: the step in their words',
+    "remove_step": "they ask to remove or delete a step from their checklist; value: the step",
+    "unsave_career": "they ask to remove or unsave a saved career; value: the career",
+    "update_profile": 'they ask to change a profile detail or state a new one ("call me Sam", "I\'m in 11th grade now", "add robotics to my interests"); value: "field: new value" where field is one of preferred_name, grade_level, school, interests, favorite_subjects, hobbies',
+    "show_colleges": 'they ask which colleges to look at or to see colleges; value: ""',
+    "change_minor": 'they ask to change, drop or swap their minor ("I don\'t want Fine Arts as my minor"); value: the minor they want, or "" to pick a better one',
+    "open_page": 'they ask to open, go to, show or take them to a page or feature, or to start something that lives on a page ("open the quiz", "I want to retake the quiz", "show my profile", "where do I upload my resume"); value: one of quiz, retake_quiz, profile, documents, plan, colleges, community_hours, explore, settings, home, or "career: <name>"',
+    "log_service_hours": 'they say they did or finished community service / volunteer hours somewhere and want them counted ("I volunteered 5 hours at the library yesterday", "log 3 hours at Second Harvest"); value: "<hours> | <place>"',
+    "set_target_college": 'they say a specific college is now their target or the one they want to go to ("I want to go to USF", "make UF my target"); value: the college',
 }
 
 FIELDS = {
@@ -154,6 +166,34 @@ def validate(raw: dict, message: str, current: dict) -> dict:
     return updates
 
 
+OPEN_WORDS = re.compile(r"\b(open|go to|take me|bring me|show me|navigate|pull up|retake|start over|redo)\b", re.IGNORECASE)
+PAGE_WORDS = [
+    (re.compile(r"\b(retake|redo|start over|again)\b.*\bquiz\b|\bquiz\b.*\b(again|retake|over)\b", re.IGNORECASE), "retake_quiz"),
+    (re.compile(r"\bquiz\b", re.IGNORECASE), "quiz"),
+    (re.compile(r"\b(documents?|upload|resume|transcript)\b", re.IGNORECASE), "documents"),
+    (re.compile(r"\bprofile\b", re.IGNORECASE), "profile"),
+    (re.compile(r"\b(community|service|volunteer\w*)\s+hours?\b|\bhours (tab|log|page)\b", re.IGNORECASE), "community_hours"),
+    (re.compile(r"\b(my path|plan)\b", re.IGNORECASE), "plan"),
+    (re.compile(r"\bcolleges?\b", re.IGNORECASE), "colleges"),
+    (re.compile(r"\b(explore|careers)\b", re.IGNORECASE), "explore"),
+    (re.compile(r"\bsettings\b", re.IGNORECASE), "settings"),
+    (re.compile(r"\bhome\b", re.IGNORECASE), "home"),
+]
+
+
+def page_request(message: str) -> list[dict]:
+    """ "Open the quiz" without the model: a fallback when the model is busy."""
+
+    if not OPEN_WORDS.search(message):
+        return []
+
+    for pattern, page in PAGE_WORDS:
+        if pattern.search(message):
+            return [{"action": "open_page", "value": page}]
+
+    return []
+
+
 def validate_actions(raw: dict, message: str) -> list[dict]:
     """Requests whose evidence is really in the message; one of each kind."""
 
@@ -170,8 +210,19 @@ def validate_actions(raw: dict, message: str) -> list[dict]:
 
         value = str(item.get("value") or "").strip()
 
-        if action in ("add_step", "save_career", "set_goal") and not value:
+        # A request without its subject ("save that one") is kept with an
+        # empty value: the counselor asks which one instead of guessing.
+        if value.lower() in {"it", "that", "this", "that one", "this one", "that career", "this career", "them"}:
+            value = ""
+
+        # A checklist step needs checklist words, so "add more AP classes"
+        # (a plan change) isn't mistaken for a to-do.
+        if action == "add_step" and not re.search(r"checklist|remind|to.?do|my plan|my path|to the plan|steps?\b", message, re.IGNORECASE):
             continue
+
+        # "Open the quiz, I want to retake it" means start it over.
+        if action == "open_page" and value.lower() == "quiz" and re.search(r"retake|again|start over|redo", message, re.IGNORECASE):
+            value = "retake_quiz"
 
         seen.add(action)
         found.append({"action": action, "value": value[:160]})
@@ -179,11 +230,14 @@ def validate_actions(raw: dict, message: str) -> list[dict]:
     return found
 
 
-async def extract(message: str, record: dict, timeout: float = 6.0) -> tuple[dict, list[dict]]:
+async def extract(message: str, record: dict, timeout: float = 12.0) -> tuple[dict, list[dict]]:
     """Updates and requested actions in this message; never slows a turn past the timeout."""
 
     if not TRIGGER.search(message) or len(message) > 1500:
         return {}, []
+
+    # "I haven't taken the SAT yet" answers the counselor's question too.
+    no_test = bool(NOT_TAKEN.search(message)) and not (record.get("tests") or {}).get("plan")
 
     current = current_values(record)
     known = ", ".join(f"{FIELDS[key]['label']}: {value}" for key, value in current.items() if value not in (None, ""))
@@ -204,9 +258,14 @@ async def extract(message: str, record: dict, timeout: float = 6.0) -> tuple[dic
         )
     except (LLMError, asyncio.TimeoutError):
         logger.warning("Record update check skipped for this turn")
-        return {}, []
+        return ({"test_plan": "Hasn't taken the SAT or ACT yet"} if no_test else {}), page_request(message)
 
-    return validate(raw, message, current), validate_actions(raw, message)
+    updates = validate(raw, message, current)
+
+    if no_test and not (updates.get("sat") or updates.get("act")):
+        updates["test_plan"] = "Hasn't taken the SAT or ACT yet"
+
+    return updates, validate_actions(raw, message)
 
 
 def describe(updates: dict, current: dict) -> list[dict]:
@@ -215,7 +274,7 @@ def describe(updates: dict, current: dict) -> list[dict]:
     return [
         {
             "field": key,
-            "label": FIELDS[key]["label"],
+            "label": FIELDS[key]["label"] if key in FIELDS else "Test plans",
             "old": current.get(key) if current.get(key) not in ("",) else None,
             "new": value,
         }

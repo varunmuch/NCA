@@ -2,6 +2,8 @@ import { Award, BookOpen, ExternalLink, GraduationCap, School } from "lucide-rea
 import type { ReactNode } from "react";
 
 import { ChanceBadge, ScholarshipsToggle } from "@/components/college/CollegeList";
+
+import { AskButton } from "./SimplePlan";
 import type { Pathway } from "@/types/cie";
 
 function dollars(value: number) {
@@ -80,8 +82,18 @@ export function PlanPathway({ pathway, only, bare = false }: { pathway: Pathway;
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="font-semibold text-ink">{course.course}</span>
                             <Tag tone={course.kind === "AP" ? "accent" : "plain"}>{course.kind}</Tag>
+                            {course.certifications?.map((cert) => (
+                              <Tag key={cert} tone="plain">Earns {cert}</Tag>
+                            ))}
                           </div>
-                          {course.why && <p className="mt-1 text-sm leading-relaxed text-ink-muted">{course.why}</p>}
+                          {course.description && <p className="mt-1.5 text-sm leading-relaxed text-ink">{course.description}</p>}
+                          {course.why && (
+                            <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
+                              <span className="font-semibold text-primary-ink">Why for you: </span>
+                              {course.why}
+                            </p>
+                          )}
+                          <AskButton question={`Should I take ${course.course} in ${course.grade}? What would I gain, and is there something better for me?`}>Talk about this class</AskButton>
                         </li>
                       ))}
                   </ul>
@@ -171,6 +183,9 @@ export function PlanPathway({ pathway, only, bare = false }: { pathway: Pathway;
                         )}
                         {college.why && <p className="mt-3 text-sm leading-relaxed text-ink-muted">{college.why}</p>}
                         {college.scholarships && <ScholarshipsToggle scholarships={college.scholarships} />}
+                        <div>
+                          <AskButton question={`Why is ${college.name} in my plan? Should I keep it or swap it for another college?`}>Why this college?</AskButton>
+                        </div>
                       </li>
                     ))}
                   </ul>

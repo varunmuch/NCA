@@ -87,9 +87,26 @@ export type MessageMetadata = {
   record_updates?: RecordUpdate[];
   // Things the counselor did or started for the student this turn.
   agent_actions?: AgentAction[];
+  // Information the counselor asked for, with a form or links.
+  info_request?: InfoRequest;
+  // Colleges shown right in the chat for a college question.
+  colleges?: CollegeCard[];
+  // A page the student asked the counselor to open.
+  navigate?: string;
+  // A My Path change the counselor recommended; one tap makes it.
+  proposed_change?: string;
   // Set only in the browser while a reply is still arriving.
   streaming?: boolean;
 };
+
+export type InfoRequest = {
+  keys: string[];
+  question: string;
+  fields: { id: "sat" | "act" | "service_hours"; label: string; placeholder: string }[];
+  links: { label: string; href: string }[];
+};
+
+export type PlanClarify = { clarify: { question: string; options: string[] } };
 
 export type AgentAction = { kind: string; text: string; href?: string; running?: boolean };
 
@@ -304,7 +321,20 @@ export type PlanMilestone = {
   task_id?: number;
 };
 
+export type PlanRevision = {
+  request: string;
+  by?: "student" | "agent";
+  summary: string;
+  applied: string[];
+  changes: { part: string; added: string[]; removed: string[] }[];
+  record_updates: RecordUpdate[];
+  actions: string[];
+  previous_version: number;
+};
+
 export type PlanContent = {
+  // How this version differs from the one it was revised from.
+  revision?: PlanRevision;
   title: string;
   career_goal: string;
   career_direction: string;
@@ -327,7 +357,7 @@ export type PlanContent = {
   summary?: string;
   next_steps?: PlanStep[];
   careers?: PlanCareer[];
-  this_year?: { period: string; steps: string[] }[];
+  this_year?: { period: string; steps: PlanYearStep[] }[];
   high_school?: { grade: string; focus: string }[];
   after_high_school?: { route: string; description: string }[];
   skills?: { skill: string; how: string }[];
@@ -336,7 +366,12 @@ export type PlanContent = {
   pathway?: Pathway;
 };
 
-export type PlanStep = { title: string; why: string };
+export type PlanResource = { id: string; title: string; url: string; description: string; kind: string };
+
+export type PlanStep = { title: string; why: string; how?: string; resource?: PlanResource | null };
+
+// Older plans have text steps; newer ones say how, with a real opportunity.
+export type PlanYearStep = string | { text: string; how?: string; resource?: PlanResource | null };
 
 // A plan career: why from the plan, pay and education from BLS data.
 export type PlanCareer = {
@@ -398,7 +433,7 @@ export type Pathway = {
   career_slug: string;
   career_title: string;
   summary: string;
-  courses: { course: string; grade: string; kind: string; why: string }[];
+  courses: { course: string; grade: string; kind: string; why: string; description?: string; certifications?: string[] }[];
   majors: { cip: string; title: string; includes?: string[]; florida_colleges: number; why: string }[];
   colleges: PathwayCollege[];
   certifications: PathwayCertification[];
@@ -494,6 +529,15 @@ export type HomeSummary = {
   // What the student did since their previous visit (from their own records).
   since_last_time?: { since: string; items: string[] } | null;
   record?: HomeRecord;
+  journey?: HomeJourney;
+};
+
+export type HomeJourney = {
+  grade: string;
+  major: string;
+  college: { name: string; chance: number | null; label: string } | null;
+  goal: string;
+  plan_steps: number;
 };
 
 export type HomeRecord = {
@@ -784,3 +828,29 @@ export type DocumentReview =
       suggestions?: string[];
       certifications?: { name: string; organization: string; url: string; why: string }[];
     };
+
+export type ServicePlace = {
+  id: string;
+  name: string;
+  city: string;
+  tags: string[];
+  what: string;
+  ages: string;
+  url: string;
+  on_district_list: boolean;
+  fits: string;
+};
+
+export type ServiceLogEntry = { id: string; place: string; hours: number; date: string; note: string };
+
+export type ServiceHours = {
+  total: number;
+  source: string;
+  paid_hours: number | null;
+  logged: number;
+  log: ServiceLogEntry[];
+  goals: { key: string; name: string; hours: number; left: number; met: boolean }[];
+  district: { name: string; url: string; list_url: string; proposal_form_url: string; steps: string[]; tip: string };
+  places: ServicePlace[];
+  retrieved: string;
+};

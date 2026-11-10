@@ -1,0 +1,161 @@
+{
+  "about": "Places near NeoCity Academy where students can earn community service hours. Most are on the Osceola school district's own list of example community service organizations. Ages and details come from each organization's page on the retrieved date; rules change, so the app links to the official page. Add a place by copying an entry: id, name, city, tags (health, animals, education, tech, environment, community, arts, food, building), what (what a student does there, plain words), ages (only what the organization's page says; \"\" if it doesn't say), url (official page), on_district_list (true if on the district's list).",
+  "retrieved": "2026-10-27",
+  "district": {
+    "name": "School District of Osceola County: Community Service Guidelines",
+    "url": "https://www.osceolaschools.net/70959_3",
+    "list_url": "https://files.smartsites.parentsquare.com/5825/list_of_community_service_opportunities.pdf",
+    "proposal_form_url": "https://files.smartsites.parentsquare.com/5825/bright_futures_community_service-paid_work_proposal_form_fillable_form.pdf",
+    "steps": [
+      "Pick a place and plan what you'll do with them.",
+      "Fill out the Bright Futures Community Service/Paid Work Proposal form and get it approved at school before you start. Hours done before approval may not count.",
+      "Keep the hours log: the supervisor signs after each visit.",
+      "When you finish, turn in the signed log with a short written reflection. Your hours then go on your transcript.",
+      "Keep copies of your log, and add the service to your resume."
+    ],
+    "tip": "About 25 hours a year from the summer before 9th grade reaches 100 by senior year.",
+    "gold_seal_hours": 30
+  },
+  "places": [
+    {
+      "id": "osceola-library-teen-ambassadors",
+      "name": "Osceola Library System: Teen Ambassadors",
+      "city": "Kissimmee, St. Cloud and other Osceola branches",
+      "tags": ["education", "community", "tech", "arts"],
+      "what": "Help at library programs and events for kids and teens at a branch near you.",
+      "ages": "Ages 13 to 17. Applications open in April, August and December.",
+      "url": "https://www.osceolalibrary.org/teens/teen-ambassador/",
+      "on_district_list": false
+    },
+    {
+      "id": "give-kids-the-world",
+      "name": "Give Kids The World Village",
+      "city": "Kissimmee",
+      "tags": ["health", "community", "arts"],
+      "what": "Help run meals, activities and events at a free resort for children with critical illnesses and their families.",
+      "ages": "Age rules depend on the role; check the volunteer page.",
+      "url": "https://www.gktw.org/volunteer/",
+      "on_district_list": true
+    },
+    {
+      "id": "second-harvest",
+      "name": "Second Harvest Food Bank of Central Florida",
+      "city": "Orlando",
+      "tags": ["food", "community"],
+      "what": "Sort and pack food for families across Central Florida during volunteer shifts.",
+      "ages": "16 and up can volunteer on their own; ages 10 to 15 need an adult (18+) with them.",
+      "url": "https://feedhopenow.org/get-involved/volunteer/",
+      "on_district_list": false
+    },
+    {
+      "id": "habitat-orlando-osceola",
+      "name": "Habitat for Humanity Greater Orlando & Osceola County",
+      "city": "Orlando and Osceola County",
+      "tags": ["building", "engineering", "community"],
+      "what": "Help build and repair affordable homes, or help at their ReStore.",
+      "ages": "Build sites have age limits and under-18 volunteers need guardian consent; check their page.",
+      "url": "https://habitatorlando.org/",
+      "on_district_list": true
+    },
+    {
+      "id": "osceola-council-on-aging",
+      "name": "Osceola Council on Aging (Meals on Wheels)",
+      "city": "Kissimmee",
+      "tags": ["health", "food", "community"],
+      "what": "Help with programs for seniors, including food assistance and Meals on Wheels.",
+      "ages": "",
+      "url": "https://osceolagenerations.org/",
+      "on_district_list": true
+    },
+    {
+      "id": "boys-girls-club",
+      "name": "Boys & Girls Clubs of Central Florida",
+      "city": "Clubs across Central Florida",
+      "tags": ["education", "community", "tech"],
+      "what": "Mentor and tutor younger kids, and help with after-school and summer programs.",
+      "ages": "",
+      "url": "https://bgccf.org/",
+      "on_district_list": true
+    },
+    {
+      "id": "special-olympics",
+      "name": "Special Olympics Florida",
+      "city": "Osceola County and statewide",
+      "tags": ["health", "community"],
+      "what": "Coach, cheer and help run sports practices and games for athletes with intellectual disabilities.",
+      "ages": "",
+      "url": "https://www.specialolympicsflorida.org/",
+      "on_district_list": true
+    },
+    {
+      "id": "red-cross",
+      "name": "American Red Cross",
+      "city": "Central Florida",
+      "tags": ["health", "community"],
+      "what": "Help at blood drives and disaster-readiness events, and learn first aid and CPR.",
+      "ages": "Youth roles are available; check the volunteer page.",
+      "url": "https://www.redcross.org/volunteer/become-a-volunteer.html",
+      "on_district_list": true
+    },
+    {
+      "id": "united-way",
+      "name": "Heart of Florida United Way",
+      "city": "Orlando, Osceola and Seminole",
+      "tags": ["community", "education", "food"],
+      "what": "Find one-day and ongoing volunteer projects with local nonprofits in one place.",
+      "ages": "",
+      "url": "https://www.hfuw.org/volunteer/",
+      "on_district_list": true
+    },
+    {
+      "id": "hands-on-orlando",
+      "name": "Hands On Orlando",
+      "city": "Orlando area",
+      "tags": ["community", "environment", "food"],
+      "what": "Sign up for short volunteer projects around the Orlando area; some are open to youth.",
+      "ages": "Some projects are open to youth; each listing shows its age rule.",
+      "url": "https://www.handsonorlando.com/",
+      "on_district_list": true
+    },
+    {
+      "id": "a-gift-for-teaching",
+      "name": "A Gift For Teaching",
+      "city": "Orlando",
+      "tags": ["education", "community"],
+      "what": "Sort and pack donated school supplies that go free to teachers and students.",
+      "ages": "",
+      "url": "https://www.agiftforteaching.org/",
+      "on_district_list": true
+    },
+    {
+      "id": "goodwill",
+      "name": "Goodwill Industries of Central Florida",
+      "city": "Central Florida",
+      "tags": ["community", "business"],
+      "what": "Help with job-training and community programs.",
+      "ages": "",
+      "url": "https://www.goodwillcfl.org/",
+      "on_district_list": true
+    },
+    {
+      "id": "uf-ifas-osceola",
+      "name": "UF/IFAS Extension Osceola County (4-H)",
+      "city": "Kissimmee",
+      "tags": ["environment", "animals", "education", "tech"],
+      "what": "Earn hours in almost any Extension program: 4-H, gardening, nature and science events.",
+      "ages": "",
+      "url": "https://sfyl.ifas.ufl.edu/osceola/volunteer-opportunitities/",
+      "on_district_list": false
+    },
+    {
+      "id": "key-club",
+      "name": "Key Club",
+      "city": "At your school",
+      "tags": ["community", "education"],
+      "what": "A student-run service club: join NeoCity's chapter, or start one with friends, and do service projects together.",
+      "ages": "High school students.",
+      "url": "https://www.keyclub.org/",
+      "on_district_list": false
+    }
+  ]
+}
